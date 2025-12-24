@@ -1,0 +1,33 @@
+name: Staging CI/CD
+
+on:
+    push:
+        branches: ["master"]
+
+jobs:
+    deploy-production:
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        steps:
+            - name: Configure SSH
+              run: |
+                  mkdir -p ~/.ssh/
+                  echo "$SSH_KEY" > ~/.ssh/dev.key
+                  chmod 600 ~/.ssh/dev.key
+                  cat >>~/.ssh/config <<END
+                  Host dev
+                    HostName $SSH_HOST
+                    User $SSH_USER
+                    Port $SSH_PORT
+                    IdentityFile ~/.ssh/dev.key
+                    StrictHostKeyChecking no
+                  END
+              env:
+                  SSH_USER: ${{ secrets.SERVER_USER }}
+                  SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+                  SSH_HOST: ${{ secrets.SERVER_HOST }}
+                  SSH_PORT: ${{ secrets.SERVER_PORT }}
+
+            - name: Deploy
+              if: ${{ always() }}
+              run: ssh dev 'cd /opt/odoo/odoo18e-prod/aulia-addons && git checkout master && git pull && cd /opt/odoo/odoo18e-prod && docker compose restart'
