@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+        <!-- Menu Item -->        
+    <menuitem id="menu_qc_root" name="Quality Checks" sequence="22" parent="quality_control.menu_quality_control"/>
+    <!-- Sub Menu Item Raw n Kemas -->
+    <menuitem id="menu_qc_raw" name="Bahan Baku" parent="menu_qc_root" action="action_data_qc_raw"/>
+    <menuitem id="menu_qc_kemas" name="Bahan Kemasan" parent="menu_qc_root" action="action_data_qc_kemas"/>
+        <!-- Sub Menu Item Half FG-->
+    <menuitem id="menu_qc_half" name="Setengah Jadi" parent="menu_qc_root" action="action_data_qc_half"/>
+        <!-- Sub Menu Item FG -->
+    <menuitem id="menu_qc_finish" name="Barang Jadi" parent="menu_qc_root" action="action_finished_goods"/>
+
+    <!-- Master Data -->
+    <menuitem
+        id="menu_qc_master_data"
+        name="Master Data"
+        parent="quality_control.menu_quality_root"
+        sequence="21"/>
+        
+    <menuitem
+        id="menu_master_data_qc"
+        name="Master Data QC"
+        parent="bmo_quality.menu_qc_master_data"
+        action="bmo_quality.form_data_qc_act_window"
+        sequence="1"/>
+        
+    <menuitem
+        id="menu_header_data_line"
+        name="Header Data Line"
+        parent="bmo_quality.menu_qc_master_data"
+        action="bmo_quality.data_header_line_action"
+        sequence="2"/>
+    
+    <menuitem
+        id="menu_rincian_analisa"
+        name="Rincian Analisa"
+        parent="bmo_quality.menu_qc_master_data"
+        action="bmo_quality.rincian_analisa_action"
+        sequence="3"/>
+
+</odoo>

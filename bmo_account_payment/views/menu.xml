@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem 
+        id="finance_menu_categ" 
+        name="Finance" 
+        parent="accountant.menu_accounting" 
+        groups="bmo_account_payment.group_z_accounting_finance"
+        sequence="3" 
+    />
+
+    <menuitem 
+        id="menu_act_ap_zpayments" 
+        name="Payments" 
+        parent="bmo_account_payment.finance_menu_categ" 
+        sequence="1"
+    />
+    <menuitem 
+        id="account.menu_action_account_payments_receivable" 
+        name="Receive" 
+        action="account.action_account_payments" 
+        parent="bmo_account_payment.menu_act_ap_zpayments" 
+        sequence="1"
+    />
+
+    <menuitem 
+        id="account.menu_action_account_payments_payable" 
+        name="Send" 
+        action="account.action_account_payments_payable" 
+        parent="bmo_account_payment.menu_act_ap_zpayments" 
+        sequence="2"
+    />
+
+    <menuitem 
+        id="menu_action_account_payments_internal" 
+        name="Internal Transfers" 
+        action="account.action_account_payments_transfer" 
+        parent="bmo_account_payment.menu_act_ap_zpayments" 
+        sequence="3"
+    />
+
+</odoo>

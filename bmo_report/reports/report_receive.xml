@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_receive">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <style>
+                    table.table-bordered { 
+                        border-top: 1px solid black;
+                        border-right: 1px solid black;
+                        border-bottom: 1px solid black;
+                        border-left: 1px solid black;
+                        border-collapse: collapse;
+                        margin-top: 0px; width: 100%;
+                        table-layout: auto;
+                    }
+                </style>
+                <div class="page">
+                    <table style="border:1px solid black;width:100%;border-collapse: collapse;">
+                        <tr style="border:1px solid black">
+                            <!-- Logo -->
+                            <td style="border:1px solid black" width="10%">
+                                <img t-if="o.env.user.company_id.logo"
+                                     style="max-width: 170px; max-height: 100px;"
+                                     t-att-src="image_data_uri(o.env.user.company_id.logo)"
+                                     alt="Logo"/>
+                            </td>
+                            <!-- Title -->
+                            <td style="border:1px solid black;font-size:12px;" width="23%">
+                                <div>Jl. Raya Salembaran No. 717</div>
+                                <div>RT 001 RW 001, Cengklong - Kosambi</div>
+                                <div>Tangerang - Banten</div>
+                                <div>Telp : 021 - 290 31 338</div>
+                                <div>Fax : 021 290 31 343</div>
+                                <div>www.auliacosmetic.com</div>
+                            </td>
+                            <!-- Company Info -->
+                            <td style="border:1px solid black;text-align:center;font-size:26px;" width="67%">
+                                <strong><span>Incoming Stock Receipt</span></strong>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <table style="width:100%; border-collapse: collapse;font-size:14px">
+                        <tr style="vertical-align: top;">
+                            <td width="10%">
+                                <strong><span>Vendor :</span></strong>
+                            </td>
+                            <td style="border:1px solid black;font-size:12px;" width="50%">
+                                <div>
+                                    <b><span t-esc="o.partner_id.name"/></b>
+                                </div>
+                                <div>
+                                    <span t-esc="o.partner_id.street"/>
+                                </div>
+                                <div>
+                                    <span t-esc="o.partner_id.street2"/>
+                                </div>
+                            </td>
+                            <td  style="border:1px solid black;font-size:12px;" width="20%">
+                                <div>
+                                    <strong><span>Receive Date</span></strong>
+                                </div>
+                                <div>
+                                    <span t-esc="(o.scheduled_date + relativedelta(hours=+7)).strftime('%d-%B-%Y')"/>
+                                </div>
+                                <div>
+                                    <strong><span>Form No.</span></strong>
+                                </div>
+                                <div>
+                                    <span t-esc="o.origin"/>
+                                </div>
+                                <div>
+                                    <strong><span>Vendor Delivery</span></strong>
+                                </div>
+                                <div>
+                                    <span t-esc="o.origin"/>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <div>
+                        <table class="table table-bordered">
+                            <thead >
+                                <tr style="font-size:14px">
+                                    <th style="border: 1px solid black;width:10px;">NO</th>
+                                    <th style="border: 1px solid black;">Description</th>
+                                    <th style="border: 1px solid black;width:80px;">Qty</th>
+                                    <th style="border: 1px solid black;width:80px;">Item Unit</th>
+                                </tr>
+                            </thead>
+                            <tbody >
+                                <t t-set="col" t-value="1"/>
+                                <t t-foreach="o.move_ids_without_package" t-as="line">
+                                    <tr style="border: 1px solid black;height: 20px;font-size:12px">
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="col"/>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:left;">
+                                            <t t-if="line.product_id">
+                                                <span t-esc="line.product_id.name"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="line.name"/>
+                                            </t>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="line.quantity" t-options="{'widget' : 'float', 'precision':0}"/>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="line.product_uom.name"/>
+                                        </td>
+                                    </tr>
+                                    <t t-set="col" t-value="col + 1"/>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br/>
+                    <div>
+                        <div>
+                            <table class="table" style="width:100%;font-size:14px;border-collapse: collapse;">
+                                <tr>
+                                    <td width="50%">
+                                        <table class="table table-bordered" style="page-break-inside: avoid;font-size: 10px;">
+                                            <tr>
+                                                <td style="border: 1px solid black;text-align:center;width:33%;">
+                                                    <strong><span>Prepared by,</span></strong>
+                                                </td>
+                                                <td style="border: 1px solid black;text-align:center;width:33%;">
+                                                    <strong><span>Reviewed by,</span></strong>
+                                                </td>
+                                                <td style="border: 1px solid black;text-align:center;width:33%;">
+                                                    <strong><span>Approval by,</span></strong>
+                                                </td>
+                                            </tr>
+                                            <tr style="border: 1px solid black;height:100px;font-size: 30px;color: red;">
+                                                <td style="border: 1px solid black;">
+                                                    <center>
+                                                        <t t-if="o.state!='draft'">
+                                                            <!-- <b><span t-esc="o.env.user.company_id.verified_text"/></b> -->
+                                                        </t>
+                                                    </center>
+                                                </td>
+                                                <td style="border: 1px solid black;font-size: 30px;">
+                                                    <center>
+                                                        <t t-if="o.state=='purchase'">
+                                                            <!-- <b><span t-esc="o.env.user.company_id.approved_text"/></b> -->
+                                                        </t>
+                                                    </center>
+                                                </td>
+                                                <td style="border: 1px solid black;font-size: 30px;">
+                                                    <center>
+                                                        <t t-if="o.state=='purchase'">
+                                                            <!-- <b><span t-esc="o.env.user.company_id.approved_text"/></b> -->
+                                                        </t>
+                                                    </center>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid black;text-align:center;"> _
+                                                    <!-- <span t-esc="o.review_apr_ids[0].requested_by.name"/> -->
+                                                </td>
+                                                <td style="border: 1px solid black;text-align:center;"> _
+                                                    <!-- <span t-esc="o.review_apr_ids[-1].requested_by.name"/> -->
+                                                </td>
+                                                <td style="border: 1px solid black;text-align:center;"> _
+                                                    <!-- <span t-esc="o.review_apr_ids[-1].requested_by.name"/> -->
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid black;text-align:center;vertical-align: top;"> _
+                                                    <!-- <span t-esc="o.review_apr_ids[0].requested_by.function"/> -->
+                                                </td>
+                                                <td style="border: 1px solid black;text-align:center;vertical-align: top;"> _
+                                                    <!-- <span t-esc="o.review_apr_ids[-1].requested_by.function"/> -->
+                                                </td>
+                                                <td style="border: 1px solid black;text-align:center;vertical-align: top;"> _
+                                                    <!-- <span t-esc="o.review_apr_ids[-1].requested_by.function"/> -->
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td style="border: 1px solid black;width:50%;vertical-align: top;">
+                                        <div>
+                                            <strong><span>Description :</span></strong>
+                                        </div>
+                                        <div style="height:100px;"><span t-field="o.note"/></div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_receive" model="ir.actions.report">
+        <field name="name">Report Receive</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">bmo_report.report_receive</field>
+        <field name="report_file">bmo_report.report_receive</field>
+        <field name="print_report_name">'Receive - %s' % object.name</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="paperformat_id" ref="bmo_report.report_do_paperformat" />
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

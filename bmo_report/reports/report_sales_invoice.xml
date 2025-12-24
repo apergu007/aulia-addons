@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_sales_invoice">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <style>
+                    table.table-bordered { 
+                        border-top: 1px solid black;
+                        border-right: 1px solid black;
+                        border-bottom: 1px solid black;
+                        border-left: 1px solid black;
+                        border-collapse: collapse;
+                        margin-top: 0px; width: 100%;
+                        table-layout: auto;
+                    }
+                </style>
+                <div class="page">
+                    <table style="border:1px solid black;width:100%;border-collapse: collapse;">
+                        <tr style="border:1px solid black">
+                            <!-- Logo -->
+                            <td style="border:1px solid black" width="10%">
+                                <img t-if="o.env.user.company_id.logo"
+                                     style="max-width: 170px; max-height: 100px;"
+                                     t-att-src="image_data_uri(o.env.user.company_id.logo)"
+                                     alt="Logo"/>
+                            </td>
+                            <!-- Title -->
+                            <td style="border:1px solid black;font-size:12px;" width="23%">
+                                <div>Jl. Raya Salembaran No. 717</div>
+                                <div>RT 001 RW 001, Cengklong - Kosambi</div>
+                                <div>Tangerang - Banten</div>
+                                <div>Telp : 021 - 290 31 338</div>
+                                <div>Fax : 021 290 31 343</div>
+                                <div>www.auliacosmetic.com</div>
+                            </td>
+                            <!-- Company Info -->
+                            <td style="border:1px solid black;text-align:center;font-size:26px;" width="67%">
+                                <strong><span>Sales Invoice</span></strong>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <table style="width:100%; border-collapse: collapse;font-size:14px">
+                        <tr style="vertical-align: top;">
+                            <td width="10%">
+                                <strong><span>Bill To :</span></strong>
+                            </td>
+                            <td style="border:1px solid black;font-size:12px;" width="50%">
+                                <div>
+                                    <span t-esc="o.partner_id.name"/>
+                                </div>
+                                <div>
+                                    <span t-esc="o.partner_id.street"/>
+                                </div>
+                                <div>
+                                    <span t-esc="o.partner_id.street2"/>
+                                </div>
+                            </td>
+                            <td  style="border:1px solid black;font-size:12px;" width="20%">
+                                <div>
+                                    <strong><span>Invoice Date</span></strong>
+                                </div>
+                                <div>
+                                    <span t-if="o.invoice_date" t-esc="(o.invoice_date + relativedelta(hours=+7)).strftime('%d-%B-%Y')"/>
+                                </div>
+                                <div>
+                                    <strong><span>Term</span></strong>
+                                </div>
+                                <div>
+                                    <span t-esc="o.invoice_payment_term_id.name"/>
+                                </div>
+                                <div>
+                                    <strong><span>DO No.</span></strong>
+                                </div>
+                                <div>
+                                    <t t-set="picking" t-value="o.line_ids.mapped('move_id.stock_valuation_layer_ids.stock_move_id.picking_id') and o.line_ids.mapped('move_id.stock_valuation_layer_ids.stock_move_id.picking_id')[0] or False"/>
+                                    <t t-if="picking">
+                                        <span t-esc="(picking.date_done + relativedelta(hours=+7)).strftime('%d-%B-%Y')"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span>-</span>
+                                    </t>
+                                </div>
+                            </td>
+                            <td  style="border:1px solid black;font-size:12px;" width="20%">
+                                <div>
+                                    <strong><span>Invoice Number</span></strong>
+                                </div>
+                                <div>
+                                    <span t-esc="o.name"/>
+                                </div>
+                                <div>
+                                    <strong><span>Due Date</span></strong>
+                                </div>
+                                <div>
+                                    <span t-esc="(o.invoice_date_due + relativedelta(hours=+7)).strftime('%d-%B-%Y')"/>
+                                </div>
+                                <div>
+                                    <strong><span>PO. No.</span></strong>
+                                </div>
+                                <div>
+                                    <!-- <span t-esc="(o.invoice_date + relativedelta(hours=+7)).strftime('%B-%y')"/> -->
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <table style="width:100%; border-collapse: collapse;font-size:14px">
+                        <tr >
+                            <td width="10%" style="vertical-align: top;">
+                                <strong><span>Ship To :</span></strong>
+                            </td>
+                            <td style="border:1px solid black;font-size:12px;" width="50%">
+                                <div>
+                                    <span t-esc="o.partner_id.ship_to"/>
+                                </div>
+                                <!-- <div>
+                                    <span t-esc="o.partner_id.street"/>
+                                </div>
+                                <div>
+                                    <span t-esc="o.partner_id.street2"/>
+                                </div> -->
+                            </td>
+                            <td  style="font-size:12px;text-align:left;" width="40%">
+                                <div>
+                                    <!-- <strong><span>Ship Via</span></strong> -->
+                                </div>
+                                <div>
+                                    <!-- <span> _ </span> -->
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <table style="width:100%;">
+                        <tr >
+                            <td width="50%">
+                                <!-- <strong><span>Ship To :</span></strong> -->
+                            </td>
+                            <td style="font-size:12px;text-align:center;" width="50%">
+                                <div>
+                                    <strong><span>Currency :</span></strong>
+                                    <span t-esc="o.currency_id.name"/>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <div>
+                        <table class="table table-bordered">
+                            <thead >
+                                <tr style="font-size:14px">
+                                    <th style="border: 1px solid black;">NO</th>
+                                    <th groups="bmo_mrp.see_item_code" style="border: 1px solid black;">Product Code</th>
+                                    <th groups="bmo_mrp.see_product_name" style="border: 1px solid black;">Product Description</th>
+                                    <th style="border: 1px solid black;">Qty Order</th>
+                                    <th style="border: 1px solid black;">Unit Type</th>
+                                    <th style="border: 1px solid black;">Total Pcs</th>
+                                    <th style="border: 1px solid black;">Price/PCS</th>
+                                    <th style="border: 1px solid black;">Disc</th>
+                                    <th style="border: 1px solid black;">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody >
+                                <t t-set="col" t-value="1"/>
+                                <t t-set="undis" t-value="0"/>
+                                <t t-set="subtotal" t-value="0"/>
+                                <t t-set="t_disc" t-value="0"/>
+                                <!-- <t t-foreach="o.invoice_line_ids.filtered(lambda l: l.price_unit)" t-as="line"> -->
+                                <t t-foreach="o.invoice_line_ids" t-as="line">
+                                    <tr style="border: 1px solid black;height: 20px;font-size:12px">
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="col"/>
+                                        </td>
+                                        <td groups="bmo_mrp.see_item_code" style="border: 1px solid black;text-align:left;">
+                                            <t t-if="line.product_id.default_code">
+                                                <span t-esc="line.product_id.default_code"/>
+                                            </t>
+                                            <t t-else="">
+                                                <!-- Ambil teks di dalam tanda [ ] -->
+                                                <t t-set="name_text" t-value="(line.name or '').strip()"/>
+                                                <t t-if="'[' in name_text and ']' in name_text">
+                                                    <t t-set="code_part" t-value="name_text.split(']')[0].replace('[','').strip()"/>
+                                                    <span t-esc="code_part"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-esc="name_text"/>
+                                                </t>
+                                            </t>
+                                        </td>
+                                        <td groups="bmo_mrp.see_product_name" style="border: 1px solid black;text-align:left;">
+                                            <t t-if="line.product_id">
+                                                <span t-esc="line.product_id.name"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="line.name"/>
+                                            </t>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="line.quantity"/>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="line.product_id.uom_id.name"/>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="line.quantity"/>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:right;">
+                                            <span t-esc="'{0:,.2f}'.format(int(line.price_unit))"/>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:right;">
+                                            <t t-set="disc" t-value="0"/>
+                                            <t t-if="line.discount_type == 'percent'">
+                                                <t t-set="disc" t-value="abs(line.price_total - (line.quantity*line.price_unit))"/>
+                                                <t t-if="line.multi_discount">
+                                                    <span t-esc="line.multi_discount"/>%
+                                                </t>
+                                            </t>
+                                            <t t-if="line.discount_type == 'amount'">
+                                                <t t-set="disc" t-value="int(line.multi_discount)"/>
+                                                <span t-esc="'{0:,.2f}'.format(int(disc))"/>
+                                            </t>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:right;">
+                                            <span t-esc="'{0:,.2f}'.format(int(line.price_subtotal))"/>
+                                        </td>
+                                    </tr>
+                                    <t t-set="col" t-value="col + 1"/>
+                                    <t t-set="t_disc" t-value="t_disc + disc"/>
+                                    <t t-set="subtotal" t-value="subtotal + line.price_subtotal"/>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br/>
+                    <div>
+                        <div>
+                            <table class="table " style="width:100%;font-size:14px">
+                                <tr>
+                                    <td rowspan="3" style="border: 1px solid black;width:70%;text-align:center;">
+                                        <div>
+                                            <strong><span>Please check immediately.This invoice will be deemed correct and accepted if we</span></strong>
+                                            <strong><span>do not receive any reply or feedback within 7 working days.</span></strong>
+                                        </div>
+                                        <!-- <div style="height:100px;"><span t-field="o.note"/></div> -->
+                                    </td>
+                                    <td style="width:30%;">
+                                        <table style="width: 100%; border-collapse: collapse;font-size:14px">
+                                            <!-- <t t-set="subtotal" t-value="sum(line.price_subtotal for line in o.invoice_line_ids)"/> -->
+                                            <tr style="border: 1px solid black;">
+                                                <td style="width: 50%;"><strong><span>Sub Total </span></strong></td>
+                                                <td>:</td>
+                                                <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(subtotal))"/></td>
+                                            </tr>
+                                            <tr style="border: 1px solid black;">
+                                                <td><strong><span>Total Discount </span></strong></td>
+                                                <td>:</td>
+                                                <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(t_disc))"/></td>
+                                            </tr>
+                                        </table>
+                                        <!-- <div style="border: 1px solid black;">
+                                            <strong><span>Sub Total :</span></strong>
+                                            <t t-set="subtotal" t-value="sum(line.price_subtotal for line in o.invoice_line_ids if line.price_subtotal &gt; 0)"/>
+                                            <span t-esc="'{0:,.2f}'.format(int(subtotal))"/>
+                                        </div>
+                                        <div style="border: 1px solid black;">
+                                            <strong><span>Total Discount :</span></strong>
+                                            <t t-set="discount_total" t-value="sum(line.price_subtotal for line in o.invoice_line_ids if line.price_subtotal &lt; 0)"/>
+                                            <t t-set="dpp_rumus" t-value="0.0"/>
+                                            <span t-esc="'{0:,.2f}'.format(int(discount_total))"/>
+                                        </div> -->
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <table class="table " style="width:100%;font-size:14px;">
+                                <tr>
+                                    <t t-set="dpp_rumus" t-value="0.0"/>
+                                    <td rowspan="8" style="border: 1px solid black;width:70%;vertical-align: top;">
+                                        <div>
+                                            <strong><span>Description :</span></strong>
+                                        </div>
+                                        <div style="height:100px;"><span t-field="o.narration"/></div>
+                                    </td>
+                                    <td style="width:30%;">
+                                        <t t-set="dpp_rumus" t-value="0.0"/>
+                                        <t t-set="dpp_rumus" t-value="((o.amount_total/1.11) * (11/12))"/>
+                                        <t t-set="discount_total" t-value="sum(line.price_subtotal for line in o.invoice_line_ids if line.price_subtotal &lt; 0)"/>
+                                        <table style="width: 100%; border-collapse: collapse;font-size:14px">
+                                            <tr style="border: 1px solid black;">
+                                                <td style="width: 50%;"><strong><span>Discount 1</span></strong></td>
+                                                <td>:</td>
+                                                <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(discount_total))"/></td>
+                                            </tr>
+                                            <tr style="border: 1px solid black;">
+                                                <td><strong><span>Discount 2</span></strong></td>
+                                                <td>:</td>
+                                                <td style="text-align:right;"></td>
+                                            </tr>
+                                            <tr style="border: 1px solid black;">
+                                                <td><strong><span>Discount 3</span></strong></td>
+                                                <td>:</td>
+                                                <td style="text-align:right;"></td>
+                                            </tr>
+                                            <tr style="border: 1px solid black;">
+                                                <td><strong><span>DPP </span></strong></td>
+                                                <td>:</td>
+                                                <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(dpp_rumus))"/></td>
+                                            </tr>
+                                            <tr style="border: 1px solid black;">
+                                                <td><strong><span>PPN </span></strong></td>
+                                                <td>:</td>
+                                                <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(o.amount_tax))"/></td>
+                                            </tr>
+                                            <tr style="border: 1px solid black;">
+                                                <td><strong><span>Delivery </span></strong></td>
+                                                <td>:</td>
+                                                <td><!-- <span t-esc="'{0:,.2f}'.format(int(subtotal))"/> --></td>
+                                            </tr>
+                                            <tr style="border: 1px solid black;">
+                                                <td><strong><span>Grand Total </span></strong></td>
+                                                <td>:</td>
+                                                <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(o.amount_total))"/></td>
+                                            </tr>
+                                        </table>
+
+                                        <!-- <div style="border: 1px solid black;">
+                                            <strong><span>Discount 1 :</span></strong>
+                                            <t t-set="discount_total" t-value="sum(line.price_subtotal for line in o.invoice_line_ids if line.price_subtotal &lt; 0)"/>
+                                            <span t-esc="'{0:,.2f}'.format(int(discount_total))"/>
+                                        </div>
+                                        <div style="border: 1px solid black;">
+                                            <strong><span>Discount 2 :</span></strong>
+                                            <t t-set="discount_total" t-value="sum(line.price_subtotal for line in o.order_line if line.price_subtotal &lt; 0)"/>
+                                            <t t-set="dpp_rumus" t-value="0.0"/>
+                                            <span t-esc="'{0:,.2f}'.format(int(discount_total))"/>
+                                        </div>
+                                        <div style="border: 1px solid black;">
+                                            <strong><span>Discount 3 :</span></strong>
+                                            <t t-set="dpp_rumus" t-value="((o.amount_total/1.11) * (11/12))"/>
+                                            <span t-esc="'{0:,.2f}'.format(int(dpp_rumus))"/>
+                                        </div>
+                                        <div style="border: 1px solid black;">
+                                            <strong><span>DPP :</span></strong>
+                                            <t t-set="dpp_rumus" t-value="((o.amount_total/1.11) * (11/12))"/>
+                                            <span t-esc="'{0:,.2f}'.format(int(dpp_rumus))"/>
+                                            <t t-set="subtotal" t-value="sum(line.price_subtotal for line in o.invoice_line_ids if line.price_subtotal &gt; 0)"/>
+                                            <span t-esc="'{0:,.2f}'.format(int(subtotal))"/>
+                                        </div>
+                                        <div style="border: 1px solid black;">
+                                            <strong><span>PPN :</span></strong>
+                                            <span t-esc="'{0:,.2f}'.format(int(o.amount_tax))"/>
+                                        </div>
+                                        <div style="border: 1px solid black;">
+                                            <strong><span>Delivery :</span></strong>
+                                            <span t-esc="'{0:,.2f}'.format(int(o.amount_total))"/>
+                                        </div>
+                                        <div style="border: 1px solid black;">
+                                            <strong><span>Grand Total :</span></strong>
+                                            <span t-esc="'{0:,.2f}'.format(int(o.amount_total))"/>
+                                        </div> -->
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <br/>
+                    <div>
+                        <div>
+                            <table class="table table-bordered" style="page-break-inside: avoid;font-size: 10px;">
+                                <tr>
+                                    <td style="border: 1px solid black;text-align:center;width:50%;">
+                                        <strong><span>Prepared by,</span></strong>
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:center;width:50%;">
+                                        <strong><span>Finance and Accounting Approval,</span></strong>
+                                    </td>
+                                </tr>
+                                <tr style="border: 1px solid black;height:100px;font-size: 30px;color: red;">
+                                    <td style="border: 1px solid black;">
+                                        <center>
+                                            <t t-if="o.state!='draft'">
+                                                <!-- <b><span t-esc="o.env.user.company_id.verified_text"/></b> -->
+                                            </t>
+                                        </center>
+                                    </td>
+                                    <td style="border: 1px solid black;font-size: 30px;">
+                                        <center>
+                                            <t t-if="o.state=='purchase'">
+                                                <!-- <b><span t-esc="o.env.user.company_id.approved_text"/></b> -->
+                                            </t>
+                                        </center>
+                                    </td> 
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black;text-align:center;"> _
+                                        <!-- <span t-esc="o.review_apr_ids[0].requested_by.name"/> -->
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:center;"> _
+                                        <!-- <span t-esc="o.review_apr_ids[-1].requested_by.name"/> -->
+                                    </td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black;text-align:center;vertical-align: top;"> _
+                                        <!-- <span t-esc="o.review_apr_ids[0].requested_by.function"/> -->
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:center;vertical-align: top;"> _
+                                        <!-- <span t-esc="o.review_apr_ids[-1].requested_by.function"/> -->
+                                    </td>
+                                    
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <img src="/bmo_report/static/img/footer.jpeg" style="width:100%; max-height:90px;"/>
+                    <div class="text-end text-muted">
+                        <div t-if="report_type == 'pdf' and display_name_in_footer" t-out="o.name">(document name)</div>
+                        <div t-if="report_type == 'pdf'">Page <span class="page"/> / <span class="topage"/></div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_sales_invoice" model="ir.actions.report">
+        <field name="name">Report Sales Invoice</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">bmo_report.report_sales_invoice</field>
+        <field name="report_file">bmo_report.report_sales_invoice</field>
+        <field name="print_report_name">'Sales Order - %s' % object.name</field>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="paperformat_id" ref="bmo_report.report_sales_invoice_paperformat" />
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

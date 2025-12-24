@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <!-- master.brand VIEWS -->
+        <record id="master_brand_view_tree" model="ir.ui.view">
+            <field name="name">master.brand.view.list</field>
+            <field name="model">master.brand</field>
+            <field name="arch" type="xml">
+                <list editable="top" create="1" delete="1" multi_edit="1" string="Master Brand" open_form_view="True">
+                    <field name="name"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="master_brand_action" model="ir.actions.act_window" >
+            <field name="name">Master Brand</field>
+            <field name="res_model">master.brand</field>
+            <field name="view_mode">list</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create an Master Brand
+                </p>
+            </field>
+        </record>
+
+
+        <menuitem id="master_brand_menu" name="Master Brand"
+             parent="sale.product_menu_catalog" sequence="31" action="bmo_sale.master_brand_action"/>
+        
+        
+        <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+        <!-- sales.category VIEWS -->
+        <record id="sales_category_view_tree" model="ir.ui.view">
+            <field name="name">sales.category.view.list</field>
+            <field name="model">sales.category</field>
+            <field name="arch" type="xml">
+                <list editable="top" create="1" delete="1" multi_edit="1" string="Sales Category" open_form_view="True">
+                    <field name="name"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="sales_category_action" model="ir.actions.act_window" >
+            <field name="name">Sales Category</field>
+            <field name="res_model">sales.category</field>
+            <field name="view_mode">list</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create an Sales Category
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="sales_category_menu" name="Sales Category"
+             parent="sale.product_menu_catalog" sequence="31" action="bmo_sale.sales_category_action"/>
+
+    </data>
+</odoo>

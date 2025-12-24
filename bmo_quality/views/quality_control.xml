@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="quality_point_view_tree_inherit_bmo_quality" model="ir.ui.view">
+        <field name="name">quality.point.tree.inherit.bmo_quality</field>
+        <field name="model">quality.point</field>
+        <field name="inherit_id" ref="quality.quality_point_view_tree"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="type_form"/>
+            </xpath>
+            <xpath expr="//field[@name='product_ids']" position="after">
+                <field name="quantity"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="quality_point_view_form_inherit_bmo_quality" model="ir.ui.view">
+        <field name="name">quality.point.form.inherit.bmo_quality</field>
+        <field name="model">quality.point</field>
+        <field name="inherit_id" ref="quality.quality_point_view_form"/>
+        <field name="arch" type="xml">
+            <!-- <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="create_data_qc" type="object" string="Create Data QC"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,purchase" readonly="1"/>
+                </header>
+            </xpath> -->
+
+            <!-- <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_see_data_qc" type="object" icon="fa-check" class="oe_stat_button">
+                    <field string="Data QC" name="qc_count" widget="statinfo"/>
+                </button>
+            </xpath> -->
+            <xpath expr="//field[@name='product_category_ids']" position="after">
+                <field name="quantity"/>
+                <field name="type_form" required="1"/>
+                <field name="tipe_pack" invisible="type_form != 'kemas'" required="type_form == 'kemas'"/>
+                <field name="master_data_id" domain="[('state','=','active')]" required="1" options="{'no_create': True, 'no_edit':True}"/>
+            </xpath>
+
+            <xpath expr="//field[@name='team_id']" position="after">
+                <field name="sample_location_id" domain="[('usage', '=', 'internal')]"
+                    required="1" options="{'no_create': True, 'no_edit':True}"/>
+            </xpath>
+
+            <xpath expr="//field[@name='picking_type_ids']" position="after">
+                <field name="picking_number_id"/>
+            </xpath>
+            <!-- <xpath expr="//group/group[2]" position="inside">
+                <field name="sample_location_ids" groups="stock.group_stock_multi_locations" widget="many2many_tags"/>
+            </xpath> -->
+            
+        </field>
+    </record>
+    
+
+</odoo>

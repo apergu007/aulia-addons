@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="form_wiz_import_master_qc" model="ir.ui.view">
+        <field name="name">form.wizard.wiz.import.master.qc</field>
+        <field name="model">wiz.import.master.qc</field>
+        <field name="arch" type="xml">
+            <form string="Import Absen">
+                <h2>Select a Absen file to import</h2>
+                <p></p>
+                <ul id="master_qc_format">
+                    <li> Microsoft Office Excel (.xlsx) -- 
+                        <a href="/bmo_quality/static/templates/import_master_qc_2.xlsx" class="ml4">
+                            <i class="fa fa-download mr4"></i>Sample Template</a>
+                    </li>
+                </ul>
+                <group>
+                    <field name="file_data" filename="file_name" widget="binary" required="1" class="oe_inline"/>
+                    <field name="file_name" invisible="1"/>
+                </group>
+                <footer>
+                    <button string="Import" name="import_data" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_wiz_import_master_qc" model="ir.actions.act_window">
+        <field name="name">Import Absen</field>
+        <field name="res_model">wiz.import.master.qc</field>
+        <field name="target">new</field>
+        <field name="view_mode">form</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!-- purchase.request inherit tree view -->
+    <record id="view_purchase_request_tree_inherit_bmo_purchase_request" model="ir.ui.view">
+        <field name="name">purchase.request.tree.inherit.bmo_purchase_request</field>
+        <field name="model">purchase.request</field>
+        <field name="inherit_id" ref="purchase_request.view_purchase_request_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='activity_ids']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="description"/>
+            </xpath>
+            
+            <xpath expr="//field[@name='state']" position="after">
+                <field name="current_approver" />
+                <field name="next_approver" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_purchase_request_form_inherit_pr" model="ir.ui.view">
+        <field name="name">purchase.request.form.inherit.pr</field>
+        <field name="model">purchase.request</field>
+        <field name="inherit_id" ref="purchase_request.view_purchase_request_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='assigned_to']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <button name="button_approved" position="attributes">
+                <attribute name="groups"></attribute>
+                <attribute name="invisible">is_current_approver == False</attribute>
+            </button>
+
+            <xpath expr="//button[@name='button_done']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='picking_type_id']" position="attributes">
+                <attribute name="domain">[('code','=','incoming')]</attribute>
+                <attribute name="options">{"no_edit": True, "no_create": True, "no_open": True}</attribute>
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='assigned_to']" position="after">
+                <field name="company_id" groups="base.group_multi_company" widget="selection" required="1" readonly="name != 'New'"/>
+            </xpath>
+            
+            <xpath expr="//field[@name='origin']" position="before">
+                <field name="date_start" readonly="1" force_save="1"/>
+            </xpath>
+
+            <xpath expr="//field[@name='group_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//group[1]/group[3]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <field name="description" position="after">
+                <field name="team_id" required="1" readonly='is_editable == False' options='{"no_edit": True, "no_create": True, "no_open": True}' />
+            </field>
+
+            <xpath expr="//field[@name='line_ids']/list/field[@name='analytic_distribution']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='line_ids']/list/field[@name='company_id']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='line_ids']" position="attributes">
+                <attribute name="readonly">is_editable == False</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='line_ids']/list/field[@name='date_required']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='line_ids']/list/field[@name='product_id']" position="attributes">
+                <attribute name="required">1</attribute>
+                <attribute name="domain">[('purchase_ok','=',True)]</attribute>
+                <attribute name="options">{"no_edit": True, "no_create": True, "no_open": True}</attribute>
+            </xpath>
+
+            <notebook position="inside">
+                <page name="approval_route" string="Approval Route" invisible="state in ['draft', 'sent'] or team_id == False">
+                    <field name="approver_ids">
+                        <list>
+                            <field name="user_id"/>
+                            <field name="role"/>
+                            <field name="state"/>
+                        </list>
+                    </field>
+                    <field name="is_current_approver" invisible="True"/>
+                </page>
+                
+                <page name="approvel_team" string="Other">
+                    <group>
+                        <!-- <field name="team_id" required="1" options='{"no_edit": True, "no_create": True, "no_open": True}' /> -->
+                        <field name="next_approver"/>
+                        <field name="current_approver"/>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="purchase_request.purchase_request_form_action">
+        <field name="context">{}</field>
+    </record>
+</odoo>

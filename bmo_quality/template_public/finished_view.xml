@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Public FINISHED-GOODS / WIP-Bulk QC report -->
+    <template id="public_finished_qc" name="Public Finished QC">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="container my-4">
+                    <div class="card shadow p-4">
+                        <t t-if="record">
+                            <!-- Header row -->
+                            <div class="row mb-3">
+                            <div class="col-6">
+                                <div>
+                                    <img t-if="record.qr_url_link" 
+                                        t-att-src="'data:image/png;base64,%s' % record.qr_url_link.decode()"
+                                        style="max-width:100px;"/>
+                                </div>
+                            </div>
+                            <div class="col-6 text-end">
+                                <p class="mb-1"><b>No Dokumen:</b> <t t-esc="record.no_document"/></p>
+                                <p class="mb-1"><b>Tanggal Efektif:</b> <t t-esc="record.effective_date"/></p>
+                                <p class="mb-1"><b>No Revisi:</b> <t t-esc="record.no_revision"/></p>
+                                <p class="mb-0"><b>Halaman:</b> <t t-esc="record.page"/></p>
+                            </div>
+                            </div>
+                            <hr/>
+                            <!-- Informasi Pemeriksaan -->
+                            <h5>Informasi Pemeriksaan</h5>
+                            <div class="row mb-3">
+                            <div class="col-6">
+                                <p class="mb-1"><b>No Analisa:</b> <t t-esc="record.no_analysis"/></p>
+                                <p class="mb-1"><b>Tgl Pemeriksaan:</b> <t t-esc="record.examination_date"/></p>
+                                <p class="mb-1"><b>Master Data:</b> <t t-esc="record.master_data_id.display_name or ''"/></p>
+                            </div>
+                            <div class="col-6">
+                                <p class="mb-1"><b>Jenis Form:</b> <t t-esc="record.type_form"/></p>
+                                <p class="mb-1"><b>Status QC:</b> <t t-esc="record.quality_state"/></p>
+                            </div>
+                            </div>
+                            <hr/>
+                            <!-- INFORMASI BARANG JADI -->
+                            <h5>Informasi Barang Jadi</h5>
+                            <div class="row mb-3">
+                            <div class="col-6">
+                                <p class="mb-1"><b>Produk:</b> <t t-esc="record.product_id.display_name or ''"/></p>
+                                <p class="mb-1"><b>Kode Barang Jadi:</b> <t t-esc="record.code_of_raw_material or ''"/></p>
+                                <p class="mb-1"><b>Varian:</b> <t t-esc="record.variants or ''"/></p>
+                                <p class="mb-1"><b>Lot:</b> <t t-esc="record.lot_id.name or ''"/></p>
+                                <p class="mb-1"><b>Tgl Kadaluarsa:</b> <t t-esc="record.expired_date"/></p>
+                            </div>
+                            <div class="col-6">
+                                <p class="mb-1"><b>Petugas Sampling:</b> <t t-esc="record.sampling_officer or ''"/></p>
+                                <p class="mb-1"><b>Jumlah Produksi:</b> <t t-esc="record.qty_received"/> <t t-esc="record.uom_datang.name or ''"/></p>
+                                <p class="mb-1"><b>Qty Sampel:</b> <t t-esc="record.qty_of_items_sampled"/> <t t-esc="record.uom_datang.name or ''"/></p>
+                                <p class="mb-1"><b>Qty Pass:</b> <t t-esc="record.qty_pass"/> <t t-esc="record.uom_datang.name or ''"/></p>
+                                <p class="mb-1"><b>Qty Fail:</b> <t t-esc="record.qty_fail"/> <t t-esc="record.uom_datang.name or ''"/></p>
+                            </div>
+                            </div>
+
+                            <hr/>
+
+                            <!-- Pemeriksaan Laboratorium (Top / Mid / Bottom / Average) -->
+                            <h5>Pemeriksaan Laboratorium</h5>
+                            <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>No</th><th>Parameter</th><th>Standar</th>
+                                    <th>Top</th><th>Mid</th><th>Bottom</th><th>Average</th><th>Metode</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr t-foreach="record.data_qc_line" t-as="line">
+                                    <td><t t-esc="line.no_text or ''"/></td>
+                                    <td><t t-esc="line.parameter or ''"/></td>
+                                    <td><t t-esc="line.standard or ''"/></td>
+                                    <td><t t-esc="line.top_results or ''"/></td>
+                                    <td><t t-esc="line.mid_range_results or ''"/></td>
+                                    <td><t t-esc="line.bottom_results or ''"/></td>
+                                    <td><t t-esc="line.average_results or ''"/></td>
+                                    <td><t t-esc="line.method or ''"/></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            </div>
+
+                            <hr/>
+
+                            <!-- Final Inspection -->
+                            <!-- <h5>Final Inspection</h5>
+                            <div class="row mb-3">
+                            <div class="col-6">
+                                <p class="mb-1"><b>Quantity per Batch:</b> <t t-esc="record.quantity_per_batch or ''"/></p>
+                                <p class="mb-1"><b>Sampling Date:</b> <t t-esc="record.sampling_date"/></p>
+                            </div>
+                            <div class="col-6">
+                                <p class="mb-1"><b>Sampling Amount:</b> <t t-esc="record.sampling_amount or ''"/></p>
+                            </div>
+                            </div>
+
+                            <hr/> -->
+
+                            <!-- Standar Pemeriksaan Level II -->
+                            <h5>Standar Pemeriksaan Level II</h5>
+                            <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>Deskripsi Defect</th>
+                                    <th>Critical</th>
+                                    <th>Major</th>
+                                    <th>Minor</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr t-foreach="record.audit_standards_line" t-as="line">
+                                    <td><t t-esc="line.defect_description or ''"/></td>
+                                    <td><t t-esc="line.critical or ''"/></td>
+                                    <td><t t-esc="line.major or ''"/></td>
+                                    <td><t t-esc="line.minor or ''"/></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            </div>
+
+                            <hr/>
+
+                            <!-- Final Summary -->
+                            <h5>Final Summary</h5>
+                            <div class="row">
+                            <div class="col-6">
+                                <p><b>Total Defects:</b> <t t-esc="record.total_defects or 0"/></p>
+                                <p><b>AQL Allowed Defects:</b> <t t-esc="record.aql_allowed_defects or 0"/></p>
+                                <p><b>AQL Results:</b> <t t-esc="record.aql_results or ''"/></p>
+                            </div>
+                            <div class="col-6">
+                                <p><b>Released:</b> <t t-esc="'✓' if record.released else '✗'"/></p>
+                                <p><b>Hold:</b> <t t-esc="'✓' if record.hold else '✗'"/></p>
+                                <p><b>Reject:</b> <t t-esc="'✓' if record.reject else '✗'"/></p>
+                                <p><b>Released by Sortir:</b> <t t-esc="'✓' if record.released_by_sortir else '✗'"/></p>
+                            </div>
+                            </div>
+
+                            <hr/>
+
+                            <!-- Notes -->
+                            <h5>Catatan</h5>
+                                <p><t t-esc="record.note or '-'"/></p>
+
+                        </t>
+                        <t t-else="">
+                            <div class="alert alert-warning">Record tidak ditemukan.</div>
+                        </t>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

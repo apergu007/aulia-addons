@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="approval_sales_team_form_inherit_bmo_sales" model="ir.ui.view">
+        <field name="name">approval.sales.team.form</field>
+        <field name="model">approval.sales.team</field>
+        <field name="inherit_id" ref="bmo_sale_approval_route.approval_sales_team_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="sale_type"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

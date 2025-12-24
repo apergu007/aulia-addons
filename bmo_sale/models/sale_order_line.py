@@ -1,0 +1,59 @@
+from odoo import api, fields, models
+from odoo.exceptions import UserError, ValidationError
+from odoo.fields import Command
+import json
+
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    product_id = fields.Many2one(
+        comodel_name='product.product',
+        string="Product",
+        change_default=True, ondelete='restrict', index='btree_not_null',
+        # domain="[('sale_ok', '=', True)]"
+        )
+    brand_id = fields.Many2one('master.brand', 'Brand', related='product_id.brand_id')
+    categ_domain = fields.Char(
+        compute="_compute_categ_domain", readonly=True)
+    
+    @api.depends('order_id.sale_categ_id','company_id')
+    def _compute_categ_domain(self):
+        for rec in self:
+            domain = [('sale_ok','=',True)]
+            if rec.order_id.sale_categ_id:
+                categ_src = self.env['product.category'].search([('sale_categ_id','=',rec.order_id.sale_categ_id.id)])
+                if categ_src:
+                    domain += [('categ_id','in',categ_src.ids)]
+            rec.categ_domain = json.dumps(domain)
+
+    def _prepare_account_move_line(self, move=False):
+        self.ensure_one()
+        aml_currency = move and move.currency_id or self.currency_id
+        date = move and move.date or fields.Date.today()
+        if self.product_id.type == 'combo':
+            # If the quantity to invoice is a whole number, format it as an integer (with no decimal point)
+            qty_to_invoice = int(self.qty_to_invoice) if self.qty_to_invoice == int(self.qty_to_invoice) else self.qty_to_invoice
+            return {
+                'display_type': 'line_section',
+                'sequence': self.sequence,
+                'name': f'{self.product_id.name} x {qty_to_invoice}',
+            }
+        res = {
+            'display_type': self.display_type or 'product',
+            'sequence': self.sequence,
+            'name': self.env['account.move.line']._get_journal_items_full_name(self.name, self.product_id.display_name),
+            'product_id': self.product_id.id,
+            'product_uom_id': self.product_uom.id,
+            'quantity': self.qty_to_invoice,
+            'discount': self.discount,
+            'price_unit': self.currency_id._convert(self.price_unit, aml_currency, self.company_id, date, round=False),
+            'tax_ids': [Command.set(self.tax_id.ids)],
+            'sale_line_ids': [Command.link(self.id)],
+            'is_downpayment': self.is_downpayment,
+        }
+        downpayment_lines = self.invoice_lines.filtered('is_downpayment')
+        if self.is_downpayment and downpayment_lines:
+            res['account_id'] = downpayment_lines.account_id[:1].id
+        if self.display_type:
+            res['account_id'] = False
+        return res

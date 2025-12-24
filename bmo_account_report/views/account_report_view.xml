@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="account_report_form_inherit_bmo_account_report" model="ir.ui.view">
+        <field name="name">account.report.form.inherit.bmo_account_report</field>
+        <field name="model">account.report</field>
+        <field name="inherit_id" ref="account_reports.account_report_form"/>
+        <field name="arch" type="xml">
+            
+            <xpath expr="//field[@name='currency_translation']" position="after">
+                <field name="filter_account_ids" widget="many2many_tags"/>
+            </xpath>
+            
+        </field>
+    </record>
+
+</odoo>

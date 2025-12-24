@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mrp_bom_tree_view_inherit_bmo_mrp" model="ir.ui.view">
+        <field name="name">mrp.bom.tree.inherit.bmo_mrp</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_tmpl_id']" position="before">
+                <field name="bom_no"/>
+                <field name="decription" optional="show"/>
+                <field name="tipe_produksi" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='product_uom_id']" position="after">
+                <field name="state"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mrp_bom_form_view_inherit_bmo_mrp" model="ir.ui.view">
+        <field name="name">mrp.bom.form.inherit.bmo_mrp</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_post" type="object" string="Post" class="oe_highlight"
+                        invisible="state != 'draft'" groups="bmo_mrp.group_bom_button_post"/>
+                    <button name="action_draft" type="object" string="Draft" class="oe_highlight"
+                        invisible="state != 'post'" groups="bmo_mrp.group_bom_button_draft"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+            </xpath>
+
+            <xpath expr="//group" position="replace">
+                <group>
+                    <group>
+                        <field name="bom_no" readonly="state != 'draft'"/>
+                        <field name="decription" readonly="state != 'draft'"/>
+                        <field name="product_tmpl_id" string="Product Description" context="{'default_is_storable': True}" readonly="state != 'draft'"/>
+                        <field name="product_id" groups="product.group_product_variant" context="{'default_is_storable': True}" readonly="state != 'draft'"/>
+                        <field name="product_id" groups="!product.group_product_variant" invisible="1"/>
+                        <label for="product_qty" string="Built For"/>
+                        <div class="o_row">
+                            <field name="product_qty" readonly="state != 'draft'"/>
+                            <field name="product_uom_id" options="{'no_open':True,'no_create':True}" groups="uom.group_uom" readonly="state != 'draft'"/>
+                        </div>
+                        <field name="min_qty" readonly="state != 'draft'"/>
+                        <field name="total_cost" readonly="state != 'draft'"/>
+                        <field name="total_cost_pcs" readonly="state != 'draft'"/>
+                    </group>
+                    <group>
+                        <field name="code" readonly="state != 'draft'"/>
+                        <field name="tipe_produksi" readonly="state != 'draft'"/>
+                        <field name="type" widget="radio" invisible="context.get('parent_production_id')" readonly="state != 'draft'"/>
+                        <p colspan="2" class="oe_grey oe_edit_only" invisible="type != 'phantom'">
+                        <ul>
+                            A BoM of type Kit is not produced with a manufacturing order.<br/>
+                            Instead, it is used to decompose a BoM into its components when:
+                            <li>
+                                it is added as a component in a manufacturing order
+                            </li>
+                            <li>
+                                it is moved via a transfer, such as a receipt or a delivery order for instance.
+                            </li>
+                        </ul>
+                        </p>
+                        <field name="show_plm" readonly="state != 'draft'"/>
+                        <field name="active" invisible="1"/>
+                        <field name="product_uom_category_id" invisible="1"/>
+                        <field name="allow_operation_dependencies" invisible="1"/>
+                        <field name="company_id" groups="base.group_multi_company" options="{'no_create': True, 'no_open': True}" invisible="context.get('parent_production_id')"/>
+                    </group>
+                </group>
+            </xpath>
+
+            <!-- bom lines -->
+            <xpath expr="//field[@name='bom_line_ids']" position="attributes">
+                <attribute name="readonly">state != 'draft'</attribute>
+            </xpath>
+            <xpath expr="//field[@name='bom_line_ids']/list/field[@name='product_id']" position="after">
+                <field name="item_desc"/>
+            </xpath>
+            <xpath expr="//field[@name='bom_line_ids']/list/field[@name='product_qty']" position="attributes">
+                <attribute name="sum">t_product_qty</attribute>
+            </xpath>
+            <xpath expr="//field[@name='bom_line_ids']/list/field[@name='product_uom_id']" position="replace">
+                <field name="product_uom_id" string="Unit (kg/pcs)" options="{'no_open':True,'no_create':True}" groups="uom.group_uom"/>
+                <field name="manual_cost_price" sum="manual_cost_price"/>
+                <field name="total_manual_cost_price" sum="total_manual_cost_price"/>
+                <field name="standard_cost" sum="standard_cost"/>
+                <field name="total_cost" sum="t_cos"/>
+            </xpath>
+
+            <!-- misc page -->
+            <xpath expr="//page[@name='miscellaneous']" position="replace">
+                <page string="Miscellaneous" name="miscellaneous">
+                    <group>
+                        <group>
+                            <field name="ready_to_produce" invisible="type == 'phantom'" string="Manufacturing Readiness" widget="radio" groups="mrp.group_mrp_routings" readonly="state != 'draft'"/>
+                            <field name="consumption" invisible="type == 'phantom'" widget="radio" readonly="state != 'draft'"/>
+                            <field name="allow_operation_dependencies" groups="mrp.group_mrp_workorder_dependencies" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="picking_type_id" invisible="type == 'phantom'" string="Routing" groups="stock.group_adv_location" readonly="state != 'draft'"/>
+                            <label for="produce_delay" string="Manuf. Lead Time"/>
+                            <div>
+                                <field name="produce_delay" class="oe_inline" readonly="state != 'draft'"/> days
+                            </div>
+                            <label for="days_to_prepare_mo"/>
+                            <div>
+                                <field name="days_to_prepare_mo" class="oe_inline" readonly="state != 'draft'"/> days
+                                <button name="action_compute_bom_days" string="Compute" type="object" help="Compute the days required to resupply all components from BoM, by either buying or manufacturing the components and/or subassemblies.                                                       Also note that purchase security lead times will be added when appropriate." class="oe_link pt-0"/>
+                            </div>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mrp_production_tree_view_inherit_bmo_mrp" model="ir.ui.view">
+        <field name="name">mrp.production.tree.inherit.bmo_mrp</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_tree_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="mrp_type" />
+                <field name="tipe_produksi" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='product_qty']" position="after">
+                <field name="qty_min_bom" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mrp_production_form_view_inherit_bmo_mrp" model="ir.ui.view">
+        <field name="name">mrp.production.form.inherit.bmo_mrp</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='bom_id']" position="attributes">
+                <attribute name="domain">[('state','=','post')]</attribute>
+                <attribute name="options">{'no_open': True,'no_create': True, 'no_create_edit': True}</attribute>
+            </xpath>
+
+            <xpath expr="//div[@name='bom_div']" position="after">
+                <field name="is_qty_bom" invisible="1"/>
+                <field name="qty_min_bom"/>
+                <field name="mrp_type" required="1" readonly="state in ['done','cancel']"/>
+                <field name="tipe_produksi"/>
+            </xpath>
+            <xpath expr="//field[@name='date_start']" position="after">
+                <field name="ok_date" readonly="state != 'draft'"/>
+            </xpath>
+
+            <xpath expr="//field[@name='move_raw_ids']/list/field[@name='product_uom_qty']" position="attributes">
+                <attribute name="sum">sum_consume</attribute>
+            </xpath>
+            <xpath expr="//field[@name='move_raw_ids']/list/field[@name='quantity']" position="attributes">
+                <attribute name="sum">sum_quantity</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_mrp_production_filter_inherit_bmo_mrp" model="ir.ui.view">
+        <field name="name">mrp.production.select.inherit.bmo_mrp</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.view_mrp_production_filter"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//filter[@name='my_mos']" position="after">
+                <filter string="Not Standar" name="is_qty_bom" domain="[('is_qty_bom', '=', False)]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

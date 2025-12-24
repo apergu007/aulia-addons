@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mrp_eco_view_form_inherit_bmo_mrp" model="ir.ui.view">
+        <field name="name">mrp.eco.form.inherit.bmo_mrp</field>
+        <field name="model">mrp.eco</field>
+        <field name="inherit_id" ref="mrp_plm.mrp_eco_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='bom_id']" position="attributes">
+                <attribute name="domain">[('show_plm','=',True)]</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

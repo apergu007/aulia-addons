@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!-- product.category inherit tree view -->
+    <record id="product_category_list_view_inherit_bmo_purchase" model="ir.ui.view">
+        <field name="name">product.category.tree.inherit.bmo_purchase</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_list_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='display_name']" position="after">
+                <field name="types" optional="hide"/>
+                <field name="quality_teams_id" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_category_form_view_inherit_bmo_purchase" model="ir.ui.view">
+        <field name="name">product.category.form.inherit.bmo_purchase</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='parent_id']" position="after">
+                <field name="types" />
+                <field name="quality_teams_id" options="{'no_create': True, 'no_edit':True}"/>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

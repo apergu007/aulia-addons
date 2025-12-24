@@ -1,0 +1,4 @@
+*.pyc
+__pycache__
+find . -name "*.pyc" -exec git rm -f "{}" \;
+find . -name "*.Identifier" -exec git rm -f "{}" \;

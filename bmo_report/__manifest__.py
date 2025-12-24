@@ -1,0 +1,32 @@
+# -*- coding: utf-8 -*-
+
+{
+    'name'          : "Report",
+    'summary'       : """ Report """,
+    'description'   : """ Report  """,
+    'author'        : 'Djunaedi',
+    'maintainer'    : 'Djunaedi',
+    'website'       : " ",
+    'category'      : 'Djunaedi',
+    'version'       : "18.0.1.0.0",
+    'license'       : 'AGPL-3',
+    'depends'       : ['base','sale','stock','account','bmo_mrp'],
+    'data'          : [
+                        'security/ir.model.access.csv',
+                        # 'security/security.xml',
+                        'wizards/wiz_production_mrp.xml',
+                        'reports/paperformat.xml',
+                        'reports/report_do.xml',
+                        'reports/report_receive.xml',
+                        'reports/report_so.xml',
+                        'reports/report_sales_invoice.xml',
+                        'reports/report_po.xml',
+                        'reports/report_po_notidr.xml',
+                        'reports/report_vendor_bill.xml',
+                        'reports/report_cust_receipt.xml',
+                        'reports/report_purchase_payment.xml',
+                        'reports/report_pr.xml',
+                        'reports/report_mo_sub.xml',
+                        'reports/report_mo_head.xml',
+                      ],
+}

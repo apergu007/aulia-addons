@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_account_period_invoice,account.period invoice,model_account_period,,1,0,0,0
+access_account_period_manager,account.period,model_account_period,bmo_closing_period.group_closing_period_manager,1,1,1,0
+
+access_account_fiscalyear_invoice,account.fiscalyear.invoice,model_account_fiscalyear,,1,0,0,0
+access_account_fiscalyear,account.fiscalyear,model_account_fiscalyear,bmo_closing_period.group_closing_period_manager,1,1,1,1
+
+access_closing_period_models,access_closing_period_models,model_closing_period_models,,1,1,1,1

@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="view_account_list_inherit_bmo_account" model="ir.ui.view">
+        <field name="name">account.account.list.inherit.bmo_account</field>
+        <field name="model">account.account</field>
+        <field name="inherit_id" ref="account.view_account_list"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='reconcile']" position="after">
+                <field name="active" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_account_search_inherit_bmo_account" model="ir.ui.view">
+        <field name="name">account.account.list.inherit.bmo_account</field>
+        <field name="model">account.account</field>
+        <field name="inherit_id" ref="account.view_account_search"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//filter[@name='receivableacc']" position="before">
+                <filter string="Archive" name="active" domain="[('active','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

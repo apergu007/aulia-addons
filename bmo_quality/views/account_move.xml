@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="view_move_form_inherit_bmo_quality" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.bmo_quality</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='purchase_vendor_bill_id']" position="after">
+                <field name="picking_domain" invisible="1"/>
+                <field name="picking_id" domain="picking_domain" invisible="1"/>
+                <field name="picking_ids" widget="many2many_tags" domain="picking_domain" options="{'no_create': True, 'no_open': True}"/>
+                <field name="invoice_origin" invisible="invoice_origin == False"/>
+            </xpath>
+            
+        </field>
+    </record>
+    
+
+</odoo>

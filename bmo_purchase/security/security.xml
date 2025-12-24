@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <record id="module_category_purchase_request_access" model="ir.module.category">
+            <field name="name">PR</field>
+            <field name="sequence">58</field>
+        </record>
+
+        <record id="group_pr_last_po_qty" model="res.groups">
+            <field name="name">Last Qty PO</field>
+            <field name="category_id" ref="module_category_purchase_request_access"/>
+        </record>
+
+        <record id="group_pr_last_po_price" model="res.groups">
+            <field name="name">Last Qty Price</field>
+            <field name="category_id" ref="module_category_purchase_request_access"/>
+        </record>
+    </data>
+</odoo>

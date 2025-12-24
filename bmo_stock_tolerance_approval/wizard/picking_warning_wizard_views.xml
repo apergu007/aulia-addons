@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_picking_warning_wizard_form" model="ir.ui.view">
+        <field name="name">picking.warning.wizard.form</field>
+        <field name="model">picking.warning.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Warning">
+                <group>
+                    <field name="message" readonly="1" nolabel="1"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" string="OK" type="object" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+
+</odoo>
+

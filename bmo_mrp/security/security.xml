@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data noupdate="0">
+
+        <record id="module_category_naming_prouct" model="ir.module.category">
+            <field name="name">Product Namning</field>
+            <field name="sequence">56</field>
+        </record>
+
+        <record id="see_product_name" model="res.groups">
+            <field name="name">See Product name </field>
+            <field name="category_id" ref="module_category_naming_prouct"/>
+        </record>
+
+        <record id="see_item_code" model="res.groups">
+            <field name="name">See Product Code </field>
+            <field name="category_id" ref="module_category_naming_prouct"/>
+        </record>
+
+        <!-- <record id="see_product_name_code" model="res.groups">
+            <field name="name">See Product Name and Code </field>
+        </record> -->
+
+        <record id="module_category_bom_access" model="ir.module.category">
+            <field name="name">BOM</field>
+            <field name="sequence">56</field>
+        </record>
+
+        <record id="group_bom_see_menu" model="res.groups">
+            <field name="name">See BOM</field>
+            <field name="category_id" ref="module_category_bom_access"/>
+        </record>
+
+        <record id="group_bom_button_post" model="res.groups">
+            <field name="name">Button Post</field>
+            <field name="category_id" ref="module_category_bom_access"/>
+        </record>
+
+        <record id="group_bom_button_draft" model="res.groups">
+            <field name="name">Button Draft</field>
+            <field name="category_id" ref="module_category_bom_access"/>
+        </record>
+    </data>
+</odoo>

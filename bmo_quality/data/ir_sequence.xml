@@ -1,0 +1,87 @@
+<odoo>
+    <data noupdate="1">
+        
+        <record id="seq_raw_material_assessment" model="ir.sequence">
+            <field name="name">Raw Material Assessment Sequence</field>
+            <field name="code">data.qc</field>
+            <field name="prefix">QC/</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <!-- Seq QC -->
+        <record id="seq_qc_baku_doc" model="ir.sequence">
+            <field name="name">QC Baku Doc Seq</field>
+            <field name="code">data.qc.baku.doc</field>
+            <!-- <field name="prefix">FRM/QC/RMT/</field> -->
+            <field name="padding">4</field>
+            <field name="company_id" eval="False" />
+            <field name="use_date_range">True</field>
+        </record>
+
+        <record id="seq_qc_analisa_baku" model="ir.sequence">
+            <field name="name">QC Baku Analisa Seq</field>
+            <field name="code">data.qc.baku.analisa</field>
+            <!-- <field name="prefix">B%(y)s%(month)s/</field> -->
+            <field name="padding">4</field>
+            <field name="company_id" eval="False" />
+            <field name="use_date_range">True</field>
+        </record>
+
+        <record id="seq_qc_kemas_doc" model="ir.sequence">
+            <field name="name">QC Kemas Doc Seq</field>
+            <field name="code">data.qc.kemas.doc</field>
+            <!-- <field name="prefix">FRM/QC/PCK/</field> -->
+            <field name="padding">4</field>
+            <field name="company_id" eval="False" />
+            <field name="use_date_range">True</field>
+        </record>
+
+        <record id="seq_qc_kemas_analisa" model="ir.sequence">
+            <field name="name">QC Kemas Analisa Seq</field>
+            <field name="code">data.qc.kemas.analisa</field>
+            <!-- <field name="prefix">K%(y)s%(month)s/</field> -->
+            <field name="padding">4</field>
+            <field name="company_id" eval="False" />
+            <field name="use_date_range">True</field>
+        </record>
+
+        <record id="seq_qc_semi_doc" model="ir.sequence">
+            <field name="name">QC Half Doc Seq</field>
+            <field name="code">data.qc.semi.doc</field>
+            <!-- <field name="prefix">FRM/QC/BLK/</field> -->
+            <field name="padding">4</field>
+            <field name="company_id" eval="False" />
+            <field name="use_date_range">True</field>
+        </record>
+
+        <record id="seq_qc_semi_analisa" model="ir.sequence">
+            <field name="name">QC Half Analisa Seq</field>
+            <field name="code">data.qc.semi.analisa</field>
+            <!-- <field name="prefix">QC/BLK/</field> -->
+            <field name="padding">4</field>
+            <field name="company_id" eval="False" />
+            <field name="use_date_range">True</field>
+        </record>
+
+        <record id="seq_qc_finish_doc" model="ir.sequence">
+            <field name="name">QC Finish Doc Seq</field>
+            <field name="code">data.qc.finish.doc</field>
+            <!-- <field name="prefix">FRM/QC/BLK/</field> -->
+            <field name="padding">4</field>
+            <field name="company_id" eval="False" />
+            <field name="use_date_range">True</field>
+        </record>
+
+        <record id="seq_qc_finish_analisa" model="ir.sequence">
+            <field name="name">QC Finish Analisa Seq</field>
+            <field name="code">data.qc.finish.analisa</field>
+            <!-- <field name="prefix">QC/BLK/</field> -->
+            <field name="padding">4</field>
+            <field name="company_id" eval="False" />
+            <field name="use_date_range">True</field>
+        </record>
+
+    </data>
+</odoo>

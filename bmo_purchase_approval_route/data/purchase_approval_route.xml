@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="request_to_approve">
+            <p>
+                Dear
+                <t t-esc="object.sudo().current_approver.user_id.name"/>,
+            </p>
+            <p>
+                You have been requested to approve the purchase order
+                <t t-esc="object.name"/>.
+            </p>
+            <p>
+                <a t-att-href="'/mail/view?model=%s&amp;res_id=%s' % (object._name, object.id)">
+                    View Purchase Order
+                </a>
+            </p>
+        </template>
+
+        <template id="order_approval">
+            <p>
+                Dear
+                % if object.user_id:
+                <t t-esc="object.user_id.sudo().name"/>,
+                % else:
+                <t t-esc="object.create_uid.sudo().name"/>,
+                % endif
+            </p>
+            <p>
+                Purchase Order "<t t-esc="object.name"/>" was approved.
+            </p>
+            <p>
+                <a t-att-href="'/mail/view?model=%s&amp;res_id=%s' % (object._name, object.id)">
+                    View Purchase Order
+                </a>
+            </p>
+        </template>
+    </data>
+</odoo>

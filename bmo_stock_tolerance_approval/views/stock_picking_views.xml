@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_picking_form_inherit_tolerance" model="ir.ui.view">
+        <field name="name">stock.picking.form.tolerance.approval</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <!-- Hide default Validate when waiting for approval -->
+            <xpath expr="//button[@name='button_validate'][1]" position="attributes">
+                <attribute name="invisible">state in ('draft', 'confirmed', 'done', 'cancel') or approval_state in ('approved','to_approve')</attribute>
+            </xpath>
+
+            <xpath expr="//button[@name='button_validate'][2]" position="attributes">
+                <attribute name="invisible">state in ('waiting', 'assigned', 'done', 'cancel') or approval_state in ('approved','to_approve')</attribute>
+            </xpath>
+            
+
+            <!-- Add Approve & Reject buttons -->
+            <header position="inside">
+                <button name="action_approve_picking"
+                        string="Approve"
+                        type="object"
+                        class="btn-primary"
+                        groups="bmo_stock_tolerance_approval.group_tolerance_receive"
+                        invisible="approval_state != 'to_approve' or state == 'done'"/>
+                <button name="action_reject_picking"
+                        string="Reject"
+                        type="object"
+                        groups="bmo_stock_tolerance_approval.group_tolerance_receive"
+                        invisible="approval_state != 'to_approve'"/>
+            </header>
+
+            <!-- Add field to see status -->
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="approval_state" readonly="1" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
