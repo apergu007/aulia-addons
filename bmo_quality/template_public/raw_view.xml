@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="public_qc_form_raw" name="Public QC Form Raw">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="container my-4">
+                    <div class="card shadow p-4">
+                        <h2 class="text-center mb-3">Quality Check - Raw Material</h2>
+
+                        <t t-if="record">
+                            <!-- Prefetch all relational records once -->
+                            <t t-set="product" t-value="record.sudo().product_id"/>
+                            <t t-set="lot" t-value="record.sudo().lot_id"/>
+                            <t t-set="supplier" t-value="record.sudo().supplier_or_customer_name_id"/>
+                            <t t-set="master" t-value="record.sudo().master_data_id"/>
+                            <t t-set="uom" t-value="record.sudo().uom_datang"/>
+
+                            <!-- Header -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <img t-if="record.qr_url_link"
+                                         t-att-src="'data:image/png;base64,%s' % record.qr_url_link.decode()"
+                                         style="max-width:100px;"/>
+                                </div>
+                                <div class="text-end">
+                                    <p><b>No Dokumen:</b> <t t-esc="record.no_document or ''"/></p>
+                                    <p><b>Tanggal Efektif:</b> <t t-esc="record.effective_date or ''"/></p>
+                                </div>
+                            </div>
+
+                            <hr/>
+
+                            <!-- Informasi Pemeriksaan -->
+                            <h4>Informasi Pemeriksaan</h4>
+                            <div class="row">
+                                <div class="col-6">
+                                    <p><b>No Analisa:</b> <t t-esc="record.no_analysis or ''"/></p>
+                                    <p><b>Tanggal Pemeriksaan:</b> <t t-esc="record.examination_date or ''"/></p>
+                                    <p><b>Master Data:</b> <t t-esc="master.display_name or ''"/></p>
+                                </div>
+                                <div class="col-6">
+                                    <p><b>Jenis Form:</b> <t t-esc="record.type_form or ''"/></p>
+                                    <p><b>Status:</b> <t t-esc="record.quality_state or ''"/></p>
+                                </div>
+                            </div>
+
+                            <hr/>
+
+                            <!-- Informasi Bahan Baku -->
+                            <h4>Informasi Bahan Baku</h4>
+                            <div class="row">
+                                <div class="col-6">
+                                    <p><b>Produk:</b> <t t-esc="product.display_name or ''"/></p>
+                                    <p><b>Kode Bahan:</b> <t t-esc="record.code_of_raw_material or ''"/></p>
+                                    <p><b>Lot:</b> <t t-esc="lot.name or ''"/></p>
+                                    <p><b>Pemasok:</b> <t t-esc="supplier.display_name or ''"/></p>
+                                </div>
+                                <div class="col-6">
+                                    <p><b>Tanggal Kedatangan:</b> <t t-esc="record.arrival_date or ''"/></p>
+                                    <p><b>Petugas Sampling:</b> <t t-esc="record.sampling_officer or ''"/></p>
+                                    <p><b>Qty Diterima:</b> <t t-esc="record.qty_received or 0"/> <t t-esc="uom.name or ''"/></p>
+                                    <p><b>Qty Sampel:</b> <t t-esc="record.qty_of_items_sampled or 0"/> <t t-esc="uom.name or ''"/></p>
+                                </div>
+                            </div>
+
+                            <hr/>
+
+                            <!-- Parameter Pemeriksaan -->
+                            <h4>Parameter Pemeriksaan</h4>
+                            <table class="table table-sm table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width:35px;">No</th>
+                                        <th>Parameter</th>
+                                        <th>Standar</th>
+                                        <th>Hasil</th>
+                                        <th>Metode</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="record.data_qc_line" t-as="line">
+                                        <td><t t-esc="line.no_text or ''"/></td>
+                                        <td><t t-esc="line.parameter or ''"/></td>
+                                        <td><t t-esc="line.standard or ''"/></td>
+                                        <td><t t-esc="line.result or ''"/></td>
+                                        <td><t t-esc="line.method or ''"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <hr/>
+
+                            <!-- Berat Jenis + Sampel (10 columns) -->
+                            <h4>Rincian Analisa</h4>
+                            <table class="table table-sm table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>No</th><th>Rincian</th>
+                                        <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+                                        <th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="record.specific_gravity_line" t-as="sg">
+                                        <td><t t-esc="sg.number or ''"/></td>
+                                        <td><t t-esc="sg.sudo().rincian_id.display_name or ''"/></td>
+                                        <td t-foreach="['n_1','n_2','n_3','n_4','n_5','n_6','n_7','n_8','n_9','n_10']" t-as="col">
+                                            <t t-esc="sg[col] or ''"/>
+                                        </td>
+                                        <td><t t-esc="sg.value or ''"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <hr/>
+
+                            <!-- Kesimpulan -->
+                            <h4>Kesimpulan</h4>
+                            <div class="row">
+                                <div class="col-6">
+                                    <p><b>Released:</b> <t t-esc="'✓' if record.released else '✗'"/></p>
+                                    <p><b>Hold:</b> <t t-esc="'✓' if record.hold else '✗'"/></p>
+                                </div>
+                                <div class="col-6">
+                                    <p><b>Reject:</b> <t t-esc="'✓' if record.reject else '✗'"/></p>
+                                    <p><b>Released by Sortir:</b> <t t-esc="'✓' if record.released_by_sortir else '✗'"/></p>
+                                </div>
+                            </div>
+
+                            <hr/>
+                            <p><b>Catatan:</b> <t t-esc="record.notes or '-'"/></p>
+                        </t>
+
+                        <t t-else="">
+                            <div class="alert alert-warning">Record tidak ditemukan.</div>
+                        </t>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

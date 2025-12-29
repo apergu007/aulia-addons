@@ -1,0 +1,23 @@
+.o_form_view .o_field_widget input.o_input,
+.o_form_view .o_field_widget select.o_input,
+.o_form_view .o_field_widget textarea.o_input {
+   border: none !important;
+   border-bottom: 1px solid #ccc !important;
+   transition: border-color 0.3s ease, border-width 0.2s ease;
+}
+
+/* Field required */
+.o_form_view .o_field_widget.o_required_modifier input.o_input,
+.o_form_view .o_field_widget.o_required_modifier select.o_input,
+.o_form_view .o_field_widget.o_required_modifier textarea.o_input {
+   border-bottom: 2px solid #ff4d4d !important;
+   /* merah */
+}
+
+/* Focus effect */
+.o_form_view .o_field_widget input.o_input:focus,
+.o_form_view .o_field_widget select.o_input:focus,
+.o_form_view .o_field_widget textarea.o_input:focus {
+   border-bottom: 2px solid #007bff !important;
+   /* biru */
+}

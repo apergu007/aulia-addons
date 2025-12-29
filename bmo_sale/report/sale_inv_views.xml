@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_sale_inv_union_filter" model="ir.ui.view">
+        <field name="name">sale.inv.union.select</field>
+        <field name="model">sale.inv.union</field>
+        <field name="arch" type="xml">
+            <search string="Search Reference Document">
+                <field name="name" string="Reference" filter_domain="['|', ('name','ilike',self), ('reference','=like',self+'%')]"/>
+                <field name="amount"/>
+                <separator/>
+                <field name="partner_id" operator="child_of"/>
+                <separator/>
+                <filter name="sale_orders" string="Sale Orders" domain="[('sale_order_id', '!=', False)]"/>
+                <filter name="customer_inv" string="Customer Invoice" domain="[('customer_inv_id', '!=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_sale_inv_union_tree" model="ir.ui.view">
+        <field name="name">sale.inv.union.list</field>
+        <field name="model">sale.inv.union</field>
+        <field name="arch" type="xml">
+            <list string="Reference Document">
+                <field name="name"/>
+                <field name="reference"/>
+                <field name="partner_id"/>
+                <field name="date"/>
+                <field name="amount"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="is_show" column_invisible="0"/>
+                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+            </list>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- Public packaging QC report -->
+  <template id="public_packaging_qc" name="Public Packaging QC">
+	<t t-call="web.html_container">
+		<t t-call="web.external_layout">
+		<div class="container my-4">
+			<div class="card shadow p-4">
+			<t t-if="record">
+				<!-- Header row -->
+				<div class="row mb-3">
+				<div class="col-6">
+					<div>
+						<img t-if="record.qr_url_link" 
+							t-att-src="'data:image/png;base64,%s' % record.qr_url_link.decode()"
+							style="max-width:100px;"/>
+					</div>
+				</div>
+				<div class="col-6 text-end">
+					<p class="mb-1"><b>No Dokumen:</b> <t t-esc="record.no_document"/></p>
+					<p class="mb-1"><b>Tanggal Efektif:</b> <t t-esc="record.effective_date"/></p>
+					<p class="mb-1"><b>No Revisi:</b> <t t-esc="record.no_revision"/></p>
+					<p class="mb-0"><b>Halaman:</b> <t t-esc="record.page"/></p>
+				</div>
+				</div>
+
+				<hr/>
+
+				<!-- Informasi Pemeriksaan -->
+				<h5>Informasi Pemeriksaan</h5>
+				<div class="row mb-3">
+				<div class="col-6">
+					<p class="mb-1"><b>Tipe Pack:</b> <t t-esc="record.tipe_pack"/></p>
+					<p class="mb-1"><b>No Analisa:</b> <t t-esc="record.no_analysis"/></p>
+					<p class="mb-1"><b>Tgl Pemeriksaan:</b> <t t-esc="record.examination_date"/></p>
+				</div>
+				<div class="col-6">
+					<p class="mb-1"><b>Master Data:</b> <t t-esc="record.master_data_id.display_name or ''"/></p>
+					<p class="mb-1"><b>Jenis Form:</b> <t t-esc="record.type_form"/></p>
+					<p class="mb-1"><b>Status QC:</b> <t t-esc="record.quality_state"/></p>
+				</div>
+				</div>
+
+				<hr/>
+
+				<!-- Informasi Bahan Baku -->
+				<h5>Informasi Bahan Kemas</h5>
+				<div class="row mb-3">
+				<div class="col-6">
+					<p class="mb-1"><b>Produk:</b> <t t-esc="record.product_id.display_name or ''"/></p>
+					<p class="mb-1"><b>Kode Bahan Kemas:</b> <t t-esc="record.code_of_raw_material or ''"/></p>
+					<p class="mb-1"><b>Lot:</b> <t t-esc="record.lot_id.name or ''"/></p>
+					<p class="mb-1"><b>Pemasok / Customer:</b> <t t-esc="record.supplier_or_customer_name_id.display_name or ''"/></p>
+					<p class="mb-1"><b>Tgl Kedatangan:</b> <t t-esc="record.arrival_date"/></p>
+				</div>
+				<div class="col-6">
+					<p class="mb-1"><b>Petugas Sampling:</b> <t t-esc="record.sampling_officer or ''"/></p>
+					<p class="mb-1"><b>Qty Diterima:</b> <t t-esc="record.qty_received"/> <t t-esc="record.uom_datang.name or ''"/></p>
+					<p class="mb-1"><b>Qty Sampel:</b> <t t-esc="record.qty_of_items_sampled"/> <t t-esc="record.uom_datang.name or ''"/></p>
+					<p class="mb-1"><b>Qty Pass:</b> <t t-esc="record.qty_pass"/> <t t-esc="record.uom_datang.name or ''"/></p>
+					<p class="mb-1"><b>Qty Fail:</b> <t t-esc="record.qty_fail"/> <t t-esc="record.uom_datang.name or ''"/></p>
+				</div>
+				</div>
+
+				<hr/>
+
+				<!-- Parameter Pemeriksaan -->
+				<h5>Parameter Pemeriksaan</h5>
+				<div class="table-responsive">
+				<table class="table table-sm table-bordered">
+					<thead class="table-light">
+					<tr>
+						<th>No</th><th>Parameter</th><th>Standar</th><th>Hasil</th><th>Metode</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr t-foreach="record.data_qc_line" t-as="line">
+						<td><t t-esc="line.no_text or ''"/></td>
+						<td><t t-esc="line.parameter or ''"/></td>
+						<td><t t-esc="line.standard or ''"/></td>
+						<td><t t-esc="line.result or ''"/></td>
+						<td><t t-esc="line.method or ''"/></td>
+					</tr>
+					</tbody>
+				</table>
+				</div>
+
+				<hr/>
+
+				<!-- Analisa Kemasan (dynamic columns per tipe_pack) -->
+				<h5>Analisa Kemasan</h5>
+				<div class="table-responsive">
+				<table class="table table-sm table-bordered">
+					<thead class="table-light">
+					<tr>
+						<th>No</th>
+						<t t-set="pack" t-value="record.tipe_pack"/>
+						<th t-if="pack in ('sticker','shrink','dudukan','ind_box','inner_box','master_box','botol','cas_datar')">Long</th>
+						<th t-if="pack in ('sticker','shrink','dudukan','ind_box','inner_box','master_box','botol','cas_datar')">Wide</th>
+						<th t-if="pack in ('dudukan','ind_box','inner_box','master_box','pot')">Heigh</th>
+						<th t-if="pack in ('shrink','dudukan','ind_box','inner_box','master_box','pot')">Thick</th>
+						<th t-if="pack == 'dudukan'">Hole</th>
+						<th t-if="pack in ('cap','botol','pot','cas_lipstik','cas_brush','tubset')">Thread</th>
+						<th t-if="pack in ('botol','pot','cas_brush','tubset')">Mouth</th>
+						<th t-if="pack in ('botol','pot','cas_brush','tubset')">Weight</th>
+						<th t-if="pack in ('botol','pot','cas_brush','tubset')">Vol Brimfull</th>
+						<th t-if="pack == 'part_ind_box'">Front LxWxH</th>
+						<th t-if="pack == 'part_ind_box'">Back LxWxH</th>
+						<th t-if="pack in ('cap','cas_lipstik')">Cap Heigh</th>
+						<th t-if="pack in ('cap','cas_lipstik')">Cap Deep</th>
+						<th t-if="pack in ('cas_datar','cas_lipstik','cas_brush')">Outside</th>
+						<th t-if="pack in ('cas_datar','cas_lipstik','cas_brush')">Deep</th>
+						<th t-if="pack == 'cas_brush'">Plug</th>
+						<th t-if="pack == 'cas_brush'">Neck Plug</th>
+						<th t-if="pack in ('pump','pum_shower')">Long Hose</th>
+						<th t-if="pack in ('pump','pum_shower')">Long Pump</th>
+						<th t-if="pack == 'pum_shower'">Long Noozle</th>
+						<th t-if="pack == 'ring'">Heigh Ring</th>
+						<th t-if="pack == 'tubset'">Tube</th>
+						<th t-if="pack == 'tubset'">Cap</th>
+						<th t-if="pack == 'tubset'">Weight Tube Set</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr t-foreach="record.analisa_pack_line" t-as="line">
+						<td><t t-esc="line_index + 1"/></td>
+						<td t-if="pack in ('sticker','shrink','dudukan','ind_box','inner_box','master_box','botol','cas_datar')"><t t-esc="line.long or ''"/></td>
+						<td t-if="pack in ('sticker','shrink','dudukan','ind_box','inner_box','master_box','botol','cas_datar')"><t t-esc="line.wide or ''"/></td>
+						<td t-if="pack in ('dudukan','ind_box','inner_box','master_box','pot')"><t t-esc="line.heigh or ''"/></td>
+						<td t-if="pack in ('shrink','dudukan','ind_box','inner_box','master_box','pot')"><t t-esc="line.thick or ''"/></td>
+						<td t-if="pack == 'dudukan'"><t t-esc="line.hole or ''"/></td>
+						<td t-if="pack in ('cap','botol','pot','cas_lipstik','cas_brush','tubset')"><t t-esc="line.thread or ''"/></td>
+						<td t-if="pack in ('botol','pot','cas_brush','tubset')"><t t-esc="line.mounth or ''"/></td>
+						<td t-if="pack in ('botol','pot','cas_brush','tubset')"><t t-esc="line.weight or ''"/></td>
+						<td t-if="pack in ('botol','pot','cas_brush','tubset')"><t t-esc="line.vol_brimfull or ''"/></td>
+						<td t-if="pack == 'part_ind_box'"><t t-esc="(line.front_long or '') + ' x ' + (line.front_wide or '') + ' x ' + (line.front_heigh or '')"/></td>
+						<td t-if="pack == 'part_ind_box'"><t t-esc="(line.back_long or '') + ' x ' + (line.back_wide or '') + ' x ' + (line.back_heigh or '')"/></td>
+						<td t-if="pack in ('cap','cas_lipstik')"><t t-esc="line.cap_heigh or ''"/></td>
+						<td t-if="pack in ('cap','cas_lipstik')"><t t-esc="line.cap_deep or ''"/></td>
+						<td t-if="pack in ('cas_datar','cas_lipstik','cas_brush')"><t t-esc="line.outside or ''"/></td>
+						<td t-if="pack in ('cas_datar','cas_lipstik','cas_brush')"><t t-esc="line.deep or ''"/></td>
+						<td t-if="pack == 'cas_brush'"><t t-esc="line.plug or ''"/></td>
+						<td t-if="pack == 'cas_brush'"><t t-esc="line.heigh_neck_plug or ''"/></td>
+						<td t-if="pack in ('pump','pum_shower')"><t t-esc="line.long_hose or ''"/></td>
+						<td t-if="pack in ('pump','pum_shower')"><t t-esc="line.long_pump or ''"/></td>
+						<td t-if="pack == 'pum_shower'"><t t-esc="line.long_noozle or ''"/></td>
+						<td t-if="pack == 'ring'"><t t-esc="line.heigh_ring or ''"/></td>
+						<td t-if="pack == 'tubset'"><t t-esc="line.tube or ''"/></td>
+						<td t-if="pack == 'tubset'"><t t-esc="line.cap or ''"/></td>
+						<td t-if="pack == 'tubset'"><t t-esc="line.weight_tube_set or ''"/></td>
+					</tr>
+					</tbody>
+				</table>
+				</div>
+
+				<hr/>
+
+				<!-- Standar Pemeriksaan Level II -->
+				<h5>Standar Pemeriksaan Level II</h5>
+				<div class="table-responsive">
+				<table class="table table-sm table-bordered">
+					<thead class="table-light">
+					<tr>
+						<th>Defect Deskripsi</th>
+						<th>Critical (0,65)</th>
+						<th>Major (2,5)</th>
+						<th>Minor (6,5)</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr t-foreach="record.audit_standards_line" t-as="line">
+						<td><t t-esc="line.defect_description or ''"/></td>
+						<td><t t-esc="line.critical or ''"/></td>
+						<td><t t-esc="line.major or ''"/></td>
+						<td><t t-esc="line.minor or ''"/></td>
+					</tr>
+					</tbody>
+				</table>
+				</div>
+
+				<hr/>
+
+				<hr/>
+				<!-- Kesimpulan -->
+				<h5>Kesimpulan</h5>
+				<div class="row">
+				<div class="col-6">
+					<p><b>Released:</b> <t t-esc="'✓' if record.released else '✗'"/></p>
+					<p><b>Hold:</b> <t t-esc="'✓' if record.hold else '✗'"/></p>
+				</div>
+				<div class="col-6">
+					<p><b>Reject:</b> <t t-esc="'✓' if record.reject else '✗'"/></p>
+					<p><b>Released by Sortir:</b> <t t-esc="'✓' if record.released_by_sortir else '✗'"/></p>
+				</div>
+				</div>
+
+				<hr/>
+
+				<!-- Catatan -->
+				<h5>Catatan</h5>
+				<p><t t-esc="record.notes or '-'"/></p>
+
+			</t>
+			<t t-else="">
+				<div class="alert alert-warning">Record tidak ditemukan.</div>
+			</t>
+			</div>
+		</div>
+		</t>
+	</t>
+  </template>
+
+  <!-- Add a "Print Packaging QC" button on the original form -->
+  <!-- <record id="view_qc_form_raw_packaging_inherit" model="ir.ui.view">
+	<field name="name">qc.form.raw.packaging.print</field>
+	<field name="model">your.qc.model</field> 
+	<field name="inherit_id" ref="your_module.view_qc_form_raw"/>
+	<field name="arch" type="xml">
+	  <header position="inside">
+		<button name="%(action_print_packaging_qc)d" string="Print Packaging QC" type="action"
+				class="btn-primary" icon="fa-print"/>
+	  </header>
+	</field>
+  </record> -->
+
+  <!-- Report action -->
+  <!-- <record id="action_print_packaging_qc" model="ir.actions.report">
+	<field name="name">Packaging QC</field>
+	<field name="model">your.qc.model</field>
+	<field name="report_type">qweb-pdf</field>
+	<field name="report_name">qr_public_share.public_packaging_qc</field>
+	<field name="report_file">PackagingQC</field>
+	<field name="print_report_name">'PackagingQC-%s' % object.no_document</field>
+	<field name="binding_model_id" ref="your_module.model_your_qc_model"/>
+	<field name="binding_type">report</field>
+  </record> -->
+</odoo>

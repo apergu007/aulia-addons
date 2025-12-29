@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_data_header_line,access_data_header_line,model_data_header_line,base.group_user,1,1,1,1
+access_rincian_analisa,access_rincian_analisa,model_rincian_analisa,base.group_user,1,1,1,1
+access_form_data_qc,access_form_data_qc,model_form_data_qc,base.group_user,1,1,1,1
+access_form_data_qc_line,access_form_data_qc_line,model_form_data_qc_line,base.group_user,1,1,1,1
+access_form_data_qc_analisa,access_form_data_qc_analisa,model_form_data_qc_analisa,base.group_user,1,1,1,1
+access_quality_check_line,access_quality_check_line,model_quality_check_line,base.group_user,1,1,1,1
+access_specific_gravity_line,access_specific_gravity_line,model_specific_gravity_line,base.group_user,1,1,1,1
+access_analisa_packaging_line,access_analisa_packaging_line,model_analisa_packaging_line,base.group_user,1,1,1,1
+access_audit_standards_line,access_audit_standards_line,model_audit_standards_line,base.group_user,1,1,1,1
+access_wiz_import_master_qc,access_wiz_import_master_qc,model_wiz_import_master_qc,base.group_user,1,1,1,1

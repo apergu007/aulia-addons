@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_fp_material_head">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+
+            <style>
+                table, td, th {
+                    border: 1px solid black;
+                    border-collapse: collapse;
+                    font-size: 12px;
+                }
+                th {
+                    text-align: center;
+                    font-weight: bold;
+                }
+                .no-border td {
+                    border: none !important;
+                }
+                .line-space {
+                    height: 26px;
+                    border-bottom: 1px solid black;
+                }
+            </style>
+
+            <div class="page">
+
+                <!-- ================= FP HEADER ================= -->
+                <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                    <tr>
+                        <td rowspan="4" style="width:8%; text-align:center; font-size:28px; font-weight:bold;">
+                            FP
+                        </td>
+                        <td style="width:10%;"><strong>FP No.</strong></td>
+                        <td style="width:12%;">
+                            <span t-esc="o.name"/>
+                        </td>
+                        <td style="width:20%;"><strong>Description</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Target Mulai</strong></td>
+                        <td>
+                            <span t-esc="o.date_start.strftime('%d/%m/%Y')"/>
+                        </td>
+                        <td rowspan="2"/>
+                    </tr>
+                    <tr>
+                        <td><strong>Target Selesai</strong></td>
+                        <td>
+                            <span t-esc="o.date_finished.strftime('%d/%m/%Y')"/>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Status FP</strong></td>
+                        <td><span t-esc="o.state"/></td>
+                        <td><strong>Batch No.</strong></td>
+                    </tr>
+                </table>
+
+                <br/>
+
+                <!-- ================= PRODUCT TABLE ================= -->
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr>
+                            <th style="width:5%;">No.</th>
+                            <th style="width:40%;">Description</th>
+                            <th style="width:20%;">Item No.</th>
+                            <th style="width:15%;">Quantity</th>
+                            <th style="width:10%;">Unit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-set="col" t-value="1"/>
+                        <tr style="height: 20px;font-size:12px;margin-top:5px;">
+                            <td style="border: 1px solid black;text-align:center;">
+                                <span t-esc="col"/>
+                            </td>
+                            <td style="border: 1px solid black;text-align:left;">
+                                <span t-esc="o.product_id.name"/>
+                            </td>
+                            <td style="border: 1px solid black;text-align:left;">
+                                <span t-esc="o.product_id.default_code"/>
+                            </td>
+                            <td style="border: 1px solid black;text-align:right;">
+                                <span t-esc="o.product_qty"/>
+                            </td>
+                            <td style="border: 1px solid black;text-align:left;">
+                                <span t-esc="o.product_uom_id.name"/>
+                            </td>
+                        </tr>
+                        <t t-set="col" t-value="col+1"/>
+                        <t t-foreach="o._get_children()" t-as="child">
+                            <tr style="height: 20px;font-size:12px;margin-top:5px;">
+                                <td style="border: 1px solid black;text-align:center;">
+                                    <span t-esc="col"/>
+                                </td>
+                                <td style="border: 1px solid black;text-align:left;">
+                                    <span t-esc="child.product_id.name"/>
+                                </td>
+                                <td style="border: 1px solid black;text-align:left;">
+                                    <span t-esc="child.product_id.default_code"/>
+                                </td>
+                                <td style="border: 1px solid black;text-align:right;">
+                                    <span t-esc="child.product_qty"/>
+                                </td>
+                                <td style="border: 1px solid black;text-align:left;">
+                                    <span t-esc="child.product_uom_id.name"/>
+                                </td>
+                            </tr>
+                            <t t-set="col" t-value="col + 1"/>
+                        </t>
+
+                        <t t-set="row_count" t-value="len(o._get_children())"/>
+                        <t t-set="max_rows" t-value="5"/>
+                        <t t-if="row_count &lt; max_rows">
+                            <t t-foreach="range(max_rows - row_count)" t-as="i">
+                                <tr style="height:20px;">
+                                    <td style="border: 1px solid black;"></td>
+                                    <td style="border: 1px solid black;"></td>
+                                    <td style="border: 1px solid black;"></td>
+                                    <td style="border: 1px solid black;"></td>
+                                    <td style="border: 1px solid black;"></td>
+                                </tr>
+                            </t>
+                        </t>
+                    </tbody>
+                </table>
+
+                <br/>
+
+                <!-- ================= SUMMARY SECTION ================= -->
+                <table class="table table-bordered" style="width:100%;page-break-inside: avoid;font-size: 5px;text-align:left;">
+                    <tr>
+                        <td style="border: 1px solid black;width:20%;">
+                            <strong><span>Dibuat Oleh,</span></strong>
+                        </td>
+                        <td style="border: 1px solid black;width:25%;">
+                            <strong><span>Selesai n Diperiksa,</span></strong>
+                        </td>
+                        <td style="border: 1px solid black;width:25%;">
+                            <strong><span>Line Mesin No:______</span></strong>
+                            <br/>
+                            <strong><span>Penanggung Jawab:</span></strong>
+                        </td>
+                        <td rowspan="3" style="border: 1px solid black;width:30%;height:80px;vertical-align: top;">
+                            <div style="height:20px;font-size: 11px;">
+                                <span>TOTAL HASIL:</span> ______ PCS/KG
+                            </div>
+                            <div style="height:20px;font-size: 11px;">
+                                <span>QTY INPUT:</span> ______ PCS/KG
+                            </div>
+                            <div style="height:20px;font-size: 11px;">
+                                <span>RETAINED SAMPLE:</span> ______ PCS/KG
+                            </div>
+                            <div style="height:20px;font-size: 11px;">
+                                <span>LOSS:</span> _____%
+                            </div>
+                        </td>
+                    </tr>
+                    <tr style="border: 1px solid black;height:50px;font-size: 30px;color: red;">
+                        <td style="border: 1px solid black;">
+                            <span/>
+                        </td>
+                        <td style="border: 1px solid black;">
+                            <span/>
+                        </td>
+                        <td style="border: 1px solid black;">
+                            <span/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;vertical-align: top;">
+                            <!-- <span>(Nama Jelas &amp; Paraf)<br/>Tgl:</span> -->
+                        </td>
+                        <td style="border: 1px solid black;vertical-align: top;">
+                            <span>Ka. Produksi<br/>Tgl:</span>
+                        </td>
+                        <td style="border: 1px solid black;vertical-align: top;">
+                            <span>(Nama Jelas &amp; Paraf)<br/>Tgl:</span>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <!-- ================= CATATAN KHUSUS ================= -->
+                <strong style="font-size:13px;">
+                    CATATAN KHUSUS BARANG JADI MASUK GUDANG JADI - 
+                    <i>Untuk diisi oleh Bagian Packing<br/>
+                    (cantumkan: Tgl + Jam + Qty + Penerima Barang Jadi)</i>
+                </strong>
+                <br/><br/>
+                <t t-foreach="range(1,12)" t-as="num">
+                    <div style="width:100%;height:50px;">
+                        <div><span t-esc="num"/>.</div>
+                        <div style="border-top: 1px solid black"></div>
+                    </div>
+                </t>
+            </div>
+            <div style="page-break-inside: avoid;">
+                <t t-call="bmo_report.report_fp_material_subs" />
+            </div>
+            <t t-foreach="o._get_children()" t-as="child">
+                <div style="page-break-inside: avoid;">
+                    <t t-set="o" t-value="child"/>
+                    <t t-call="bmo_report.report_fp_material_subs" />
+                </div>
+            </t>
+        </t>
+    </t>
+</template>
+
+
+
+
+    <record id="action_fp_material_head" model="ir.actions.report">
+        <field name="name">Report fp Head</field>
+        <field name="model">mrp.production</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">bmo_report.report_fp_material_head</field>
+        <field name="report_file">bmo_report.report_fp_material_head</field>
+        <field name="print_report_name">'Report Fp - %s' % object.name</field>
+        <field name="binding_model_id" ref="mrp.model_mrp_production"/>
+        <field name="paperformat_id" ref="bmo_report.report_mo_sub" />
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

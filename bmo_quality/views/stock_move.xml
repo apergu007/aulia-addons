@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!-- Stock.picking View -->
+    <record id="view_picking_form_pick_inherit_bmo_quality" model="ir.ui.view">
+        <field name="name">stock.picking.form.pick.inherit.bmo_quality</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='lot_ids']" position="after">
+                <field name="no_analisa_qc" optional="hide"/>
+            </xpath>    
+            
+        </field>
+    </record>
+    <!-- Stock.picking inherit -->
+    <record id="view_picking_form_pick_inherit_bmo_quality" model="ir.ui.view">
+        <field name="name">stock.picking.view.form.inherit.quality.inherit.bmo_quality</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="quality_control.stock_picking_view_form_inherit_quality"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='check_quality']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='button_quality_alert']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            
+        </field>
+    </record>
+
+    <!-- Stock.move View -->
+    <record id="view_move_tree_inherit_bmo_quality" model="ir.ui.view">
+        <field name="name">stock.move.form.inherit.bmo_quality</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_move_tree"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="check_ids" optional="hide" widget="many2many_tags"/>
+            </xpath>
+            
+        </field>
+    </record>
+
+    <!-- Stock.move.line View -->
+    <record id="view_move_line_tree_inherit_bmo_quality" model="ir.ui.view">
+        <field name="name">stock.move.line.form.inherit.bmo_quality</field>
+        <field name="model">stock.move.line</field>
+        <field name="inherit_id" ref="stock.view_move_line_tree"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='lot_id']" position="after">
+                <field name="check_ids" optional="hide" widget="many2many_tags"/>
+                <field name="no_analisa_qc" optional="hide"/>
+            </xpath>
+            
+        </field>
+    </record>
+
+    <record id="view_stock_move_line_operation_tree_inherit_bmo_quality" model="ir.ui.view">
+        <field name="name">stock.move.line.operations.list.inherit.bmo_quality</field>
+        <field name="model">stock.move.line</field>
+        <field name="inherit_id" ref="stock.view_stock_move_line_operation_tree"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='quant_id']" position="after">
+                <field name="check_ids" optional="hide" widget="many2many_tags"/>
+                <field name="no_analisa_qc" optional="hide"/>
+            </xpath>
+            
+        </field>
+    </record>
+    
+
+</odoo>

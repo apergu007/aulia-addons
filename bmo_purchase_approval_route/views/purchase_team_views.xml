@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+    <record id="purchase_team_tree" model="ir.ui.view">
+        <field name="name">purchase.team.tree</field>
+        <field name="model">purchase.team</field>
+        <field name="arch" type="xml">
+            <list string="Purchase Team">
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+
+    <record id="purchase_team_form" model="ir.ui.view">
+        <field name="name">purchase.team.form</field>
+        <field name="model">purchase.team</field>
+        <field name="arch" type="xml">
+            <form string="PO Team" class="o_purchase_team">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="user_id" domain="[('share', '=', False)]" widget="many2one_avatar_user"/>
+                        </group>
+                        <group>
+                            <field name="company_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="lock_amount_total" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Approvers">
+                            <field name="approver_ids" nolabel="1">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="user_id"/>
+                                    <field name="role"/>
+                                    <field name="min_amount"/>
+                                    <field name="max_amount"/>
+                                    <field name="company_currency_id" invisible="True"/>
+                                    <field name="lock_amount_total" invisible="1"/>
+                                    <field name="custom_condition_code" invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <record id="purchase_team_act_window" model="ir.actions.act_window">
+        <field name="name">PO Teams</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">purchase.team</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+        <field name="view_id" eval="False"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                    No team found. Let's create one!
+            </p>
+        </field>
+    </record>
+
+    <menuitem name="PO Teams" id="purchase_team_menu" action="purchase_team_act_window" parent="purchase.menu_purchase_config" sequence="50"/>
+
+</odoo>

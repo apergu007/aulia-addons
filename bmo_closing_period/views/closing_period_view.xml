@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- closing.period.models list view -->
+    <record id="closing_period_models_period_view_list" model="ir.ui.view">
+        <field name="name">closing.period.models.view.list</field>
+        <field name="model">closing.period.models</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="model_id" required="1" options="{'no_create': 1, 'no_edit': 1}"/>
+                <field name="field_id" required="1" domain="[('ttype', 'in', ['date', 'datetime']), ('model_id', '=', model_id)]" options="{'no_create': 1, 'no_edit': 1}"/>
+                <field name="company_id"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_account_fiscalyear_list" model="ir.ui.view">
+        <field name="name">account.fiscalyear.list</field>
+        <field name="model">account.fiscalyear</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="date_start"/>
+                <field name="date_stop"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_account_fiscalyear_form" model="ir.ui.view">
+        <field name="name">account.fiscalyear.form</field>
+        <field name="model">account.fiscalyear</field>
+        <field name="arch" type="xml">
+            <form string="Fiscal year">
+                <header>
+                    <button name="action_draft" string="open Fiscal Years" type="object" class="oe_highlight" invisible="state == 'draft'" groups="bmo_closing_period.group_closing_period_manager"/>
+                    <button name="action_done" string="Close Fiscal Years" type="object" class="oe_highlight" invisible="state != 'draft'" groups="bmo_closing_period.group_closing_period_manager"/>
+                    <button name="create_period" invisible="state != 'draft'" string="Create Monthly Periods" type="object" class="oe_highlight" groups="bmo_closing_period.group_closing_period_manager"/>
+                    <button name="update_models_closing" invisible="state != 'draft'" string="Update Models Periods" type="object" class="oe_highlight" groups="bmo_closing_period.group_closing_period_manager"/>
+                    <field name="state" widget="statusbar" nolabel="1" />
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="state != 'draft'"/>
+                            <field name="code" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="date_start" readonly="state != 'draft'"/>
+                            <field name="date_stop" readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="period" string="Period">
+                            <field colspan="4" name="period_ids" nolabel="1" readonly="state != 'draft'"/>
+                        </page>
+                        <page name="period_model" string="Model">
+                            <field name="closing_period_models_line" context="{'list_view_ref' : 'bmo_closing_period.closing_period_models_period_view_list'}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_fiscalyear" model="ir.actions.act_window">
+        <field name="name">Fiscal Years</field>
+        <field name="res_model">account.fiscalyear</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+    </record>
+
+    <record id="view_account_period_list" model="ir.ui.view">
+        <field name="name">account.period.list</field>
+        <field name="model">account.period</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="date_start"/>
+                <field name="date_stop"/>
+                <field name="special"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_account_period_form" model="ir.ui.view">
+        <field name="name">account.period.form</field>
+        <field name="model">account.period</field>
+        <field name="arch" type="xml">
+            <form string="Account Period">
+                <header>
+                    <button name="action_done" string="Close Period" type="object" class="oe_highlight" invisible="state != 'draft'" groups="bmo_closing_period.group_closing_period_manager"/>
+                    <button name="action_draft" invisible="state != 'done'" string="Re-Open Period" type="object" groups="bmo_closing_period.group_closing_period_manager"/>
+                    <field name="state" widget="statusbar" nolabel="1"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="fiscalyear_id" readonly="1"/>
+                            <label for="date_start" string="Duration" readonly="1"/>
+                            <div>
+                                <field name="date_start" class="oe_inline" nolabel="1" readonly="1"/> -
+                                <field name="date_stop" nolabel="1" class="oe_inline" readonly="1"/>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="code" readonly="1"/>
+                            <field name="special" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="user_ids" widget="many2many_tags" options="{'no_create': 1, 'no_edit': 1}"/>
+                    </group>
+                    <field name="closing_period_models_line" colspan="4" nolabel="1" widget="one2many_list" context="{'list_view_ref' : 'bmo_closing_period.closing_period_models_period_view_list'}"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_account_period_search" model="ir.ui.view">
+        <field name="name">account.period.search</field>
+        <field name="model">account.period</field>
+        <field name="arch" type="xml">
+            <search string="Search Period">
+                <field name="name" filter_domain="['|', ('name','ilike',self), ('code','ilike',self)]" string="Period"/>
+                <filter string="To Close" name="draft" domain="[('state','=','draft')]" icon="terp-dialog-close"/>
+                <filter string="To Open" name="done" domain="[('state','=','done')]" icon="terp-dialog-close"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_account_period" model="ir.actions.act_window">
+        <field name="name">Periods</field>
+        <field name="res_model">account.period</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_draft': 1}</field>
+    </record>
+
+    <!-- closing.period.models list view -->
+    <record id="closing_period_models_view_list" model="ir.ui.view">
+        <field name="name">closing.period.models.view.list</field>
+        <field name="model">closing.period.models</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0">
+                <field name="name_fy"/>
+                <field name="period_id"/>
+                <field name="model_id"/>
+                <field name="field_id"/>
+                <field name="company_id"/>
+                <field name="state_fy"/>
+                <field name="state_period"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="closing_period_models_view_search" model="ir.ui.view">
+        <field name="name">closing.period.models.view.search</field>
+        <field name="model">closing.period.models</field>
+        <field name="arch" type="xml">
+            <search string="Search Description">
+                <field name="name_fy"/>
+                <filter string="Open FY" name="draft_fy" domain="[('state_fy','=','draft')]" icon="terp-dialog-close"/>
+                <group expand="0" string="Group By">
+                    <filter string="Name FY" name="name_fy" domain="[]" context="{'group_by': 'name_fy'}"/>
+                    <filter string="Status FY" name="state_fy" domain="[]" context="{'group_by': 'state_fy'}"/>
+                    <filter string="Status Period" name="state_period" domain="[]" context="{'group_by': 'state_period'}"/>
+                    <filter string="Period" name="period" domain="[]" context="{'group_by': 'period_id'}"/>
+
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="closing_period_models_action_server_draft" model="ir.actions.server">
+        <field name="name">Action Open</field>
+        <field name="model_id" ref="bmo_closing_period.model_closing_period_models"/>
+        <field name="binding_model_id" ref="bmo_closing_period.model_closing_period_models"/>
+        <field name="state">code</field>
+        <field name="code">
+            for item in records:
+                item.action_open()
+        </field>
+    </record>
+
+    <record id="closing_period_models_action_server_done" model="ir.actions.server">
+        <field name="name">Action Closed</field>
+        <field name="model_id" ref="bmo_closing_period.model_closing_period_models"/>
+        <field name="binding_model_id" ref="bmo_closing_period.model_closing_period_models"/>
+        <field name="state">code</field>
+        <field name="code">
+            for item in records:
+                item.action_close()
+        </field>
+    </record>
+
+    <record id="action_account_period_models" model="ir.actions.act_window">
+        <field name="name">Period Models</field>
+        <field name="res_model">closing.period.models</field>
+        <field name="view_mode">list</field>
+        <field name="domain">[('period_id','!=',False)]</field>
+        <field name="view_id" ref="bmo_closing_period.closing_period_models_view_list" />
+    </record>
+    
+</odoo>

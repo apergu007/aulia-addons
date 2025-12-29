@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="purchase_team_tree_inherit_bmo_purchase" model="ir.ui.view">
+        <field name="name">purchase.team.tree.inherit.bmo_purchase_approval_route</field>
+        <field name="model">purchase.team</field>
+        <field name="inherit_id" ref="bmo_purchase_approval_route.purchase_team_tree"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="types" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="purchase_team_form_inherit_bmo_purchase" model="ir.ui.view">
+        <field name="name">purchase.team.form.inherit.bmo_purchase_approval_route</field>
+        <field name="model">purchase.team</field>
+        <field name="inherit_id" ref="bmo_purchase_approval_route.purchase_team_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="types" />
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

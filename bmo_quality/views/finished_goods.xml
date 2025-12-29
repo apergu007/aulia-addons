@@ -1,0 +1,249 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <!-- list Bahan Baku-->
+        <record id="finished_goods_list" model="ir.ui.view">
+            <field name="name">quality.check.list.fg</field>
+            <field name="model">quality.check</field>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <list string="Barang Jadi" delete="0" duplicate="0">
+                    <field name="no_analysis"/>
+                    <field name="no_document"/>
+                    <field name="product_id"/>
+                    <field name="lot_id"/>
+                    <field name="arrival_date"/>
+                    <field name="examination_date" optional="show"/>
+                    <field name="qty_received" optional="show"/>
+                    <field name='qty_of_items_sampled' optional="show"/>
+                    <field name='qty_pass' optional="show"/>
+                    <field name='qty_fail' optional="show"/>
+                    <field name='released_by_sortir' optional="hide"/>
+                    <field name="quality_state" optional="show" widget='badge' 
+                        decoration-success="quality_state == 'pass'" 
+                        decoration-info="quality_state == 'none'" 
+                        decoration-danger="quality_state == 'fail'"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Form Bahan Baku-->
+        <record id="finished_goods_form" model="ir.ui.view">
+            <field name="name">quality.check.form.fg</field>
+            <field name="model">quality.check</field>
+            <field name="priority">100</field>
+            <field name="arch" type="xml"> 
+                <form string="Barang Jadi" delete="0" duplicate="0">
+                    <header>
+                        <button name="do_pass" type="object" class="btn-primary" invisible="quality_state != 'none'" string="Pass" />
+                        <button name="do_fail" type="object" class="btn-primary" invisible="quality_state != 'none'" string="Fail" />
+                        <button name="do_by_sort" type="object" class="btn-primary" invisible="quality_state != 'none'" string="By Sortir" />
+                        <button name="do_measure" type="object" invisible="test_type != 'measure' or quality_state != 'none'" string="Measure" data-hotkey="v"/>
+                        <!-- <button name="do_alert" type="object" invisible="quality_state in ['pass','none']" string="Create Alert" data-hotkey="g"/> -->
+                        <field name="quality_state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <field name="qr_url_link" widget="image" class="oe_avatar oe_left" options="{'size': [128,128]}"/>
+                        <group string="Informasi Dokumen">
+                            <group >
+                                <field name="no_document"/>
+                                <field name="effective_date" readonly="quality_state != 'none'"/>
+                            </group>
+                            <group >
+                                <field name="no_revision" readonly="1" force_save="1"/>
+                                <field name="page"/>
+                            </group>
+                        </group>
+                        <br/>
+                        <group string="Informasi Pemeriksaan">
+                            <field name="point_id" invisible="1"/>
+                            <field name="no_analysis" readonly="quality_state != 'none'"/>
+                            <field name="examination_date" readonly="quality_state != 'none'"/>
+                            <field name="type_form" invisible="1"/>
+                            <field name="master_data_id" force_save="1" readonly="quality_state != 'none'"/>
+                            <field name="picking_id" invisible="1"/>
+                            <field name="point_id" invisible="1"/>
+                        </group>
+                        <br/>
+                        <separator string="Informasi Barang Jadi"/>
+                        <group>
+                            <group >
+                                <field name="product_id" readonly="1" force_save="1" />
+                                <field name="code_of_raw_material" string="Code Barang Jadi"/>
+                                <field name="variants" readonly="1" force_save="1" />
+                                <field name="lot_id" readonly="1" force_save="1" />
+                                <field name="expired_date" readonly="1" force_save="1" />
+                            </group>
+                            <group >    
+                                <field name="sampling_officer" required="1" readonly="quality_state != 'none'"/>
+                                <label for="qty_received" id="standard_price_label" string="Jumlah Produksi" readonly="1" force_save="1"/>
+                                <div name="qty_received_uom">
+                                    <field name="qty_received" class="oe_inline" widget="monetary"/>
+                                    <span groups="uom.group_uom">
+                                        <field name="uom_datang" class="oe_inline" readonly="1"/>
+                                    </span>
+                                </div>
+                                <label for="qty_of_items_sampled" id="standard_price_label"/>
+                                <div name="qty_of_items_sampled_uom">
+                                    <field name="qty_of_items_sampled" class="oe_inline" widget="monetary" readonly="quality_state != 'none'"/>
+                                    <span groups="uom.group_uom">
+                                         
+                                        <field name="uom_datang" class="oe_inline" readonly="1"/>
+                                    </span>-
+                                    <span><field name="persen_sampling" widget="percentage" class="oe_inline" readonly="1"/></span>
+                                </div>
+                                <label for="qty_pass" id="standard_price_label"/>
+                                <div name="qty_pass_uom">
+                                    <field name="qty_pass" class="oe_inline" widget="monetary" readonly="quality_state != 'none'"/>
+                                    <span groups="uom.group_uom">
+                                         
+                                        <field name="uom_datang" class="oe_inline" readonly="1"/>
+                                    </span>-
+                                    <span><field name="persen_pass" widget="percentage" class="oe_inline" readonly="1"/></span>
+                                </div>
+                                <label for="qty_fail" id="standard_price_label"/>
+                                <div name="qty_fail_uom">
+                                    <field name="qty_fail" class="oe_inline" widget="monetary" readonly="quality_state != 'none'"/>
+                                    <span groups="uom.group_uom">
+                                         
+                                        <field name="uom_datang" class="oe_inline" readonly="1"/>
+                                    </span>-
+                                    <span><field name="persen_fail" widget="percentage" class="oe_inline" readonly="1"/></span>
+                                </div>
+                                <!-- <field name="qty_of_samples_per_date" readonly="quality_state != 'none'"/> -->
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Pemeriksaan Laboratorium">
+                                <group>
+                                    <field name="data_qc_line" force_save="1" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                        <list editable="bottom" create="0" delete="0">
+                                            <field name="no_text" force_save="1" readonly="1"/>
+                                            <field name="header_id" force_save="1" readonly="1"/>
+                                            <field name="parameter" force_save="1" readonly="1"/>
+                                            <field name="standard" force_save="1" readonly="1"/>
+                                            <field name="result"/>
+                                            <field name="method"/>
+                                        </list>
+                                    </field>
+                                </group>
+                            </page>
+                        </notebook>
+                        <group string="Final Inspection" invisible="1">
+                            <group>    
+                                <field name="quantity_per_batch" readonly="quality_state != 'none'"/>
+                                <field name="sampling_date" readonly="quality_state != 'none'"/>
+                            </group>
+                            <group >
+                                <!-- <field name="sampling_officer_id" readonly="quality_state != 'none'"/> -->
+                                <field name="sampling_amount" readonly="quality_state != 'none'"/>
+                            </group>
+                        </group>
+                        <group string="Standar Pemeriksaan Level II">
+                            <field name="audit_standards_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="defect_description" width="300"/>
+                                    <field name="critical"/>
+                                    <field name="major"/>
+                                    <field name="minor"/>
+                                </list>
+                            </field>
+
+                            <div style="margin-top:0px;">
+                                <table class="o_group o_inner_group" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:300px;"></th>
+                                            <th style="text-align:center;"></th>
+                                            <th style="text-align:center;"></th>
+                                            <th style="text-align:center;"></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr>
+                                            <td><b>Total Defects</b></td>
+                                            <td><field name="total_critical" readonly="1"/></td>
+                                            <td><field name="total_major" readonly="1"/></td>
+                                            <td><field name="total_minor" readonly="1"/></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><b>AQL Allowed Defects</b></td>
+                                            <td><field name="aql_critical" readonly="quality_state != 'none'"/></td>
+                                            <td><field name="aql_major" readonly="quality_state != 'none'"/></td>
+                                            <td><field name="aql_minor" readonly="quality_state != 'none'"/></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><b>AQL Results</b></td>
+                                            <td><field name="result_critical"/></td>
+                                            <td><field name="result_major"/></td>
+                                            <td><field name="result_minor"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </group>
+                        <!-- <notebook>
+                            <page string="Standar Pemeriksaan Level II">
+                                <field name="audit_standards_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                    <list editable="bottom">
+                                        <field name="defect_description" />
+                                        <field name="critical" />
+                                        <field name="major" />
+                                        <field name="minor" />
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                        <separator />
+                        <group>
+                            <group>
+                            </group>
+                            <group>
+                                <field name="total_defects" readonly="quality_state != 'none'"/>
+                                <field name="aql_allowed_defects" readonly="quality_state != 'none'"/>
+                                <field name="aql_results" readonly="quality_state != 'none'"/>
+                            </group>
+                        </group> -->
+                        <group>
+                            <field name="notes" readonly="quality_state != 'none'"/>
+                        </group>
+                        <group string="Kesimpulan :">
+                            <group>
+                                <field name="released"/>
+                                <field name="hold"/>
+                            </group>
+                            <group>
+                                <field name="reject"/>
+                                <field name="released_by_sortir" readonly="1" force_save="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        
+        <!-- Action Barang Jadi -->
+        <record id="action_finished_goods" model="ir.actions.act_window">
+            <field name="name">Form QC - Barang Jadi</field>
+            <field name="res_model">quality.check</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('type_form', '=', 'finish')]</field>
+            <field name="context">{'default_type_form': 'finish'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('bmo_quality.finished_goods_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('bmo_quality.finished_goods_form')})]"/>
+            <field name="help" type="html">
+                <p name="o_view_nocontent_smiling_face">
+                    Create Barang Jadi ...
+                </p>
+            </field>
+        </record>
+
+    
+    </data>
+</odoo>

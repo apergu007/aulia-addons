@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <menuitem 
+        name="PR Teams" 
+        id="purchase_request_team_menu" 
+        action="purchase_request_team_act_window" 
+        parent="purchase_request.menu_purchase_request" 
+        sequence="50"/>
+
+
+</odoo>

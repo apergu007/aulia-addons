@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="view_category_property_form_inter_transfer" model="ir.ui.view">
+        <field name="name">product.category.stock.property.form.inherit.inter_transfer</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="stock_account.view_category_property_form"/>
+        <field name="arch" type="xml">
+            <field name="property_stock_account_output_categ_id" position="after">
+                <field name="property_inter_locations_clearing_account_id" options="{'no_create': True}"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

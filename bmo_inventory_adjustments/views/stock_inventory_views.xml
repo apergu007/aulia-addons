@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="stock_inventory_line_list" model="ir.ui.view">
+        <field name="name">stock.inventory.line.list</field>
+        <field name="model">stock.inventory.line</field>
+        <field name="arch" type="xml">
+            <list string="Stock Inventory Lines">
+                <field name="product_id"/>
+                <field name="product_qty"/>
+                <field name="product_uom_id" groups="uom.group_uom"/>
+                <field name="location_id" groups="stock.group_stock_multi_locations"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="stock_inventory_line_list2" model="ir.ui.view">
+        <field name="name">stock.inventory.line.list2</field>
+        <field name="model">stock.inventory.line</field>
+        <field name="arch" type="xml">
+            <list editable="top" string="Inventory Details" decoration-info="product_qty != theoretical_qty" decoration-danger="theoretical_qty &lt; 0">
+                <field name="product_id" domain="[('type','=','product')]"/>
+                <field name="product_uom_id" string="UoM" groups="uom.group_uom"/>
+                <field name="location_id" domain="[('id', 'child_of', inventory_location_id)]" groups="stock.group_stock_multi_locations"/>
+                <field name="theoretical_qty" readonly="1" force_save="1"/>
+                <field name="product_qty" string="Real Quantity"/>
+                <field name="state" invisible="1"/>
+                <field name="inventory_id" invisible="1"/>
+                <field name="inventory_location_id" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="stock_inventory_line_search" model="ir.ui.view">
+        <field name="name">stock.inventory.line.search</field>
+        <field name="model">stock.inventory.line</field>
+        <field name="arch" type="xml">
+            <search string="Search Inventory Lines">
+                <field name="product_id"/>
+                <field name="location_id" groups="stock.group_stock_multi_locations"/>
+            </search>
+        </field>
+    </record>
+
+
+    <record id="action_inventory_line_list" model="ir.actions.act_window">
+        <field name="name">Inventory Lines</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">stock.inventory.line</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="stock_inventory_line_list2"/>
+        <field name="domain">[('inventory_id', '=', active_id)]</field>
+    </record>
+
+    <record id="view_inventory_list" model="ir.ui.view">
+        <field name="name">stock.inventory.list</field>
+        <field name="model">stock.inventory</field>
+        <field name="arch" type="xml">
+            <list string="Number Inventory" decoration-muted="state == 'cancel'">
+                <field name="name"/>
+                <field name="type_adjustments" />
+                <field name="company_id" />
+                <field name="location_id" />
+                <field name="date"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_inventory_form" model="ir.ui.view">
+        <field name="name">stock.inventory.form</field>
+        <field name="model">stock.inventory</field>
+        <field name="arch" type="xml">
+            <form string="Inventory Adjustment">
+                <header>
+                    <button name="action_start" invisible="state != 'draft'" string="Submit" type="object" class="oe_highlight" groups="stock.group_stock_user" data-hotkey="r"/>
+                    <button name="action_validate" invisible="state != 'to approve'" string="Validate Inventory" type="object" class="oe_highlight" groups="stock.group_stock_manager" data-hotkey="v"/>
+                    <button name="action_cancel_draft" invisible="state != 'to approve'" string="Set to Draft" type="object" data-hotkey="d"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,to approve,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" name="action_view_stock_valuation_layers" class="oe_stat_button" icon="fa-dollar" invisible="state != 'done'">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Valuation</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Annual inventory" readonly="state != 'draft'" required="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="type_adjustments" required="1" readonly="state != 'draft'"/>
+                            <field name="location_id" readonly="state != 'draft'" domain="[('usage','=', 'internal')]" options="{'no_create': True, 'no_edit':True, 'no_open':True}"/>
+                        </group>
+                        <group>
+                            <field name="date" readonly="state != 'draft'"/>
+                            <field name="company_id" options="{'no_create': True, 'no_edit':True, 'no_open':True}" readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Inventory Details">
+                            <field name="line_ids" readonly="state != 'draft'">
+                                <list string="Inventory Details" editable="bottom" decoration-info="product_qty != theoretical_qty" decoration-danger="theoretical_qty &lt; 0">
+                                    <field name="product_id" domain="[('type','=','consu')]" attrs="{'readonly': [('parent.filter', '=', 'consu')]}" options="{'no_create': True, 'no_edit':True}" force_save="1"/>
+                                    <field name="product_uom_id" string="UoM" domain="[('category_id', '=', product_uom_category_id)]" force_save="1" readonly="1" width="45px"/>
+                                    <field name="product_uom_category_id" column_invisible="1"/>
+                                    <field name="location_id" column_invisible="1"/>
+                                    <field name="theoretical_qty" readonly="1"/>
+                                    <field name="product_qty" string="Real Quantity" column_invisible="parent.type_adjustments == 'value_only'"/>
+                                    <field name="lot_id" domain="[('product_id', '=', product_id), ('company_id', '=', company_id)]" required="product_id.tracking != 'none'"/>
+                                    <field name="lot_name" placeholder="New Lot/Serial" required="product_id.tracking != 'none'" invisible="lot_id != False"/>
+                                    <field name="old_value" column_invisible="parent.type_adjustments != 'value_only'" width="70px"/>
+                                    <field name="value_new" column_invisible="parent.type_adjustments != 'value_only'" width="70px"/>
+                                    <field name="price_unit_new" column_invisible="parent.type_adjustments != 'value_only'"/>
+                                    <field name="state" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Inventory Adjustments" invisible="state != 'done'">
+                            <field name="move_ids" readonly="1">
+                                <list decoration-muted="scrapped == True" string="Stock Moves">
+                                    <field name="product_id"/>
+                                    <field name="reference" />
+                                    <field name="picking_id" column_invisible="1" />
+                                    <field name="create_date" column_invisible="1" />
+                                    <field name="scrapped" column_invisible="1"/>
+                                    <field name="state" column_invisible="1"/>
+                                    <field name="location_id" string="From"/>
+                                    <field name="location_dest_id" string="To"/>
+                                    <field name="quantity"/>
+                                    <field name="product_uom" options="{'no_open': True, 'no_create': True}" string="Unit of Measure" groups="uom.group_uom"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_inventory_filter" model="ir.ui.view">
+        <field name="name">stock.inventory.filter</field>
+        <field name="model">stock.inventory</field>
+        <field name="arch" type="xml">
+            <search string="Search Inventory">
+                <field name="name" string="Inventory Reference"/>
+                <field name="date"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="In Progress" name="to approve" domain="[('state', '=', 'to approve')]"/>
+                <filter string="Validated" name="done" domain="[('state', '=', 'done')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="status" domain="[]" context="{'group_by':'state'}"/>
+                    <filter string="Inventories Date" name="inventories_month" domain="[]" context="{'group_by':'date'}" help="Physical Inventories by Date"/>
+                </group>
+            </search>
+
+        </field>
+    </record>
+
+    <record id="action_inventory_form" model="ir.actions.act_window">
+        <field name="name">Inventory Adjustments</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">stock.inventory</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_inventory_list"/>
+        <field name="search_view_id" ref="view_inventory_filter"/>
+    </record>
+
+    <menuitem action="action_inventory_form" id="menu_action_inventory_form" parent="stock.menu_stock_adjustments" sequence="30"/>
+</odoo>

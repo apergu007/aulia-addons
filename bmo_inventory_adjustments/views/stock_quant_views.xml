@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- <menuitem id="stock.menu_action_inventory_tree" name="Physical Inventory" parent="stock.menu_stock_adjustments" sequence="10" action="stock.action_view_inventory_tree" groups="ap_stock.zgroup_physical_inventory"/> -->
+
+        <record id="view_stock_quant_tree_inventory_editable_inherit_ap_stock" model="ir.ui.view">
+            <field name="name">stock.quant.inventory.list.editable.inherit.ap_stock</field>
+            <field name="model">stock.quant</field>
+            <field name="inherit_id" ref="stock.view_stock_quant_tree_inventory_editable"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//list" position="attributes">
+                    <attribute name="create">false</attribute>
+                    <attribute name="edit">false</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='inventory_quantity']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='inventory_date']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='action_set_inventory_quantity']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='action_inventory_history']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+
+        <!-- <record id="view_stock_quant_tree_editable_inherit_ap_stock" model="ir.ui.view">
+            <field name="name">stock.quant.tree.editable.inherit.ap_stock</field>
+            <field name="model">stock.quant</field>
+            <field name="inherit_id" ref="stock.view_stock_quant_tree_editable"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list" position="attributes">
+                    <attribute name="create">false</attribute>
+                    <attribute name="edit">false</attribute>
+                    <attribute name="multi_edit">false</attribute>
+                </xpath>
+                
+                <xpath expr="//field[@name='inventory_quantity_auto_apply']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                </xpath>
+                
+                <xpath expr="//button[@name='%(stock.action_view_inventory_tree)d']" position="attributes">
+                    <attribute name="column_invisible">1</attribute>
+                </xpath>
+            </field>
+        </record> -->
+    </data>
+</odoo>

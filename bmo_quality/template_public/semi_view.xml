@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- Public WIP-Bulk QC report -->
+  <template id="public_qc_form_semi" name="Public Semi QC">
+    <t t-call="web.html_container">
+        <t t-call="web.external_layout">
+        <div class="container my-4">
+            <div class="card shadow p-4">
+            <t t-if="record">
+                <!-- Header row -->
+                <div class="row mb-3">
+                <div class="col-6">
+					<div>
+						<img t-if="record.qr_url_link" 
+							t-att-src="'data:image/png;base64,%s' % record.qr_url_link.decode()"
+							style="max-width:100px;"/>
+					</div>
+				</div>
+                <div class="col-6 text-end">
+                    <p class="mb-1"><b>No Dokumen:</b> <t t-esc="record.no_document"/></p>
+                    <p class="mb-1"><b>Tanggal Efektif:</b> <t t-esc="record.effective_date"/></p>
+                    <p class="mb-1"><b>No Revisi:</b> <t t-esc="record.no_revision"/></p>
+                    <p class="mb-0"><b>Halaman:</b> <t t-esc="record.page"/></p>
+                </div>
+                </div>
+
+                <hr/>
+
+                <!-- Informasi Pemeriksaan -->
+                <h5>Informasi Pemeriksaan</h5>
+                <div class="row mb-3">
+                <div class="col-6">
+                    <p class="mb-1"><b>No Analisa:</b> <t t-esc="record.no_analysis"/></p>
+                    <p class="mb-1"><b>Tgl Pemeriksaan:</b> <t t-esc="record.examination_date"/></p>
+                    <p class="mb-1"><b>Master Data:</b> <t t-esc="record.master_data_id.display_name or ''"/></p>
+                </div>
+                <div class="col-6">
+                    <p class="mb-1"><b>Jenis Form:</b> <t t-esc="record.type_form"/></p>
+                    <p class="mb-1"><b>Status QC:</b> <t t-esc="record.quality_state"/></p>
+                </div>
+                </div>
+
+                <hr/>
+
+                <!-- INFORMASI WIP BULK -->
+                <h5>Informasi WIP Bulk</h5>
+                <div class="row mb-3">
+                <div class="col-6">
+                    <p class="mb-1"><b>Produk:</b> <t t-esc="record.product_id.display_name or ''"/></p>
+                    <p class="mb-1"><b>Kode Bulk:</b> <t t-esc="record.code_of_raw_material or ''"/></p>
+                    <p class="mb-1"><b>Varian:</b> <t t-esc="record.variants or ''"/></p>
+                    <p class="mb-1"><b>Lot:</b> <t t-esc="record.lot_id.name or ''"/></p>
+                    <p class="mb-1"><b>Tgl Produksi:</b> <t t-esc="record.production_date"/></p>
+                </div>
+                <div class="col-6">
+                    <p class="mb-1"><b>Tgl Sampling:</b> <t t-esc="record.sampling_date"/></p>
+                    <p class="mb-1"><b>Petugas Sampling:</b> <t t-esc="record.sampling_officer or ''"/></p>
+                    <p class="mb-1"><b>Jumlah Produksi:</b> <t t-esc="record.qty_received"/> <t t-esc="record.uom_datang.name or ''"/></p>
+                    <p class="mb-1"><b>Qty Sampel:</b> <t t-esc="record.qty_of_items_sampled"/> <t t-esc="record.uom_datang.name or ''"/></p>
+                    <p class="mb-1"><b>Qty Pass:</b> <t t-esc="record.qty_pass"/> <t t-esc="record.uom_datang.name or ''"/></p>
+                    <p class="mb-1"><b>Qty Fail:</b> <t t-esc="record.qty_fail"/> <t t-esc="record.uom_datang.name or ''"/></p>
+                </div>
+                </div>
+
+                <hr/>
+
+                <!-- Parameter Pemeriksaan (Top / Mid / Bottom / Average) -->
+                <h5>Parameter Pemeriksaan</h5>
+                <div class="table-responsive">
+                <table class="table table-sm table-bordered">
+                    <thead class="table-light">
+                    <tr>
+                        <th>No</th><th>Parameter</th><th>Standar</th>
+                        <th>Top</th><th>Mid</th><th>Bottom</th><th>Average</th><th>Metode</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr t-foreach="record.data_qc_line" t-as="line">
+                        <td><t t-esc="line.no_text or ''"/></td>
+                        <td><t t-esc="line.parameter or ''"/></td>
+                        <td><t t-esc="line.standard or ''"/></td>
+                        <td><t t-esc="line.top_results or ''"/></td>
+                        <td><t t-esc="line.mid_range_results or ''"/></td>
+                        <td><t t-esc="line.bottom_results or ''"/></td>
+                        <td><t t-esc="line.average_results or ''"/></td>
+                        <td><t t-esc="line.method or ''"/></td>
+                    </tr>
+                    </tbody>
+                </table>
+                </div>
+
+                <hr/>
+
+                <hr/>
+                <!-- Kesimpulan -->
+                <h5>Kesimpulan</h5>
+                <div class="row">
+                <div class="col-6">
+                    <p><b>Released:</b> <t t-esc="'✓' if record.released else '✗'"/></p>
+                    <p><b>Hold:</b> <t t-esc="'✓' if record.hold else '✗'"/></p>
+                </div>
+                <div class="col-6">
+                    <p><b>Reject:</b> <t t-esc="'✓' if record.reject else '✗'"/></p>
+                    <p><b>Released by Sortir:</b> <t t-esc="'✓' if record.released_by_sortir else '✗'"/></p>
+                </div>
+                </div>
+
+                <hr/>
+
+                <!-- Catatan -->
+                <h5>Catatan</h5>
+                <p><t t-esc="record.note or '-'"/></p>
+
+            </t>
+            <t t-else="">
+                <div class="alert alert-warning">Record tidak ditemukan.</div>
+            </t>
+            </div>
+        </div>
+        </t>
+    </t>
+  </template>
+
+  <!-- Add a "Print WIP Bulk QC" button on the original form -->
+  <!-- <record id="view_qc_wip_bulk_print_inherit" model="ir.ui.view">
+    <field name="name">qc.wip.bulk.print</field>
+    <field name="model">your.qc.model</field>  
+    <field name="inherit_id" ref="your_module.view_qc_form_wip_bulk"/> 
+    <field name="arch" type="xml">
+      <header position="inside">
+        <button name="%(action_print_wip_bulk_qc)d" string="Print WIP Bulk QC" type="action"
+                class="btn-primary" icon="fa-print"/>
+      </header>
+    </field>
+  </record> -->
+
+  <!-- Report action -->
+  <!-- <record id="action_print_wip_bulk_qc" model="ir.actions.report">
+    <field name="name">WIP Bulk QC</field>
+    <field name="model">your.qc.model</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">qr_public_share.public_wip_bulk_qc</field>
+    <field name="report_file">WIPBulkQC</field>
+    <field name="print_report_name">'WIPBulkQC-%s' % object.no_document</field>
+    <field name="binding_model_id" ref="your_module.model_your_qc_model"/>
+    <field name="binding_type">report</field>
+  </record> -->
+</odoo>

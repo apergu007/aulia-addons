@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!-- purchase.request inherit tree view -->
+    <record id="view_purchase_request_tree_inherit_bmo_purchase" model="ir.ui.view">
+        <field name="name">purchase.request.tree.inherit.bmo_purchase</field>
+        <field name="model">purchase.request</field>
+        <field name="inherit_id" ref="purchase_request.view_purchase_request_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="before">
+                <field name="types" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_purchase_request_form_inherit_bmo_purchase" model="ir.ui.view">
+        <field name="name">purchase.request.form.inherit.bmo_purchase</field>
+        <field name="model">purchase.request</field>
+        <field name="inherit_id" ref="purchase_request.view_purchase_request_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='button_draft']" position="replace">
+                <!-- <button name="button_draft" string="Reset" invisible="state not in ('to_approve','approved','rejected','done')" 
+                    type="object" groups="purchase_request.group_purchase_request_manager"/> -->
+                <button name="button_draft" string="Reset" invisible="state not in ('rejected')" type="object" groups="purchase_request.group_purchase_request_manager"/>
+            </xpath>
+            <xpath expr="//button[@name='button_rejected']" position="replace">
+                <button name="wizard_pop_up_cancel" invisible="state not in ('to_approve')" string="Reject" type="object" groups="purchase_request.group_purchase_request_manager"/>
+            </xpath>
+
+            <xpath expr="//field[@name='requested_by']" position="after">
+                <field name="to_done" invisible="1"/>
+                <field name="types" required="1" readonly="is_editable == False"/>
+                <field name="p_categ" invisible="1" readonly="is_editable == False"/>
+                <field name="pr_teams_domain" invisible="1"/>
+            </xpath>
+
+            <xpath expr="//field[@name='line_ids']/list/field[@name='product_id']" position="before">
+                <field name="p_categ" column_invisible="1"/>
+                <field name="categ_domain" column_invisible="1"/>
+                <field name="product_categ_id" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']/list/field[@name='product_id']" position="attributes">
+                <attribute name="domain">categ_domain</attribute>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']/list/field[@name='estimated_cost']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']/list/field[@name='estimated_cost']" position="before">
+                <field name="last_po" groups="bmo_purchase.group_pr_last_po_qty"/>
+                <field name="last_po_price" groups="bmo_purchase.group_pr_last_po_price"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Page Origin">
+                    <field name="origin_text"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_purchase_request_form_inherit_pr_inherit_bmo_purchase" model="ir.ui.view">
+        <field name="name">purchase.request.inherit.form.inherit.bmo_purchase</field>
+        <field name="model">purchase.request</field>
+        <field name="inherit_id" ref="bmo_purchase_request_approval_route.view_purchase_request_form_inherit_pr"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='team_id']" position="attributes">
+                <attribute name="domain">pr_teams_domain</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="purchase_request_line_tree_inherit_bmo_purchase" model="ir.ui.view">
+        <field name="name">purchase.request.line.list</field>
+        <field name="model">purchase.request.line</field>
+        <field name="inherit_id" ref="purchase_request.purchase_request_line_tree"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='product_id']" position="before">
+                <field name="product_categ_id" optional="show"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="view_purchase_request_search_tree_inherit_bmo_purchase" model="ir.ui.view">
+        <field name="name">purchase.request.select.inherit.bmo_purchase</field>
+        <field name="model">purchase.request</field>
+        <field name="inherit_id" ref="purchase_request.view_purchase_request_search"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="origin" string="Source Document" filter_domain="[('origin','ilike',self)]"/>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

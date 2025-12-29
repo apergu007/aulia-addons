@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="view_account_payment_tree_inherit_bmo_account_payment" model="ir.ui.view">
+        <field name="name">account.payment.list.inherit.bmo_account_payment</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='amount_company_currency_signed']" position="after">
+                <field name="total_write_off_line" string="Total Other" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="total_all" string="Total" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_account_payment_form_inherit_bmo_account_payment" model="ir.ui.view">
+        <field name="name">account.payment.form.inherit.bmo_account_payment</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='payment_type']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='payment_type']" position="before">
+                <label for="is_internal_transfer"/>
+                <div>
+                    <field name="is_internal_transfer" readonly="payment_type == 'inbound' or state != 'draft'"/>
+                    <span invisible="paired_internal_transfer_payment_id or not is_internal_transfer or state != 'draft'" class="fst-italic">
+                        A second payment will be created in the destination journal.
+                    </span>
+                </div>
+            </xpath>
+
+            <xpath expr="//field[@name='partner_bank_id']" position="before">
+                <field name="destination_journal_id" placeholder="e.g. Cash" context="{'default_partner_id': partner_id}" invisible="not is_internal_transfer" readonly="state != 'draft'" required="is_internal_transfer and state == 'draft'"/>
+            </xpath>
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-warning text-center" role="alert" invisible="not is_internal_transfer or not require_partner_bank_account or partner_bank_id">
+                    The selected payment method requires a bank account but none is set on
+                    <button class="oe_link alert-link" type="object" name="action_open_destination_journal" style="padding: 0; vertical-align: baseline;">the destination journal</button>.
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='partner_bank_id'][1]" position="attributes">
+                <attribute name="invisible">not show_partner_bank_account or partner_type != 'customer' or is_internal_transfer or payment_type == 'inbound'</attribute>
+                <attribute name="required">require_partner_bank_account and not is_internal_transfer</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_bank_id'][2]" position="attributes">
+                <attribute name="invisible">not show_partner_bank_account or partner_type != 'supplier' or is_internal_transfer or payment_type == 'inbound'</attribute>
+                <attribute name="required">require_partner_bank_account and not is_internal_transfer</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_bank_id'][3]" position="attributes">
+                <attribute name="invisible">not show_partner_bank_account or is_internal_transfer or payment_type == 'outbound'</attribute>
+                <attribute name="required">require_partner_bank_account and not is_internal_transfer</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_id'][1]" position="attributes">
+                <attribute name="invisible">partner_type != 'customer' or is_internal_transfer</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_id'][2]" position="attributes">
+                <attribute name="invisible">partner_type != 'supplier' or is_internal_transfer </attribute>
+            </xpath>
+
+            <xpath expr="//label[@for='amount']" position="before">
+                <field name="invoice_amount"/>
+            </xpath>
+
+            <xpath expr="//field[@name='memo']" position="after">
+                <field name="x_manual_number" readonly="state != 'draft'"/>
+            </xpath>
+            
+            <xpath expr="//group[@name='main_group']" position="after">
+                <notebook invisible="is_internal_transfer == True">
+                    <page name="write_off_line_ids" string="Other Account" invisible="paired_internal_transfer_payment_id != False">
+                        <field name="write_off_line_ids" nolabel="1" readonly="state != 'draft'">
+                            <list editable="bottom" context="{'default_currency_id': currency_id}">
+                                <field name="account_id" required="1" options="{'no_create': True}"/>
+                                <field name="name" required="1"/>
+                                <field name="currency_id" column_invisible="1" force_save="1"/>
+                                <field name="analytic_account_id" options="{'no_create': True}"/>
+                                <!-- <field name="amount" column_invisible="1"/> -->
+                                <field name="debit" sum="Debit"/>
+                                <field name="credit" sum="Credit"/>
+                            </list>
+                        </field>
+                        <group class="oe_subtotal_footer oe_right">
+                            <field name="total_write_off_line" string="Total Other" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="total_all" string="Total" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        </group>
+                    </page>
+                    <page name="x_account_move" string="Invoices">
+                        <field name="x_account_move_line_ids" 
+                            domain="[('partner_id', '=', partner_id),('reconciled', '=', False),('move_id.move_type', '=', 'in_invoice'),('account_id','=',destination_account_id)]" 
+                            readonly="state != 'draft'" invisible="payment_type != 'outbound'">
+                            <list>
+                                <field name="date" />
+                                <field name="move_name" />
+                                <field name="account_id" />
+                                <field name="name" />
+                                <field name="balance" sum="Balance"/>
+                                <field name="amount_residual_currency" sum="Amount"/>
+                            </list>
+                        </field>
+
+                        <field name="x_account_move_line_ids" 
+                            domain="[('partner_id', '=', partner_id),('reconciled', '=', False),('move_id.move_type', '=', 'out_invoice'),('account_id','=',destination_account_id)]" 
+                            readonly="state != 'draft'" invisible="payment_type != 'inbound'">
+                            <list>
+                                <field name="date" />
+                                <field name="move_name" />
+                                <field name="account_id" />
+                                <field name="name" />
+                                <field name="balance" sum="Balance"/>
+                                <field name="amount_residual_currency" sum="Amount"/>
+                            </list>
+                        </field>
+
+                    </page>
+                </notebook>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="account.action_account_payments" model="ir.actions.act_window">
+        <field name="domain">[('payment_type','=','inbound')]</field>
+        <field name="context">{
+                'default_payment_type': 'outbound',
+                'default_partner_type': 'supplier',
+                'display_account_trust': True,
+        }</field>
+    </record>
+
+    <record id="account.action_account_payments_payable" model="ir.actions.act_window">
+        <field name="domain">[('payment_type','=','outbound')]</field>
+        <field name="context">{
+            'default_payment_type': 'outbound',
+            'default_partner_type': 'supplier',
+            'default_move_journal_types': ('bank', 'cash'),
+            'display_account_trust': True,
+        }</field>
+    </record>
+
+    <record id="account.action_account_payments_transfer" model="ir.actions.act_window">
+        <field name="domain">[('is_internal_transfer','=',True)]</field>
+    </record>
+
+
+    
+</odoo>

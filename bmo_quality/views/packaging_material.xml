@@ -1,0 +1,421 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <!-- list Bahan Baku-->
+        <record id="data_qc_list_kemas" model="ir.ui.view">
+            <field name="name">quality.check.list.raw</field>
+            <field name="model">quality.check</field>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <list string="Packaging Material" delete="0" duplicate="0">
+                    <field name="no_analysis"/>
+                    <field name="no_document"/>
+                    <field name="product_id"/>
+                    <field name="lot_id"/>
+                    <field name="arrival_date"/>
+                    <field name="examination_date" optional="show"/>
+                    <field name="qty_received" optional="show"/>
+                    <field name='qty_of_items_sampled' optional="show"/>
+                    <field name='qty_pass' optional="show"/>
+                    <field name='qty_fail' optional="show"/>
+                    <field name='released_by_sortir' optional="hide"/>
+                    <field name="quality_state" optional="show" widget='badge' 
+                        decoration-success="quality_state == 'pass'" 
+                        decoration-info="quality_state == 'none'" 
+                        decoration-danger="quality_state == 'fail'"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Form Bahan Baku-->
+        <record id="data_qc_form_kemas" model="ir.ui.view">
+            <field name="name">quality.check.form.raw</field>
+            <field name="model">quality.check</field>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <form string="Packaging Material" delete="0" duplicate="0">
+                    <header>
+                        <button name="do_pass" type="object" class="btn-primary" invisible="quality_state != 'none'" string="Pass" />
+                        <button name="do_fail" type="object" class="btn-primary" invisible="quality_state != 'none'" string="Fail" />
+                        <button name="do_by_sort" type="object" class="btn-primary" invisible="quality_state != 'none'" string="By Sortir" />
+                        <button name="do_measure" type="object" invisible="test_type != 'measure' or quality_state != 'none'" string="Measure" data-hotkey="v"/>
+                        <!-- <button name="do_alert" type="object" invisible="quality_state in ['pass','none']" string="Create Alert" data-hotkey="g"/> -->
+                        <field name="quality_state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <field name="qr_url_link" widget="image" class="oe_avatar oe_left" options="{'size': [128,128]}"/>
+                        <group string="Informasi Dokumen">
+                            <group >
+                                <field name="no_document"/>
+                                <field name="effective_date" readonly="quality_state != 'none'"/>
+                            </group>
+                            <group >
+                                <field name="no_revision" force_save="1" readonly="1"/>
+                                <field name="page"/>
+                            </group>
+                        </group>
+                        <br/>
+                        <group string="Informasi Pemeriksaan">
+                            <field name="point_id" invisible="1"/>
+                            <field name="tipe_pack" readonly="quality_state != 'none'"/>
+                            <field name="no_analysis" readonly="quality_state != 'none'"/>
+                            <field name="examination_date" readonly="quality_state != 'none'"/>
+                            <field name="type_form" invisible="1"/>
+                            <field name="master_data_id" force_save="1" readonly="quality_state != 'none'"/>
+                            <field name="picking_id" invisible="1"/>
+                            <field name="point_id" invisible="1"/>
+                        </group>
+                        <br/>
+                        <separator string="Informasi Bahan Kemas"/>
+                        <group>
+                            <group>
+                                <field name="product_id" readonly="1" force_save="1" />
+                                <field name="code_of_raw_material" string="Code Bahan Kemas"/>
+                                <field name="lot_id" readonly="1" force_save="1" />
+                                <field name="supplier_or_customer_name_id" readonly="1" force_save="1" />
+                                <field name="arrival_date" readonly="1" force_save="1" />
+                            </group>
+                            <group >    
+                                <field name="sampling_officer" required="1" readonly="quality_state != 'none'"/>
+                                <label for="qty_received" id="standard_price_label" readonly="1" force_save="1"/>
+                                <div name="qty_received_uom">
+                                    <field name="qty_received" class="oe_inline" widget="monetary"/>
+                                    <span groups="uom.group_uom">
+                                        <field name="uom_datang" class="oe_inline" readonly="1"/>
+                                    </span>
+                                </div>
+                                <label for="qty_of_items_sampled" id="standard_price_label"/>
+                                <div name="qty_of_items_sampled_uom">
+                                    <field name="qty_of_items_sampled" class="oe_inline" widget="monetary" readonly="quality_state != 'none'"/>
+                                    <span groups="uom.group_uom">
+                                         
+                                        <field name="uom_datang" class="oe_inline" readonly="1"/>
+                                    </span>
+                                </div>
+                                <label for="qty_pass" id="standard_price_label"/>
+                                <div name="qty_pass_uom">
+                                    <field name="qty_pass" class="oe_inline" widget="monetary" readonly="quality_state != 'none'"/>
+                                    <span groups="uom.group_uom">
+                                         
+                                        <field name="uom_datang" class="oe_inline" readonly="1"/>
+                                    </span>
+                                </div>
+                                <label for="qty_fail" id="standard_price_label"/>
+                                <div name="qty_fail_uom">
+                                    <field name="qty_fail" class="oe_inline" widget="monetary" readonly="quality_state != 'none'"/>
+                                    <span groups="uom.group_uom">
+                                         
+                                        <field name="uom_datang" class="oe_inline" readonly="1"/>
+                                    </span>
+                                </div>
+                                <!-- <field name="qty_of_samples_per_date" readonly="quality_state != 'none'"/> -->
+                            </group>
+                        </group>
+
+                        <group string="Parameter Pemeriksaan">
+                            <field name="data_qc_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom"  force_save="1" create="0" delete="0">
+                                    <field name="no_text"  force_save="1" readonly="1"/>
+                                    <field name="header_id" force_save="1" readonly="1"/>
+                                    <field name="parameter" force_save="1" readonly="1"/>
+                                    <field name="standard" force_save="1" readonly="1"/>
+                                    <field name="result"/>
+                                    <field name="method"/>
+                                </list>
+                            </field>
+                        </group>
+                        
+                        <separator string="Analisa Kemasan"/>
+                        <group invisible="tipe_pack != 'sticker'">
+                            <field name="analisa_pack_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="tipe_pack" column_invisible="1"/>
+                                    <field name="long" avg="long"/>
+                                    <field name="wide" avg="wide"/>
+                                </list>
+                            </field>
+                        </group>
+
+                        <group invisible="tipe_pack != 'shrink'">
+                            <field name="analisa_pack_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="tipe_pack" column_invisible="1"/>
+                                    <field name="long" avg="long"/>
+                                    <field name="wide" avg="wide"/>
+                                    <field name="thick" avg="thick"/>
+                                </list>
+                            </field>
+                        </group>
+
+                        <group invisible="tipe_pack != 'dudukan'">
+                            <field name="analisa_pack_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="tipe_pack" column_invisible="1"/>
+                                    <field name="long" avg="long"/>
+                                    <field name="wide" avg="wide"/>
+                                    <field name="heigh" avg="heigh"/>
+                                    <field name="hole" avg="hole"/>
+                                </list>
+                            </field>
+                        </group>
+                        <group invisible="tipe_pack != 'part_ind_box'">
+                            <field name="analisa_pack_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="tipe_pack" column_invisible="1"/>
+                                    <field name="front_long" avg="front_long"/>
+                                    <field name="front_wide" avg="front_wide"/>
+                                    <field name="front_heigh" avg="front_heigh"/>
+                                    <field name="back_long" avg="back_long"/>
+                                    <field name="back_wide" avg="back_wide"/>
+                                    <field name="back_heigh" avg="back_heigh"/>
+                                </list>
+                            </field>
+                        </group>
+
+                        <group invisible="tipe_pack not in ['ind_box','inner_box','master_box']">
+                            <field name="analisa_pack_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="tipe_pack" column_invisible="1"/>
+                                    <field name="long" avg="long"/>
+                                    <field name="wide" avg="wide"/>
+                                    <field name="heigh" avg="heigh"/>
+                                </list>
+                            </field>
+                        </group>
+
+                        <group invisible="tipe_pack != 'cap'">
+                            <field name="analisa_pack_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="tipe_pack" column_invisible="1"/>
+                                    <field name="cap_heigh" avg="cap_heigh"/>
+                                    <field name="cap" avg="cap"/>
+                                    <field name="thread" avg="thread"/>
+                                    <field name="weight" avg="weight"/>
+                                </list>
+                            </field>
+                        </group>
+
+                        <group invisible="tipe_pack != 'botol'">
+                            <field name="analisa_pack_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="tipe_pack" column_invisible="1"/>
+                                    <field name="heigh_bottle" avg="heigh_bottle"/>
+                                    <field name="wide" avg="wide"/>
+                                    <field name="mounth" avg="mounth"/>
+                                    <field name="thread" avg="thread"/>
+                                    <field name="heigh_neck" avg="heigh_neck"/>
+                                    <field name="weight" avg="weight"/>
+                                    <field name="vol_brimfull" avg="vol_brimfull"/>
+                                </list>
+                            </field>
+                        </group>
+
+                        <group invisible="tipe_pack != 'pot'">
+                            <field name="analisa_pack_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="tipe_pack" column_invisible="1"/>
+                                    <field name="heigh" avg="heigh"/>
+                                    <field name="outside" avg="outside"/>
+                                    <field name="deep" avg="deep"/>
+                                    <field name="thread" avg="thread"/>
+                                    <field name="weight" avg="weight"/>
+                                    <field name="vol_brimfull" avg="vol_brimfull"/>
+                                </list>
+                            </field>
+                        </group>
+
+                        <group invisible="tipe_pack != 'cas_datar'">
+                            <field name="analisa_pack_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="tipe_pack" column_invisible="1"/>
+                                    <field name="long" avg="long"/>
+                                    <field name="wide" avg="outwideside"/>
+                                    <field name="deep" avg="deep"/>
+                                    <field name="outside" avg="outside"/>
+                                    <field name="weight" avg="weight"/>
+                                </list>
+                            </field>
+                        </group>
+
+                        <group invisible="tipe_pack != 'cas_lipstik'">
+                            <field name="analisa_pack_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="tipe_pack" column_invisible="1"/>
+                                    <field name="outside" avg="outside"/>
+                                    <field name="heigh" avg="heigh"/>
+                                    <field name="thread" string="Casing Snap" avg="thread"/>
+                                    <field name="mounth" string="Casing Mulut" avg="mounth"/>
+                                    <field name="cap_heigh" avg="cap_heigh"/>
+                                    <field name="cap_deep" avg="cap_deep"/>
+                                    <field name="weight" avg="weight"/>
+                                </list>
+                            </field>
+                        </group>
+
+                        <group invisible="tipe_pack != 'cas_brush'">
+                            <field name="analisa_pack_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="tipe_pack" column_invisible="1"/>
+                                    <field name="heigh_outside" avg="heigh_outside"/>
+                                    <field name="mounth" avg="mounth"/>
+                                    <field name="plug" avg="plug"/>
+                                    <field name="heigh_neck_plug" avg="heigh_neck_plug"/>
+                                    <field name="cap_deep" avg="cap_deep"/>
+                                    <field name="weight" avg="weight"/>
+                                    <field name="vol_brimfull" avg="vol_brimfull"/>
+                                </list>
+                            </field>
+                        </group>
+
+                        <group invisible="tipe_pack != 'pump'">
+                            <field name="analisa_pack_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="tipe_pack" column_invisible="1"/>
+                                    <field name="long_hose" avg="long_hose"/>
+                                    <field name="heigh_pump" avg="heigh_pump"/>
+                                    <field name="outside" avg="outside"/>
+                                    <field name="deep" avg="deep"/>
+                                    <field name="weight" avg="weight"/>
+                                </list>
+                            </field>
+                        </group>
+
+                        <group invisible="tipe_pack != 'pum_shower'">
+                            <field name="analisa_pack_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="tipe_pack" column_invisible="1"/>
+                                    <field name="long_hose" avg="long_hose"/>
+                                    <field name="long_pump" avg="long_pump"/>
+                                    <field name="outside" avg="outside"/>
+                                    <field name="deep" avg="deep"/>
+                                    <field name="hose" avg="hose"/>
+                                    <field name="long_noozle" avg="long_noozle"/>
+                                    <field name="weight" avg="weight"/>
+                                </list>
+                            </field>
+                        </group>
+
+                        <group invisible="tipe_pack != 'ring'">
+                            <field name="analisa_pack_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="tipe_pack" column_invisible="1"/>
+                                    <field name="heigh_ring" avg="heigh_ring"/>
+                                    <field name="outside" avg="outside"/>
+                                    <field name="deep" avg="deep"/>
+                                    <field name="weight" avg="weight"/>
+                                </list>
+                            </field>
+                        </group>
+
+                        <group invisible="tipe_pack != 'tubset'">
+                            <field name="analisa_pack_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="tipe_pack" column_invisible="1"/>
+                                    <field name="heigh_tube_set" avg="heigh_tube_set"/>
+                                    <field name="tube" avg="tube"/>
+                                    <field name="mounth" avg="mounth"/>
+                                    <field name="thread" avg="thread"/>
+                                    <field name="heigh_neck" avg="heigh_neck"/>
+                                    <field name="weight_tube_set" avg="weight_tube_set"/>
+                                    <field name="vol_brimfull" string="Brimful" avg="vol_brimfull"/>
+                                    <field name="cap" avg="cap"/>
+                                    <field name="thread" avg="thread"/>
+                                </list>
+                            </field>
+                        </group>
+                        
+                        <group string="Standar Pemeriksaan Level II">
+                            <field name="audit_standards_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="defect_description" width="300"/>
+                                    <field name="critical"/>
+                                    <field name="major"/>
+                                    <field name="minor"/>
+                                </list>
+                            </field>
+
+                            <div style="margin-top:0px;">
+                                <table class="o_group o_inner_group" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:300px;"></th>
+                                            <th style="text-align:center;"></th>
+                                            <th style="text-align:center;"></th>
+                                            <th style="text-align:center;"></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr>
+                                            <td><b>Total Defects</b></td>
+                                            <td><field name="total_critical" readonly="1"/></td>
+                                            <td><field name="total_major" readonly="1"/></td>
+                                            <td><field name="total_minor" readonly="1"/></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><b>AQL Allowed Defects</b></td>
+                                            <td><field name="aql_critical" readonly="quality_state != 'none'"/></td>
+                                            <td><field name="aql_major" readonly="quality_state != 'none'"/></td>
+                                            <td><field name="aql_minor" readonly="quality_state != 'none'"/></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><b>AQL Results</b></td>
+                                            <td><field name="result_critical"/></td>
+                                            <td><field name="result_major"/></td>
+                                            <td><field name="result_minor"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </group>
+
+                        <!-- <group>
+                            <group>
+                            </group>
+                            <group>
+                                <field name="total_defects" readonly="quality_state != 'none'"/>
+                                <field name="aql_allowed_defects" readonly="quality_state != 'none'"/>
+                                <field name="aql_results" readonly="quality_state != 'none'"/>
+                            </group>
+                        </group> -->
+                        <group>
+                            <field name="notes" readonly="quality_state != 'none'"/>
+                        </group>
+                        <group string="Kesimpulan :">
+                            <group>
+                                <field name="released"/>
+                                <field name="hold"/>
+                            </group>
+                            <group>
+                                <field name="reject"/>
+                                <field name="released_by_sortir" readonly="1" force_save="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action Bahan Kemasan -->
+        <record id="action_data_qc_kemas" model="ir.actions.act_window">
+            <field name="name">Form QC - Bahan Kemasan</field>
+            <field name="res_model">quality.check</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('type_form', '=', 'kemas')]</field>
+            <field name="context">{'default_type_form': 'kemas'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('bmo_quality.data_qc_list_kemas')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('bmo_quality.data_qc_form_kemas')})]"/>
+            <field name="help" type="html">
+                <p name="o_view_nocontent_smiling_face">
+                    Create Bahan Kemasan ...
+                </p>
+            </field>
+        </record>
+
+    
+    </data>
+</odoo>

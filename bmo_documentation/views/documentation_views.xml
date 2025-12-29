@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- List view -->
+    <record id="view_ats_document_list" model="ir.ui.view">
+        <field name="name">ats.document.list</field>
+        <field name="model">ats.document</field>
+        <field name="arch" type="xml">
+            <list string="Dokumen">
+                <field name="name"/>
+                <!-- <field name="doc_type"/> -->
+                <field name="filename"/>
+                <field name="date"/>
+                <field name="uploaded_by"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form view -->
+    <record id="view_ats_document_form" model="ir.ui.view">
+        <field name="name">ats.document.form</field>
+        <field name="model">ats.document</field>
+        <field name="arch" type="xml">
+            <form string="Dokumen">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="doc_type" invisible="1"/>
+                        <field name="file" filename="filename"/>
+                        <field name="filename"/>
+                        <field name="date"/>
+                        <field name="uploaded_by"/>
+                    </group>
+                    <footer>
+                        <button name="action_open_viewer" type="object" string="Lihat Dokumen" class="btn-primary"/>
+                        <button special="cancel" string="Tutup" class="btn-secondary"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_ats_user_manual" model="ir.actions.act_window">
+        <field name="name">User Manual</field>
+        <field name="res_model">ats.document</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('doc_type','=','manual')]</field>
+        <field name="context">{'default_doc_type': 'manual'}</field>
+    </record>
+
+    <record id="action_ats_white_book" model="ir.actions.act_window">
+        <field name="name">Buku Putih</field>
+        <field name="res_model">ats.document</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('doc_type','=','whitepaper')]</field>
+        <field name="context">{'default_doc_type': 'whitepaper'}</field>
+    </record>
+
+</odoo>

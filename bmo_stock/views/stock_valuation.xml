@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+    <record id="stock_valuation_layer_tree_inherit_bmo_stock" model="ir.ui.view">
+        <field name="name">stock.valuation.layer.tree.bmo_stock</field>
+        <field name="model">stock.valuation.layer</field>
+        <field name="inherit_id" ref="stock_account.stock_valuation_layer_tree"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='unit_cost']" position="attributes">
+                <attribute name="groups">bmo_stock.see_product_cost</attribute>
+            </xpath>
+            <xpath expr="//field[@name='value']" position="attributes">
+                <attribute name="groups">bmo_stock.see_product_cost</attribute>
+            </xpath>
+            <xpath expr="//field[@name='remaining_value']" position="attributes">
+                <attribute name="groups">bmo_stock.see_product_cost</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+
+</odoo>

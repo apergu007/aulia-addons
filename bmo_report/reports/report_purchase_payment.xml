@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_purchase_payment">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <style>
+                    table.table-bordered { 
+                        border-top: 1px solid black;
+                        border-right: 1px solid black;
+                        border-bottom: 1px solid black;
+                        border-left: 1px solid black;
+                        border-collapse: collapse;
+                        margin-top: 0px; width: 100%;
+                        table-layout: auto;
+                    }
+                </style>
+                <div class="page">
+                    <table style="border:1px solid black;width:100%;border-collapse: collapse;">
+                        <tr style="border:1px solid black">
+                            <!-- Logo -->
+                            <td style="border:1px solid black" width="10%">
+                                <img t-if="o.env.user.company_id.logo"
+                                     style="max-width: 170px; max-height: 100px;"
+                                     t-att-src="image_data_uri(o.env.user.company_id.logo)"
+                                     alt="Logo"/>
+                            </td>
+                            <!-- Title -->
+                            <td style="border:1px solid black;font-size:10px;" width="23%">
+                                <div>Jl. Raya Salembaran No. 717</div>
+                                <div>RT 001 RW 001, Cengklong - Kosambi</div>
+                                <div>Tangerang - Banten</div>
+                                <div>Telp : 021 - 290 31 338</div>
+                                <div>Fax : 021 290 31 343</div>
+                                <div>www.auliacosmetic.com</div>
+                            </td>
+                            <!-- Company Info -->
+                            <td style="border:1px solid black;text-align:center;font-size:26px;" width="67%">
+                                <strong><span>Purchase Payment</span></strong>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <table style="width:100%; border-collapse: collapse;font-size:10px">
+                        <tr style="vertical-align: top;">
+                            <td width="10%">
+                                <strong><span>Vendor :</span></strong>
+                            </td>
+                            <td style="border:1px solid black;font-size:10px;" width="50%">
+                                <div>
+                                    <span t-esc="o.partner_id.name"/>
+                                </div>
+                                <div>
+                                    <span t-esc="o.partner_id.street"/>
+                                </div>
+                                <div>
+                                    <span t-esc="o.partner_id.street2"/>
+                                </div>                            
+                            </td>
+                            <td  style="border:1px solid black;font-size:10px;" width="20%">
+                                <div>
+                                    <strong><span>Payment Date</span></strong>
+                                </div>
+                                <div>
+                                    <span t-esc="(o.date + relativedelta(hours=+7)).strftime('%d-%B-%Y')"/>
+                                </div>
+                                <div>
+                                    <strong><span>Cheque Date</span></strong>
+                                </div>
+                                <div>
+                                    <span t-esc="(o.date + relativedelta(hours=+7)).strftime('%d-%B-%Y')"/>
+                                </div>
+                                <div>
+                                    <strong><span>Bank</span></strong>
+                                </div>
+                                <div>
+                                    <span t-esc="o.journal_id.name"/>
+                                </div>
+                                <div>
+                                    <strong><span>Currency</span></strong>
+                                </div>
+                                <div>
+                                    <span t-esc="o.currency_id.name"/>
+                                </div>
+                            </td>
+                            <td  style="border:1px solid black;font-size:10px;" width="20%">
+                                <div>
+                                    <strong><span>Form No.</span></strong>
+                                </div>
+                                <div>
+                                    <span t-esc="o.name"/>
+                                </div>
+                                <div>
+                                    <strong><span>Cheque No.</span></strong>
+                                </div>
+                                <div>
+                                    <!-- <span t-esc="o.invoice_payment_term_id.name"/> -->
+                                    <span>-</span>
+                                </div>
+                                <div>
+                                    <strong><span>Cheque Amount</span></strong>
+                                </div>
+                                <div>
+                                    <span t-esc="'{0:,.2f}'.format(int(o.amount))"/>
+                                </div>
+                                <div>
+                                    <strong><span>Rate</span></strong>
+                                </div>
+                                <div>
+                                    <span>-</span>
+                                    <!-- <span t-esc="o.currency_id.name"/> -->
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <div>
+                        <table class="table table-bordered">
+                            <thead >
+                                <tr style="font-size:10px">
+                                    <th style="border: 1px solid black;">NO</th>
+                                    <th style="border: 1px solid black;">Invoice No.</th>
+                                    <th style="border: 1px solid black;">Date</th>
+                                    <th style="border: 1px solid black;">Due</th>
+                                    <th style="border: 1px solid black;">Amount</th>
+                                    <th style="border: 1px solid black;">Owning</th>
+                                    <th style="border: 1px solid black;">Payment</th>
+                                    <th style="border: 1px solid black;">Disc. Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody >
+                                <t t-set="col" t-value="1"/>
+                                <t t-set="total_amount_due" t-value="0"/>
+                                <t t-set="total_disc" t-value="0"/>
+                                <t t-foreach="o.x_account_move_line_ids" t-as="line">
+                                    <tr style="border: 1px solid black;height: 20px;font-size:10px">
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="col"/>                                            
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="line.move_name"/>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="(line.date + relativedelta(hours=+7)).strftime('%d-%B-%Y')"/>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="(line.date + relativedelta(hours=+7)).strftime('%d-%B-%Y')"/>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="'{0:,.2f}'.format(int(o.amount))"/>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:right;">
+                                            <t t-set="t_amount_due" t-value="0"/>
+                                            <t t-set="t_disc" t-value="0"/>
+                                            <t t-foreach="request.env['account.move'].search([('name', '=', line.move_name)])" t-as="am">
+                                                <t t-esc="'{0:,.2f}'.format(int(am.amount_residual))"/>
+                                                <t t-foreach="am.invoice_line_ids" t-as="aml">
+                                                    <t t-set="disc" t-value="abs(aml.price_subtotal - (aml.quantity*aml.price_unit))"/>
+                                                    <t t-set="t_disc" t-value="t_disc+disc"/>
+                                                </t>
+                                            </t>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="'{0:,.2f}'.format(int(line.balance))"/>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="'{0:,.2f}'.format(int(t_disc))"/>
+                                        </td>
+                                    </tr>
+                                    <t t-set="col" t-value="col + 1"/>
+                                    <t t-set="total_disc" t-value="total_disc + t_disc"/>
+                                    <t t-set="total_amount_due" t-value="total_amount_due + t_amount_due"/>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br/>
+                    <div>
+                        <div>
+                            <table class="table " style="width:100%;font-size:10px;">
+                                <tr>
+                                    <t t-set="dpp_rumus" t-value="0.0"/>
+                                    <td rowspan="8" style="width:5%;">
+                                        <div>
+                                            <strong><span>Say :</span></strong>
+                                        </div>
+                                    </td>
+                                    <td style="border:1px solid black;font-size:10px;" width="65%">
+                                        <div>
+                                            <span t-esc="o.currency_id.amount_to_text(o.total_all)" />
+                                        </div>                          
+                                    </td>
+                                    <td style="width:30%;">
+                                        <t t-set="total_payment" t-value="sum(line.balance for line in o.x_account_move_line_ids)"/>
+                                        <table style="width: 100%; border-collapse: collapse;font-size:10px">
+                                            <tr style="border: 1px solid black;">
+                                                <td style="width: 50%;"><strong><span>Total Owning </span></strong></td>
+                                                <td>:</td>
+                                                <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(total_amount_due))"/></td>
+                                            </tr>
+                                            <tr style="border: 1px solid black;">
+                                                <td><strong><span>Total Discount </span></strong></td>
+                                                <td>:</td>
+                                                <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(total_disc))"/></td>
+                                            </tr>
+                                        </table>
+                                        <br/>
+                                        <table style="width: 100%; border-collapse: collapse;font-size:10px">
+                                            <tr style="border: 1px solid black;">
+                                                <td><strong><span>Total Payment </span></strong></td>
+                                                <td>:</td>
+                                                <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(total_payment))"/></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            <br/>
+                            <table>
+                                <table style="width: 100%; border-collapse: collapse;font-size:10px">
+                                    <tr style="border: 1px solid black;">
+                                        <td><strong><span>Memo :</span></strong></td>
+                                        <td style="text-align:right;"><span t-esc="o.memo"/></td>
+                                    </tr>
+                                </table>
+                            </table>
+                        </div>
+                    </div>
+                    <br/>
+                    <div>
+                        <div>
+                            <table class="table table-bordered" style="page-break-inside: avoid;font-size: 10px;">
+                                <tr>
+                                    <td style="border: 1px solid black;text-align:center;width:50%;">
+                                        <strong><span>Payment Recorded by,</span></strong>
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:center;width:50%;">
+                                        <strong><span>Reconciled By,</span></strong>
+                                    </td>
+                                    
+                                </tr>
+                                <tr style="border: 1px solid black;height:100px;font-size: 10px;color: red;">
+                                    <td style="border: 1px solid black;">
+                                        <center>
+                                            <t t-if="o.state!='draft'">
+                                                <!-- <b><span t-esc="o.env.user.company_id.verified_text"/></b> -->
+                                            </t>
+                                        </center>
+                                    </td>
+                                    <td style="border: 1px solid black;font-size: 10px;">
+                                        <center>
+                                            <t t-if="o.state=='purchase'">
+                                                <!-- <b><span t-esc="o.env.user.company_id.approved_text"/></b> -->
+                                            </t>
+                                        </center>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black;text-align:center;"> _
+                                        <!-- <span t-esc="o.review_apr_ids[0].requested_by.name"/> -->
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:center;"> _
+                                        <!-- <span t-esc="o.review_apr_ids[-1].requested_by.name"/> -->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black;text-align:center;vertical-align: top;"> _
+                                        <!-- <span t-esc="o.review_apr_ids[0].requested_by.function"/> -->
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:center;vertical-align: top;"> _
+                                        <!-- <span t-esc="o.review_apr_ids[-1].requested_by.function"/> -->
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_purchase_payment" model="ir.actions.report">
+        <field name="name">Report Purchase Payment</field>
+        <field name="model">account.payment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">bmo_report.report_purchase_payment</field>
+        <field name="report_file">bmo_report.report_purchase_payment</field>
+        <field name="print_report_name">'Purchase Payment - %s' % object.name</field>
+        <field name="binding_model_id" ref="account.model_account_payment"/>
+        <field name="paperformat_id" ref="bmo_report.report_purchase_payment_paperformat" />
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

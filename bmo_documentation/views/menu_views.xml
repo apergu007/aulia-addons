@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- User Manual Menu -->
+    <menuitem id="menu_ats_user_manual_root" name="User Manual" web_icon="bmo_documentation,static/description/user-guide.png" sequence="85"/>
+
+    <!-- Buku Putih Menu -->
+    <menuitem id="menu_ats_white_book_root" name="Buku Putih" web_icon="bmo_documentation,static/description/airplane.png" sequence="86" />
+
+    <!-- Submenu untuk masing-masing model -->
+    <menuitem id="menu_ats_user_manual" name="Daftar User Manual" parent="menu_ats_user_manual_root" action="action_ats_user_manual"/>
+
+    <menuitem id="menu_ats_white_book" name="Daftar Buku Putih" parent="menu_ats_white_book_root" action="action_ats_white_book"/>
+</odoo>

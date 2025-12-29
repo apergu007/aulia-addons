@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_fp_material_subs">
+        <t t-call="web.html_container">
+            <!-- <t t-foreach="docs" t-as="o"> -->
+                <style>
+                    table.table-bordered { 
+                        border-top: 1px solid black;
+                        border-right: 1px solid black;
+                        border-bottom: 1px solid black;
+                        border-left: 1px solid black;
+                        border-collapse: collapse;
+                        margin-top: 0px; width: 100%;
+                        table-layout: auto;
+                    }
+                </style>
+                <div class="page">
+                    <!-- Report Header -->
+
+                    <!-- Material Information -->
+                    <table style="width:100%; border-collapse: collapse;font-size:14px">
+                        <tr>
+                            <td width="20%">
+                                <strong><span>FP No.</span></strong>
+                            </td>
+                            <td width="25%">
+                                <div>
+                                    <strong><span>Batch No.</span></strong>
+                                </div>
+                            </td>
+                            <td width="25%">
+                                <div>
+                                    <strong><span>Description</span></strong>
+                                </div>
+                            </td>
+                            <td width="30%"/>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>
+                                    <!-- <span t-esc="o.fp_no"/> -->
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <!-- <span t-esc="o.fp_no"/> -->
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <span t-esc="o.product_id.default_code"/>-<span t-esc="o.product_qty"/>
+                                </div>
+                            </td>
+                            <td width="30%"/>
+                        </tr>
+                    </table>
+                    <br/>
+
+                    <table class="table" style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="font-size:14px;text-align:center;">
+                                <th style="border: 1px solid black;">Item No</th>
+                                <th style="border: 1px solid black;">Unit</th>
+                                <th style="border: 1px solid black;">Qty Kebutuhan</th>
+                                <th style="border: 1px solid black;">Qty Pakai</th>
+                                <th style="border: 1px solid black;">No. Analisa</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <t t-foreach="o.move_raw_ids" t-as="line">
+
+                                <!-- Build list from no_analisa_qc -->
+                                <t t-if="line.no_analisa_qc">
+                                    <t t-set="lot_list" t-value="line.no_analisa_qc.split(', ')"/>
+                                </t>
+                                <t t-if="not line.no_analisa_qc">
+                                    <t t-set="lot_list" t-value="[]"/>
+                                </t>
+
+                                <!-- Determine rowspan -->
+                                <t t-set="rw" t-value="len(lot_list) if lot_list else 1"/>
+
+                                <!-- FIRST ROW -->
+                                <tr style="height:20px;font-size:12px;">
+
+                                    <td t-att-rowspan="rw" style="border:1px solid black;text-align:center;">
+                                        <span t-esc="line.product_id.default_code"/>
+                                    </td>
+
+                                    <td t-att-rowspan="rw" style="border:1px solid black;text-align:center;">
+                                        <span t-esc="line.product_uom.name"/>
+                                    </td>
+
+                                    <td t-att-rowspan="rw" style="border:1px solid black;text-align:center;">
+                                        <span t-esc="line.product_uom_qty"/>
+                                    </td>
+
+                                    <td t-att-rowspan="rw" style="border:1px solid black;text-align:center;">
+                                        <span t-esc="line.quantity"/>
+                                    </td>
+
+                                    <!-- First lot printed here -->
+                                    <td style="border:1px solid black;text-align:left;">
+                                        <span t-esc="lot_list[0] if lot_list else ''"/>
+                                    </td>
+
+                                </tr>
+
+                                <!-- Remaining lot numbers printed as additional rows -->
+                                <t t-if="rw > 1">
+                                    <t t-foreach="lot_list[1:]" t-as="lot">
+                                        <tr style="height:20px;font-size:12px;">
+                                            <td style="border:1px solid black;text-align:left;">
+                                                <span t-esc="lot"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </t>
+
+                            </t>
+
+                            <!-- Auto fill blank rows -->
+                            <t t-set="row_count" t-value="len(o.move_raw_ids)"/>
+                            <t t-set="max_rows" t-value="22"/>
+
+                            <t t-if="row_count &lt; max_rows">
+                                <t t-foreach="range(max_rows - row_count)" t-as="i">
+                                    <tr style="height:22px;">
+                                        <td style="border:1px solid black;"></td>
+                                        <td style="border:1px solid black;"></td>
+                                        <td style="border:1px solid black;"></td>
+                                        <td style="border:1px solid black;"></td>
+                                        <td style="border:1px solid black;"></td>
+                                    </tr>
+                                </t>
+                            </t>
+
+                        </tbody>
+                    </table>
+
+
+
+                    <table style="width:100%; height:170px; border-collapse: collapse; font-size:12px; margin-top:10px;">
+                        <tr style="height:20px;">
+                            <td style="border:1px solid black; width:40%; padding:4px;">
+                                <strong>Reject Supplier (Kode + Qty)</strong>
+                            </td>
+                            <td style="border:1px solid black; width:40%; padding:4px;">
+                                <strong>Kembali Ke Gudang (Kode + Qty)</strong>
+                            </td>
+                            <td rowspan="2" style="border:1px solid black; width:20%; text-align:center; height:120px; padding:4px;">
+                                
+                                <!-- Diserahkan -->
+                                <div style="height:60px; padding-top:4px;">
+                                    <strong>Diserahkan Oleh,</strong>
+                                    <div style="height:40px;"></div>
+                                    <div>(Nama Jelas &amp; Paraf)</div>
+                                </div>
+                                <hr/>
+                                <!-- Diterima -->
+                                <div style="height:60px; padding-top:4px;">
+                                    <strong>Diterima Oleh,</strong>
+                                    <div style="height:40px;"></div>
+                                    <div>(Nama Jelas &amp; Paraf)</div>
+                                </div>
+                                <hr/>
+                            </td>
+                        </tr>
+                    
+                        <tr style="height:150px;">
+                            <td style="border:1px solid black; padding:4px; vertical-align:top;">
+                                <!-- <span t-esc="o.reject_supplier or ''"/> -->
+                            </td>
+                            <td style="border:1px solid black; padding:4px; vertical-align:top;">
+                                <!-- <span t-esc="o.return_to_warehouse or ''"/> -->
+                            </td>
+                        </tr>
+                    </table>
+
+                    <br/>
+                    <!-- Signature Section -->
+                    <table class="table table-bordered" style="page-break-inside: avoid;font-size: 10px;">
+                        <tr>
+                            <td style="border: 1px solid black;text-align:center;width:20%;">
+                                <strong><span>Diketahui Oleh QC,</span></strong>
+                            </td>
+                            <td style="border: 1px solid black;text-align:center;width:20%;">
+                                <strong><span>Line Mesin No:______</span></strong>
+                                <br/>
+                                <strong><span>Penanggung Jawab:</span></strong>
+                            </td>
+                            <td style="border: 1px solid black;text-align:center;width:20%;">
+                                <strong><span>Diinput Oleh,</span></strong>
+                            </td>
+                            <td style="border: 1px solid black;text-align:center;width:20%;">
+                                <strong><span>Diketahui Oleh,</span></strong>
+                            </td>
+                            <td style="border: 1px solid black;text-align:center;width:20%;">
+                                <strong><span>FINAL CHECK,</span></strong>
+                            </td>
+                        </tr>
+                        <tr style="border: 1px solid black;height:100px;font-size: 30px;color: red;">
+                            <td style="border: 1px solid black;">
+                                <span/>
+                            </td>
+                            <td style="border: 1px solid black;">
+                                <span/>
+                            </td>
+                            <td style="border: 1px solid black;">
+                                <span/>
+                            </td>
+                            <td style="border: 1px solid black;">
+                                <span/>
+                            </td>
+                            <td style="border: 1px solid black;">
+                                <span/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black;text-align:center;vertical-align: top;">
+                                <span>(Nama Jelas &amp; Paraf)<br/>Tgl:</span>
+                            </td>
+                            <td style="border: 1px solid black;text-align:center;vertical-align: top;">
+                                <span>(Nama Jelas &amp; Paraf)<br/>Tgl:</span>
+                            </td>
+                            <td style="border: 1px solid black;text-align:center;vertical-align: top;">
+                                <span>(Nama Jelas &amp; Paraf)<br/>Tgl:</span>
+                            </td>
+                            <td style="border: 1px solid black;text-align:center;vertical-align: top;">
+                                <span>(Nama Jelas &amp; Paraf)<br/>Tgl:</span>
+                            </td>
+                            <td style="border: 1px solid black;text-align:center;vertical-align: top;">
+                                <span>SPV PPIC<br/>Tgl:</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            <!-- </t> -->
+        </t>
+    </template>
+
+    <template id="report_fp_material_subs_action">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="bmo_report.report_fp_material_subs" />
+            </t>
+        </t>
+    </template>
+
+    <record id="action_fp_material_subs" model="ir.actions.report">
+        <field name="name">Report fp Subs</field>
+        <field name="model">mrp.production</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">bmo_report.report_fp_material_subs_action</field>
+        <field name="report_file">bmo_report.report_fp_material_subs_action</field>
+        <field name="print_report_name">'Report Fp - %s' % object.name</field>
+        <field name="binding_model_id" ref="mrp.model_mrp_production"/>
+        <field name="paperformat_id" ref="bmo_report.report_mo_sub" />
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

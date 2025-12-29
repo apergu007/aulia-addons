@@ -1,0 +1,8 @@
+<odoo>
+    
+    <record id="zgroup_physical_inventory" model="res.groups">
+        <field name="name">Physical Inventory Group</field>
+        <field name="category_id" ref="base.module_category_inventory"/>
+    </record>
+    
+</odoo>

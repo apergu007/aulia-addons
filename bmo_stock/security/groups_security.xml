@@ -1,0 +1,18 @@
+<odoo>
+    
+    <!-- <record id="zgroup_physical_inventory" model="res.groups">
+        <field name="name">Physical Inventory Group</field>
+        <field name="category_id" ref="base.module_category_inventory"/>
+    </record> -->
+
+    <record id="see_product_cost" model="res.groups">
+        <field name="name">See Product Cost </field>
+        <field name="category_id" ref="base.module_category_inventory_inventory"/>
+    </record>
+
+    <record id="see_product_price" model="res.groups">
+        <field name="name">See Product Price </field>
+        <field name="category_id" ref="base.module_category_inventory_inventory"/>
+    </record>
+    
+</odoo>

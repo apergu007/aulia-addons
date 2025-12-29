@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <menuitem
+            id="menu_root_ap_cose_period"
+            name="Periods closing"
+            web_icon="bmo_closing_period,static/src/img/icon.png"
+            sequence="40"
+            groups="bmo_closing_period.group_closing_period_user"/>
+        <!-- This Menu Item Must have a parent -->
+        <menuitem 
+            id="menu_period" 
+            name="Periods" 
+            parent="bmo_closing_period.menu_root_ap_cose_period" 
+            sequence="5"
+        />
+        <menuitem 
+            id="menu_action_account_fiscalyear" 
+            action="action_account_fiscalyear" 
+            parent="bmo_closing_period.menu_period"
+        />
+        <menuitem 
+            id="menu_action_account_period" 
+            action="action_account_period" 
+            parent="bmo_closing_period.menu_period"
+        />
+        <menuitem 
+            id="menu_action_account_period_models" 
+            action="bmo_closing_period.action_account_period_models" 
+            parent="bmo_closing_period.menu_period"
+        />
+        <menuitem 
+            id="menu_finance_periodical_processing" 
+            name="Periodic Processing" 
+            parent="account.menu_finance_entries" 
+            sequence="13" 
+            groups="account.group_account_user,account.group_account_manager"/>
+            
+    </data>
+</odoo>

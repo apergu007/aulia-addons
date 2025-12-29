@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+    <!-- rincian.analisa VIEWS -->
+    <record id="rincian_analisa_view_tree" model="ir.ui.view">
+        <field name="name">rincian.analisa.view.list</field>
+        <field name="model">rincian.analisa</field>
+        <field name="arch" type="xml">
+            <list editable="top" create="1" delete="1" multi_edit="1" string="Rincian Analisa" open_form_view="True">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="compute_type"/>
+                <field name="show_picno_weight_and_water" widget="boolean_toggle"/>
+                <field name="show_picno_weight" widget="boolean_toggle"/>
+                <field name="show_koh_volume" widget="boolean_toggle"/>
+                <field name="show_n_koh" widget="boolean_toggle"/>
+                <field name="show_mass_sample" widget="boolean_toggle"/>
+                <field name="show_acid" widget="boolean_toggle"/>
+                <field name="show_gravity_specific" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="rincian_analisa_action" model="ir.actions.act_window" >
+        <field name="name">Rincian Analisa</field>
+        <field name="res_model">rincian.analisa</field>
+        <field name="view_mode">list</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create an Rincian Analisa
+            </p>
+        </field>
+    </record>
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+    <!-- data.header.line VIEWS -->
+    <record id="data_header_line_view_tree" model="ir.ui.view">
+        <field name="name">data.header.line.view.list</field>
+        <field name="model">data.header.line</field>
+        <field name="arch" type="xml">
+            <list editable="top" create="1" delete="1" multi_edit="1" string="Master Header Line" open_form_view="True">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="data_header_line_action" model="ir.actions.act_window" >
+        <field name="name">Master Header Line</field>
+        <field name="res_model">data.header.line</field>
+        <field name="view_mode">list</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create an Master Header Line
+            </p>
+        </field>
+    </record>
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <!-- Master Data QC -->
+    <record id="form_data_qc_tree" model="ir.ui.view">
+        <field name="name">form.data.qc.tree</field>
+        <field name="model">form.data.qc</field>
+        <field name="arch" type="xml">
+            <list string="Data QC">
+                <field name="name"/>
+                <field name="type_form"/>
+                <field name="state"/>
+                <field name="company_id" groups="base.group_multi_company" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+
+    <record id="form_data_qc_form" model="ir.ui.view">
+        <field name="name">form.data.qc.form</field>
+        <field name="model">form.data.qc</field>
+        <field name="arch" type="xml">
+            <form string="Form Data QC">
+                <header>
+                    <button name="action_draft" type="object" class="btn-primary" invisible="state == 'draft'" string="Draft" />
+                    <button name="action_active" type="object" class="btn-primary" invisible="state != 'draft'" string="Active" />
+                    <button name="%(bmo_quality.action_wiz_import_master_qc)d" string="Import Line" type="action" invisible="state != 'draft'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" required="1" readonly="state != 'draft'"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="type_form" required="1" readonly="state != 'draft'"/>
+                            <field name="company_id" groups="base.group_multi_company" invisible="1"/>
+                            <field name="revision" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Form Data Lines">
+                            <field name="form_lines" nolabel="1" readonly="state != 'draft'">
+                                <list editable="bottom">
+                                    <field name="no_text"/>
+                                    <field name="header_id" options="{'no_create': True, 'no_edit':True, 'no_open':True}"/>
+                                    <field name="parameter"/>
+                                    <field name="decimal_places"/>
+                                    <field name="std"/>
+                                    <field name="result" optional="hide"/>
+                                    <field name="method"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Rincian Analisa" invisible="type_form != 'raw'">
+                            <field name="analisa_lines" nolabel="1" readonly="state != 'draft'">
+                                <list editable="bottom">
+                                    <field name="no_text"/>
+                                    <field name="rincian_id" options="{'no_create': True, 'no_edit':True, 'no_open':True}"/>
+                                    <field name="rincian_code" optional="hide"/>
+                                    <field name="compute_type" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <record id="form_data_qc_act_window" model="ir.actions.act_window">
+        <field name="name">Form Data QC</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">form.data.qc</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+        <field name="view_id" eval="False"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                    No Data found. Let's create one!
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_partner_form_inherit" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//span[@name='address_name']" position="before">
+                <field name="code_partner" required="1"/>
+            </xpath>
+            <xpath expr="//sheet/group/group[1]/div" position="after">
+                <field name="ship_to"/>
+            </xpath>
+            <xpath expr="//notebook/page[@name='sales_purchases']/group/group/field[@name='user_id']" position="after">
+                <field name="is_customer"/>
+                <field name="warehouse_id" options="{'no_create': True, 'no_open': True}"/>
+            </xpath>
+            <xpath expr="//notebook/page[@name='sales_purchases']/group/group[2][@name='purchase']" position="inside">
+                <field name="is_vendor"/>
+            </xpath>
+        </field>
+    </record> 
+    
+    <record id="account.res_partner_action_customer" model="ir.actions.act_window">
+        <field name="domain">[('is_customer','=',1)]</field>
+        <field name="path">customers</field>
+        <field name="context">{'search_default_customer': 1,'res_partner_search_mode': 'customer', 'default_is_company': True, 'default_customer_rank': 1, 'default_is_customer' : True}</field>
+        <field name="view_mode">list,form,kanban</field>
+    </record>
+
+    <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
+        <field name="domain">[('is_vendor','=',1)]</field>
+        <field name="path">vendors</field>
+        <field name="context">{'search_default_supplier': 1,'res_partner_search_mode': 'supplier', 'default_is_company': True, 'default_supplier_rank': 1, 'default_is_vendor' : True}</field>
+        <field name="view_mode">list,form,kanban</field>
+    </record>
+    
+    <record id="contacts.action_contacts" model="ir.actions.act_window">
+        <field name="view_mode">list,kanban,form</field>
+    </record>
+
+    <menuitem id="contacts_menu_categ" name="Contacts" parent="contacts.menu_contacts" sequence="1"/>
+    <menuitem id="res_partner_menu_contacts_customer" parent="bmo_partner.contacts_menu_categ" action="account.res_partner_action_customer" sequence="1"/>
+    <menuitem id="res_partner_menu_contacts_vendor" parent="bmo_partner.contacts_menu_categ" action="account.res_partner_action_supplier" sequence="2"/>
+    <menuitem id="contacts.res_partner_menu_contacts" parent="bmo_partner.contacts_menu_categ" action="contacts.action_contacts" sequence="4"/>
+</odoo>

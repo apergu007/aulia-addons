@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- RFQ -->
+    <template id="report_purchase_request_inherit_bmo_purchase_request" inherit_id="purchase_request.report_purchase_request">
+        <xpath expr="//table[@class='table table-condensed']" position="replace">
+            <style>
+                table.table-condensed { 
+                    border-top: 1px solid black;
+                    border-right: 1px solid black;
+                    border-bottom: 1px solid black;
+                    border-left: 1px solid black;
+                    border-collapse: collapse;
+                    margin-top: 0px; width: 100%;
+                    table-layout: auto;
+                }
+            </style>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>
+                            <strong>Description</strong>
+                        </th>
+                        <th groups="analytic.group_analytic_accounting">
+                            <strong>Analytic Distribution</strong>
+                        </th>
+                        <th class="text-right">
+                            <strong>Qty</strong>
+                        </th>
+                        <th class="text-center" groups="uom.group_uom">
+                            <strong>Product UoM</strong>
+                        </th>
+                        <th>
+                            <strong>Estimated Cost</strong>
+                        </th>
+                        <th class="text-right">
+                            <strong>Requested Date</strong>
+                        </th>
+                        <th>
+                            <strong>Specifications</strong>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="o.line_ids" t-as="line_id">
+                        <td>
+                            <span t-field="line_id.name" />
+                        </td>
+                        <td groups="analytic.group_analytic_accounting">
+                            <span
+                                t-field="line_id.analytic_distribution"
+                            />
+                        </td>
+                        <td class="text-right">
+                            <span t-field="line_id.product_qty" />
+                        </td>
+                        <t>
+                            <td
+                                class="text-center"
+                                groups="uom.group_uom"
+                            >
+                                <span
+                                    t-field="line_id.product_uom_id.category_id.name"
+                                />
+                            </td>
+                        </t>
+                        <td>
+                            <span t-field="line_id.estimated_cost" />
+                        </td>
+                        <td class="text-right">
+                            <span t-field="line_id.date_required" />
+                        </td>
+                        <td>
+                            <span t-field="line_id.specifications" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </xpath>
+    </template>
+
+</odoo>

@@ -1,0 +1,270 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <!-- list Bahan Baku-->
+        <record id="data_qc_list_raw" model="ir.ui.view">
+            <field name="name">quality.check.list.raw</field>
+            <field name="model">quality.check</field>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <list string="Raw Material" delete="0" duplicate="0">
+                    <field name="no_analysis"/>
+                    <field name="no_document"/>
+                    <field name="product_id"/>
+                    <field name="lot_id"/>
+                    <field name="arrival_date"/>
+                    <field name="examination_date" optional="show"/>
+                    <field name="qty_received" optional="show"/>
+                    <field name='qty_of_items_sampled' optional="show"/>
+                    <field name='qty_pass' optional="show"/>
+                    <field name='qty_fail' optional="show"/>
+                    <field name='released_by_sortir' optional="hide"/>
+                    <field name="quality_state" optional="show" widget='badge' 
+                        decoration-success="quality_state == 'pass'" 
+                        decoration-info="quality_state == 'none'" 
+                        decoration-danger="quality_state == 'fail'"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Form Bahan Baku-->
+        <record id="data_qc_form_raw" model="ir.ui.view">
+            <field name="name">quality.check.form.raw</field>
+            <field name="model">quality.check</field>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <form string="Raw Material" delete="0" duplicate="0">
+                    <header>
+                        <button name="do_pass" type="object" class="btn-primary" invisible="quality_state != 'none'" string="Pass" />
+                        <button name="do_fail" type="object" class="btn-primary" invisible="quality_state != 'none'" string="Fail" />
+                        <button name="do_by_sort" type="object" class="btn-primary" invisible="quality_state != 'none'" string="By Sortir" />
+                        <button name="do_measure" type="object" invisible="test_type != 'measure' or quality_state != 'none'" string="Measure" data-hotkey="v"/>
+                        <!-- <button name="do_alert" type="object" invisible="quality_state in ['pass','none']" string="Create Alert" data-hotkey="g"/> -->
+                        <field name="quality_state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <field name="qr_url_link" widget="image" class="oe_avatar oe_left" options="{'size': [128,128]}"/>
+                        <group string="Informasi Dokumen">
+                            <group >
+                                <field name="no_document"/>
+                                <field name="effective_date" readonly="quality_state != 'none'"/>
+                            </group>
+                            <group >
+                                <field name="no_revision" force_save="1" readonly="1"/>
+                                <field name="page"/>
+                            </group>
+                        </group>
+                        <br/>
+                        <group string="Informasi Pemeriksaan">
+                            <field name="point_id" invisible="1"/>
+                            <field name="no_analysis" readonly="quality_state != 'none'"/>
+                            <field name="examination_date" readonly="quality_state != 'none'"/>
+                            <field name="type_form" invisible="1"/>
+                            <field name="master_data_id" force_save="1" readonly="quality_state != 'none'"/>
+                            <field name="picking_id" invisible="1"/>
+                            <field name="point_id" invisible="1"/>
+                        </group>
+                        <br/>
+                        <separator string="Informasi Bahan Baku"/>
+                        <group>
+                            <group>
+                                <field name="product_id" readonly="1" force_save="1" />
+                                <field name="code_of_raw_material"/>
+                                <field name="lot_id" readonly="1" force_save="1" />
+                                <field name="supplier_or_customer_name_id" readonly="1" force_save="1" />
+                                <field name="arrival_date" readonly="1" force_save="1" />
+                            </group>
+                            <group >    
+                                <field name="sampling_officer" required="1" readonly="quality_state != 'none'"/>
+                                <label for="qty_received" id="standard_price_label"/>
+                                <div name="qty_received_uom">
+                                    <field name="qty_received" class="oe_inline" widget="monetary" readonly="1" force_save="1"/>
+                                    <span groups="uom.group_uom">
+                                        <field name="uom_datang" class="oe_inline" readonly="1"/>
+                                    </span>
+                                </div>
+                                <label for="qty_of_items_sampled" id="standard_price_label"/>
+                                <div name="qty_of_items_sampled_uom">
+                                    <field name="qty_of_items_sampled" class="oe_inline" widget="monetary" readonly="quality_state != 'none'"/>
+                                    <span groups="uom.group_uom">
+                                         
+                                        <field name="uom_datang" class="oe_inline" readonly="1"/>
+                                    </span>
+                                </div>
+                                <label for="qty_pass" id="standard_price_label"/>
+                                <div name="qty_pass_uom">
+                                    <field name="qty_pass" class="oe_inline" widget="monetary" readonly="quality_state != 'none'"/>
+                                    <span groups="uom.group_uom">
+                                         
+                                        <field name="uom_datang" class="oe_inline" readonly="1"/>
+                                    </span>
+                                </div>
+                                <label for="qty_fail" id="standard_price_label"/>
+                                <div name="qty_fail_uom">
+                                    <field name="qty_fail" class="oe_inline" widget="monetary" readonly="quality_state != 'none'"/>
+                                    <span groups="uom.group_uom">
+                                         
+                                        <field name="uom_datang" class="oe_inline" readonly="1"/>
+                                    </span>
+                                </div>
+                                <!-- <field name="qty_pass" readonly="quality_state != 'none'"/>
+                                <field name="qty_fail" readonly="quality_state != 'none'"/> -->
+                                <!-- <field name="qty_of_samples_per_date" readonly="quality_state != 'none'"/> -->
+                            </group>
+                        </group>
+                        <!-- <notebook>
+                            <page string="Parameter Pemeriksaan">
+                                <group>
+                                    <field name="data_qc_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'" force_save="1">
+                                        <list editable="bottom" create="0" delete="0" edit="1">
+                                            <field name="no_text" force_save="1" readonly="1"/>
+                                            <field name="header_id" force_save="1" readonly="1"/>
+                                            <field name="parameter" force_save="1" readonly="1"/>
+                                            <field name="standard" force_save="1" readonly="1"/>
+                                            <field name="result" required="1"/>
+                                            <field name="method"/>
+                                        </list>
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="Rincian Analisa">
+                                <group>
+                                    <field name="specific_gravity_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                        <list editable="bottom">
+                                            <field name="specific_gravity_id" column_invisible="1"/>
+                                            <field name="number"/>
+                                            <field name="rincian_id" options="{'no_create': True, 'no_open': True}"/>
+                                            <field name="rincian_code" optional="hide"/>
+                                            <field name="n_1"/>
+                                            <field name="n_2"/>
+                                            <field name="n_3"/>
+                                            <field name="n_4"/>
+                                            <field name="n_5"/>
+                                            <field name="n_6"/>
+                                            <field name="n_7"/>
+                                            <field name="n_8"/>
+                                            <field name="n_9"/>
+                                            <field name="n_10"/>
+                                            <field name="value"/>
+                                        </list>
+                                    </field>
+                                </group>
+                            </page>
+                        </notebook> -->
+                        <group string="Parameter Pemeriksaan">
+                            <field name="data_qc_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'" force_save="1">
+                                <list editable="bottom" create="0" delete="0" edit="1">
+                                    <field name="no_text" force_save="1" readonly="1"/>
+                                    <field name="header_id" force_save="1" readonly="1"/>
+                                    <field name="parameter" force_save="1" readonly="1"/>
+                                    <field name="standard" force_save="1" readonly="1"/>
+                                    <field name="result" required="1"/>
+                                    <field name="method"/>
+                                </list>
+                            </field>
+                        </group>
+
+                        <group string="Rincian Analisa">
+                            <field name="specific_gravity_line" mode="list,kanban" nolabel="1" colspan="2" readonly="quality_state != 'none'">
+                                <list editable="bottom">
+                                    <field name="specific_gravity_id" column_invisible="1"/>
+                                    <field name="number"/>
+                                    <field name="rincian_id" options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="rincian_code" optional="hide"/>
+                                    <field name="n_1"/>
+                                    <field name="n_2"/>
+                                    <field name="n_3"/>
+                                    <field name="n_4"/>
+                                    <field name="n_5"/>
+                                    <field name="n_6"/>
+                                    <field name="n_7"/>
+                                    <field name="n_8"/>
+                                    <field name="n_9"/>
+                                    <field name="n_10"/>
+                                    <field name="value"/>
+                                </list>
+                            </field>
+                        </group>
+                        <separator/>
+                        <group string="Configurasi Field" invisible="1">
+                            <group>
+                                <field name="show_picno_weight_and_water" readonly="0"/>
+                                <field name="show_picno_weight" readonly="0"/>
+                                <field name="show_n_koh" readonly="0"/>
+                            </group>
+                            <group>
+                                <field name="show_gravity_specific" readonly="0"/>
+                                <field name="show_koh_volume" readonly="0"/>
+                                <field name="show_mass_sample" readonly="0"/>
+                                <field name="show_acid" readonly="0"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group >    
+                                <field name="picno_weight_and_water" required="1" readonly="quality_state != 'none'" invisible="not show_picno_weight_and_water"/>
+                                <field name="picno_weight" required="1" readonly="quality_state != 'none'" invisible="not show_picno_weight"/>
+                                <field name="n_koh" required="1" readonly="quality_state != 'none'" invisible="not show_n_koh"/>
+                            </group>
+                            <group >
+                                <field name="gravity_specific" invisible="not show_gravity_specific"/>
+                                <field name="koh_volume" invisible="not show_koh_volume"/>
+                                <field name="mass_sample" invisible="not show_mass_sample"/>
+                                <field name="acid" invisible="not show_acid"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="notes" readonly="quality_state != 'none'"/>
+                        </group>
+                        <group string="Kesimpulan :">
+                            <group>
+                                <field name="released"/>
+                                <field name="hold"/>
+                            </group>
+                            <group>
+                                <field name="reject"/>
+                                <field name="released_by_sortir" readonly="1" force_save="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action Bahan Baku-->
+        <record id="action_data_qc_raw" model="ir.actions.act_window">
+            <field name="name">Form QC - Bahan Baku</field>
+            <field name="res_model">quality.check</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('type_form', '=', 'raw')]</field>
+            <field name="context">{'default_type_form': 'raw'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('bmo_quality.data_qc_list_raw')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('bmo_quality.data_qc_form_raw')})]"/>
+            <field name="help" type="html">
+                <p name="o_view_nocontent_smiling_face">
+                    Create Bahan Baku ...
+                </p>
+            </field>
+        </record>
+
+        <!-- Action Bahan Kemasan -->
+        <!-- <record id="action_data_qc_kemas" model="ir.actions.act_window">
+            <field name="name">Form QC - Bahan Kemasan</field>
+            <field name="res_model">quality.check</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('type_form', '=', 'kemas')]</field>
+            <field name="context">{'default_type_form': 'kemas'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('bmo_quality.data_qc_list_raw')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('bmo_quality.data_qc_form_raw')})]"/>
+            <field name="help" type="html">
+                <p name="o_view_nocontent_smiling_face">
+                    Create Bahan Kemasan ...
+                </p>
+            </field>
+        </record> -->
+
+    
+    </data>
+</odoo>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_sale_approval_route" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.sale.approval.route</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="25"/>
+        <field name="inherit_id" ref="sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@name='catalog_setting_container']" position="before">
+                <block title="SO Approval" name="teams_setting_container">
+                    <setting id="sale_teams" >
+                        <div class="col-12 col-lg-6 o_setting_box" id="sale_order_approval_route">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="sale_order_approval_route"/>
+                                <span class="fa fa-lg fa-building-o" title="Values set here are company-specific."
+                                    aria-label="Values set here are company-specific." groups="base.group_multi_company"
+                                    role="img"/>
+                                <div class="text-muted">
+                                    Use Sale team based approval route for Sale orders
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="sale_order_approval_route" class="o_light_label" widget="radio"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <field name="group_product_variant"/>
+                        <div class="content-group" invisible="not group_product_variant">
+                            <div class="mt8">
+                                <button name="175" icon="oi-arrow-right" type="action" string="Attributes" class="btn-link"/>
+                            </div>
+                        </div> -->
+                    </setting>
+                </block>
+
+                <!-- <div class="col-12 col-lg-6 o_setting_box" id="sale_order_approval_route">
+                    <div class="o_setting_left_pane"/>
+                    <div class="o_setting_right_pane">
+                        <label for="sale_order_approval_route"/>
+                        <span class="fa fa-lg fa-building-o" title="Values set here are company-specific."
+                              aria-label="Values set here are company-specific." groups="base.group_multi_company"
+                              role="img"/>
+                        <div class="text-muted">
+                            Use Sale team based approval route for Sale orders
+                        </div>
+                        <div class="content-group">
+                            <div class="mt16">
+                                <field name="sale_order_approval_route" class="o_light_label" widget="radio"/>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
+

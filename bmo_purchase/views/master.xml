@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <!-- po.delivery.to VIEWS -->
+        <record id="po_delivery_to_view_tree" model="ir.ui.view">
+            <field name="name">po.delivery.to.view.list</field>
+            <field name="model">po.delivery.to</field>
+            <field name="arch" type="xml">
+                <list editable="top" create="1" delete="1" string="PO Delivery To" open_form_view="True">
+                    <field name="types" required="1"/>
+                    <field name="p_categ" required="1"/>
+                    <field name="picking_type_id" required="1" options="{'no_create': True, 'no_edit':True}"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="po_delivery_to_action" model="ir.actions.act_window" >
+            <field name="name">PO Delivery To</field>
+            <field name="res_model">po.delivery.to</field>
+            <field name="view_mode">list</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create an PO Delivery To
+                </p>
+            </field>
+        </record>
+
+
+        <menuitem id="po_delivery_to_menu" name="PO Delivery To"
+             parent="purchase.menu_purchase_config" sequence="31" action="bmo_purchase.po_delivery_to_action"/>
+
+    </data>
+</odoo>

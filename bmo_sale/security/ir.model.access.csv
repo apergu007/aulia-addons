@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_master_brand,access_master_brand,model_master_brand,base.group_user,1,1,1,1
+access_sales_category,access_sales_category,model_sales_category,base.group_user,1,1,1,1
+access_sale_inv_union,access_sale_inv_union,model_sale_inv_union,base.group_user,1,1,1,1

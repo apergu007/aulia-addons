@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_report_do">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <style>
+                    table.table-bordered { 
+                        border-top: 1px solid black;
+                        border-right: 1px solid black;
+                        border-bottom: 1px solid black;
+                        border-left: 1px solid black;
+                        border-collapse: collapse;
+                        margin-top: 0px; width: 100%;
+                        table-layout: auto;
+                    }
+                </style>
+                <div class="page">
+                    <table style="border:1px solid black;width:100%;border-collapse: collapse;">
+                        <tr style="border:1px solid black">
+                            <!-- Logo -->
+                            <td style="border:1px solid black" width="10%">
+                                <img t-if="o.env.user.company_id.logo"
+                                     style="max-width: 170px; max-height: 100px;"
+                                     t-att-src="image_data_uri(o.env.user.company_id.logo)"
+                                     alt="Logo"/>
+                            </td>
+                            <!-- Title -->
+                            <td style="border:1px solid black;font-size:12px;" width="23%">
+                                <div>Jl. Raya Salembaran No. 717</div>
+                                <div>RT 001 RW 001, Cengklong - Kosambi</div>
+                                <div>Tangerang - Banten</div>
+                                <div>Telp : 021 - 290 31 338</div>
+                                <div>Fax : 021 290 31 343</div>
+                                <div>www.auliacosmetic.com</div>
+                            </td>
+                            <!-- Company Info -->
+                            <td style="border:1px solid black;text-align:center;font-size:26px;" width="67%">
+                                <strong><span>Delivery Note</span></strong>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <table style="width:100%; border-collapse: collapse;font-size:14px">
+                        <tr style="vertical-align: top;">
+                            <td width="10%">
+                                <strong><span>Bill To :</span></strong>
+                            </td>
+                            <td style="border:1px solid black;font-size:12px;" width="50%">
+                                <div>
+                                    <span t-esc="o.partner_id.name"/>
+                                </div>
+                                <div>
+                                    <span t-esc="o.partner_id.street"/>
+                                </div>
+                                <div>
+                                    <span t-esc="o.partner_id.street2"/>
+                                </div>
+                            </td>
+                            <td  style="border:1px solid black;font-size:12px;" width="20%">
+                                <div>
+                                    <strong><span>Delivery Date</span></strong>
+                                </div>
+                                <div>
+                                    <span t-esc="o.date_done"/>
+                                </div>
+                                <div>
+                                    <strong><span>Customer No.</span></strong>
+                                </div>
+                                <div>
+                                    <span t-esc="o.partner_id.code_partner"/>
+                                </div>
+                                <div>
+                                    <strong><span>Ship Via</span></strong>
+                                </div>
+                                <div>
+                                    <span>_ _ _ _ _ _ _</span>
+                                </div>
+                            </td>
+                            <td  style="border:1px solid black;font-size:12px;" width="20%">
+                                <div>
+                                    <strong><span>Delivery No</span></strong>
+                                </div>
+                                <div>
+                                    <span t-esc="o.name"/>
+                                </div>
+                                <div>
+                                    <strong><span>PO. No.</span></strong>
+                                </div>
+                                <div>
+                                    <span t-esc="o.origin"/>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <table style="width:100%; border-collapse: collapse;font-size:14px">
+                        <tr >
+                            <td width="10%" style="vertical-align: top;">
+                                <strong><span>Ship To :</span></strong>
+                            </td>
+                            <td style="border:1px solid black;font-size:12px; vertical-align: top;" width="50%">
+                                <div>
+                                    <span t-esc="o.partner_id.ship_to"/>
+                                </div>
+                                <!-- <div>
+                                    <span t-esc="o.partner_id.street"/>
+                                </div>
+                                <div>
+                                    <span t-esc="o.partner_id.street2"/>
+                                </div> -->
+                            </td>
+                            <td  style="border:1px solid black;font-size:12px;text-align:center;" width="40%">
+                                <div>
+                                    <span>Please note!</span>
+                                </div>
+                                <div>
+                                    <span>Any claim of variance must be submited max.</span>
+                                </div>
+                                <div>
+                                    <span>within 7 working days from delivery date. Claim</span>
+                                </div>
+                                <div>
+                                    <span>must include sufficient supporting documents</span>
+                                </div>
+                                <div>
+                                    <span>and shall be emailed to</span>
+                                </div>
+                                <div>
+                                    <span>isladmin.02@auliacosmetic.com</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <div>
+                        <table class="table table-bordered">
+                            <thead >
+                                <tr style="font-size:14px">
+                                    <th style="border: 1px solid black;">NO</th>
+                                    <th style="border: 1px solid black;">Product Code</th>
+                                    <th style="border: 1px solid black;">Product Description</th>
+                                    <th style="border: 1px solid black;">Delivery</th>
+                                    <th style="border: 1px solid black;">Unit Type</th>
+                                    <th style="border: 1px solid black;">Total Pcs</th>
+                                    <th style="border: 1px solid black;">Nomor Seri</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="col" t-value="0"/>
+                                <t t-foreach="o.move_ids_without_package.sorted(key=lambda ml: ml.product_id.id)" t-as="line">
+                                    <t t-set="col" t-value="col+1"/>
+                                    <!-- <t t-set="line" t-value="item[1]"/> -->
+                                    
+                                    <!-- Filter move lines for this product -->
+                                    <t t-set="sml_list" t-value="o.move_line_ids.filtered(lambda x: x.product_id.id == line.product_id.id)"/>
+                                    <t t-if="sml_list">
+                                        <t t-set="first_sml" t-value="sml_list[0]"/>
+                                        <t t-set="rest_sml" t-value="sml_list[1:]"/>
+                                        
+                                        <!-- First row with rowspan -->
+                                        <tr style="border: 1px solid black;height: 20px;font-size:12px">
+                                            <td t-att-rowspan="len(sml_list)" style="border: 1px solid black;text-align:center;">
+                                                <span t-esc="col"/>
+                                            </td>
+                                            <td t-att-rowspan="len(sml_list)" style="border: 1px solid black;text-align:left;">
+                                                <span t-esc="line.product_id.default_code"/>
+                                            </td>
+                                            <td t-att-rowspan="len(sml_list)" style="border: 1px solid black;text-align:left;">
+                                                <span t-esc="line.product_id.name"/>
+                                            </td>
+                                            <td t-att-rowspan="len(sml_list)" style="border: 1px solid black;text-align:center;">
+                                                <span t-esc="line.quantity"/>
+                                            </td>
+                                            <td t-att-rowspan="len(sml_list)" style="border: 1px solid black;text-align:center;">
+                                                <span t-esc="line.product_id.uom_id.name"/>
+                                            </td>
+                                            <td style="border: 1px solid black;text-align:center;">
+                                                <span t-esc="first_sml.quantity"/>
+                                            </td>
+                                            <td style="border: 1px solid black;text-align:left;">
+                                                <span t-if="first_sml.lot_id" t-esc="first_sml.lot_id.name"/>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Remaining move lines -->
+                                        <t t-foreach="rest_sml" t-as="sml">
+                                            <tr style="border: 1px solid black;height: 20px;font-size:12px">
+                                                <td style="border: 1px solid black;text-align:center;">
+                                                    <span t-esc="sml.quantity"/>
+                                                </td>
+                                                <td style="border: 1px solid black;text-align:left;">
+                                                    <span t-if="sml.lot_id" t-esc="sml.lot_id.name"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </t>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br/>
+                    <div>
+                        <div>
+                            <table class="table table-bordered" >
+                                <tr>
+                                    <td style="border: 1px solid black;font-size:14px">
+                                        <div>
+                                            <strong><span>Description :</span></strong>
+                                        </div>
+                                        <div style="height:60px;"><span t-field="o.note"/></div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <br/>
+                    <div>
+                        <div>
+                            <table class="table table-bordered" style="page-break-inside: avoid;font-size: 10px;">
+                                <tr>
+                                    <td style="border: 1px solid black;text-align:center;width:25%;">
+                                        <strong><span>Prepared by,</span></strong>
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:center;width:25%;">
+                                        <strong><span>Warehouse,</span></strong>
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:center;width:25%;">
+                                        <strong><span>Delivered by,</span></strong>
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:center;width:25%;">
+                                        <strong><span>Received by,</span></strong>
+                                    </td>
+                                </tr>
+                                <tr style="border: 1px solid black;height:100px;font-size: 30px;color: red;">
+                                    <td style="border: 1px solid black;">
+                                        <center>
+                                            <t t-if="o.state!='draft'">
+                                                <!-- <b><span t-esc="o.env.user.company_id.verified_text"/></b> -->
+                                            </t>
+                                        </center>
+                                    </td>
+                                    <td style="border: 1px solid black;font-size: 30px;">
+                                        <center>
+                                            <t t-if="o.state=='purchase'">
+                                                <!-- <b><span t-esc="o.env.user.company_id.approved_text"/></b> -->
+                                            </t>
+                                        </center>
+                                    </td>
+                                    <td style="border: 1px solid black;font-size: 30px;">
+                                        <center>
+                                            <t t-if="o.state=='purchase'">
+                                                <!-- <b><span t-esc="o.env.user.company_id.approved_text"/></b> -->
+                                            </t>
+                                        </center>
+                                    </td>
+                                    <td style="border: 1px solid black;font-size: 30px;">
+                                        <center>
+                                            <t t-if="o.state=='purchase'">
+                                                <!-- <b><span t-esc="o.env.user.company_id.approved_text"/></b> -->
+                                            </t>
+                                        </center>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black;text-align:center;"> _
+                                        <!-- <span t-esc="o.review_apr_ids[0].requested_by.name"/> -->
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:center;"> _
+                                        <!-- <span t-esc="o.review_apr_ids[-1].requested_by.name"/> -->
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:center;"> _
+                                        <!-- <span t-esc="o.review_apr_ids[-1].requested_by.name"/> -->
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:center;"> _
+                                        <!-- <span t-esc="o.review_apr_ids[-1].requested_by.name"/> -->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black;text-align:center;vertical-align: top;"> _
+                                        <!-- <span t-esc="o.review_apr_ids[0].requested_by.function"/> -->
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:center;vertical-align: top;"> _
+                                        <!-- <span t-esc="o.review_apr_ids[-1].requested_by.function"/> -->
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:center;vertical-align: top;"> _
+                                        <!-- <span t-esc="o.review_apr_ids[-1].requested_by.function"/> -->
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:center;vertical-align: top;"> _
+                                        <!-- <span t-esc="o.review_apr_ids[-1].requested_by.function"/> -->
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <img src="/bmo_report/static/img/footer.jpeg" style="width:100%; max-height:90px;"/>
+                    <div class="text-end text-muted">
+                        <div t-if="report_type == 'pdf' and display_name_in_footer" t-out="o.name">(document name)</div>
+                        <div t-if="report_type == 'pdf'">Page <span class="page"/> / <span class="topage"/></div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_do" model="ir.actions.report">
+        <field name="name">Report Delivery Note</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">bmo_report.report_report_do</field>
+        <field name="report_file">bmo_report.report_report_do</field>
+        <field name="print_report_name">'Delivery Note - %s' % object.name</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="paperformat_id" ref="bmo_report.report_do_paperformat" />
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

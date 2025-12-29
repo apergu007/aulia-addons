@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+    <!-- product.category inherit tree view -->
+    <record id="product_category_list_view_inherit_bmo_sale" model="ir.ui.view">
+        <field name="name">product.category.tree.inherit.bmo_sale</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_list_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='display_name']" position="after">
+                <field name="sale_categ_id" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_category_form_view_inherit_bmo_sale" model="ir.ui.view">
+        <field name="name">product.category.form.inherit.bmo_sale</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='parent_id']" position="after">
+                <field name="sale_categ_id" options="{'no_create': True, 'no_edit':True}"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- ////////////////////////////////////////////////////////////////////////////////// -->
+
+    <record id="product_template_only_form_view_inherit_bmo_sale" model="ir.ui.view">
+        <field name="name">product.template.form.inherit.bmo_sale</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='supplier_taxes_id']" position="before">
+                <field name="brand_id"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

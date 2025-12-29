@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_report_pr">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <style>
+                    table.table-bordered { 
+                        border-top: 1px solid black;
+                        border-right: 1px solid black;
+                        border-bottom: 1px solid black;
+                        border-left: 1px solid black;
+                        border-collapse: collapse;
+                        margin-top: 0px; width: 100%;
+                        table-layout: auto;
+                    }
+                </style>
+                <div class="page">
+                    <table style="border:1px solid black;width:100%;border-collapse: collapse;">
+                        <tr style="border:1px solid black">
+                            <!-- Logo -->
+                            <td style="border:1px solid black" width="10%">
+                                <img t-if="o.env.user.company_id.logo"
+                                     style="max-width: 170px; max-height: 100px;"
+                                     t-att-src="image_data_uri(o.env.user.company_id.logo)"
+                                     alt="Logo"/>
+                            </td>
+                            <!-- Title -->
+                            <td style="border:1px solid black;font-size:12px;" width="23%">
+                                <div>Jl. Raya Salembaran No. 717</div>
+                                <div>RT 001 RW 001, Cengklong - Kosambi</div>
+                                <div>Tangerang - Banten</div>
+                                <div>Telp : 021 - 290 31 338</div>
+                                <div>Fax : 021 290 31 343</div>
+                                <div>www.auliacosmetic.com</div>
+                            </td>
+                            <!-- Company Info -->
+                            <td style="border:1px solid black;text-align:center;font-size:26px;" width="67%">
+                                <strong><span>Purchase Request</span></strong>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <table style="width:100%; border-collapse: collapse">
+                        <tr style="vertical-align: top;">
+                            <td width="25%">
+                                <div style="font-size:14px">
+                                    <strong><span>Creations Date and time :</span></strong>
+                                </div>
+                                <div style="font-size:12px">
+                                    <span t-if="o.date_start" t-esc="(o.date_start + relativedelta(hours=+7)).strftime('%d-%B-%Y')"/>
+                                </div>
+                            </td>
+                            <td  width="25%">
+                                <div style="font-size:14px">
+                                    <strong><span>Request By :</span></strong>
+                                </div>
+                                <div style="font-size:12px">
+                                    <span t-esc="o.requested_by.name"/>
+                                </div>
+                            </td>
+                            <td  width="25%">
+                                <div style="font-size:14px">
+                                    <strong><span>Approval Name :</span></strong>
+                                </div>
+                                <t t-foreach="o.approver_ids.filtered(lambda x: x.id)" t-as="app">
+                                    <div style="font-size:12px">
+                                        <span t-esc="app.user_id.name"/>
+                                    </div>
+                                </t>
+                            </td>
+                            <td  width="25%">
+                                <div style="font-size:14px">
+                                    <strong><span>Approval Status :</span></strong>
+                                </div>
+                                <t t-foreach="o.approver_ids.filtered(lambda x: x.id)" t-as="app">
+                                    <div style="font-size:12px">
+                                        <span t-esc="app.state"/>
+                                    </div>
+                                </t>
+                            </td>
+                        </tr>
+                    </table>
+                    <table style="width:100%;">
+                        <tr >
+                            <td >
+                                <div style="font-size:14px">
+                                    <strong><span>Descriptions :</span></strong>
+                                </div>
+                                <div style="font-size:12px">
+                                    <span t-esc="o.description"/>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <div>
+                        <table class="table table-bordered">
+                            <thead >
+                                <tr style="font-size:14px">
+                                    <th style="border: 1px solid black;">NO</th>
+                                    <th style="border: 1px solid black;">Product Code</th>
+                                    <th style="border: 1px solid black;">Description</th>
+                                    <th style="border: 1px solid black;">Qty</th>
+                                    <th style="border: 1px solid black;">UoM</th>
+                                </tr>
+                            </thead>
+                            <tbody >
+                                <t t-set="col" t-value="1"/>
+                                <t t-set="undis" t-value="0"/>
+                                <t t-set="t_disc" t-value="0"/>
+                                <!-- <t t-foreach="o.order_line.filtered(lambda l: l.price_unit)" t-as="line"> -->
+                                <t t-foreach="o.line_ids" t-as="line">
+                                    <tr style="border: 1px solid black;height: 20px;font-size:12px">
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="col"/>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:left;">
+                                            <span t-esc="line.product_id.default_code"/>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:left;">
+                                            <t t-if="line.product_id">
+                                                <span t-esc="line.product_id.name"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="line.name"/>
+                                            </t>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="line.product_qty" t-options="{'widget' : 'float', 'precision':2}"/>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="line.product_id.uom_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <t t-set="col" t-value="col + 1"/>
+                                    <!-- <t t-set="t_disc" t-value="t_disc + disc"/> -->
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_pr" model="ir.actions.report">
+        <field name="name">Report Purchase Request</field>
+        <field name="model">purchase.request</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">bmo_report.report_report_pr</field>
+        <field name="report_file">bmo_report.report_report_pr</field>
+        <field name="print_report_name">'Purchase Request - %s' % object.name</field>
+        <field name="binding_model_id" ref="purchase_request.model_purchase_request"/>
+        <field name="paperformat_id" ref="bmo_report.report_pr_paperformat" />
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

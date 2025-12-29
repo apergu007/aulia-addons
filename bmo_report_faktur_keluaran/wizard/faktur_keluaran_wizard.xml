@@ -1,0 +1,32 @@
+<odoo>
+    <record id="view_faktur_keluaran_wizard" model="ir.ui.view">
+        <field name="name">faktur.keluaran.wizard.form</field>
+        <field name="model">faktur.keluaran.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Faktur Keluaran Excel">
+                <group>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                </group>
+                <footer>
+                    <button name="action_generate_excel" string="Generate Excel" type="object" class="btn-primary"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+                <group invisible="file == False">
+                    <field name="file" filename="filename"/>
+                    <field name="filename" readonly="1"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_faktur_keluaran_excel" model="ir.actions.act_window">
+        <field name="name">Faktur Keluaran Excel</field>
+        <field name="res_model">faktur.keluaran.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_faktur_keluaran_root" name="Laporan Pajak" parent="account.menu_finance_reports" sequence="3"/>
+    <menuitem id="menu_faktur_keluaran_excel" name="Faktur Keluaran Excel" parent="menu_faktur_keluaran_root" action="action_faktur_keluaran_excel"/>
+</odoo>

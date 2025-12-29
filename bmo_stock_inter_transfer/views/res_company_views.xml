@@ -1,0 +1,16 @@
+<odoo>
+    <record id="res_config_internal_transfer_bmo" model="ir.ui.view">
+        <field name="name">res.company.form.internal.transfer.bmo</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="Internal Transfer Accounting">
+                    <group>
+                        <field name="inter_locations_clearing_account_id"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

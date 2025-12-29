@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+
+        <record id="ir_rule_zpo_team_comp_rule" model="ir.rule">
+            <field name="name">Company PO Team Rules</field>
+            <field name="model_id" ref="bmo_purchase_approval_route.model_purchase_team"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+    </data>
+</odoo>
