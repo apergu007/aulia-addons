@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_sales_orders">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <style>
+                    table.table-bordered { 
+                        border-top: 1px solid black;
+                        border-right: 1px solid black;
+                        border-bottom: 1px solid black;
+                        border-left: 1px solid black;
+                        border-collapse: collapse;
+                        margin-top: 0px; width: 100%;
+                        table-layout: auto;
+                    }
+                </style>
+                <div class="page">
+                    <table style="border-collapse: collapse;">
+                        <tr>
+                            <td>
+                                <img t-if="o.env.user.company_id.logo"
+                                    style="max-width: 340px; max-height: 150px;"
+                                    t-att-src="image_data_uri(o.env.user.company_id.logo)"
+                                    alt="Logo"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <div style="font-weight:bold;">
+                        Sales Order No. <span t-esc="o.name"/>
+                    </div>
+                    <br/>
+                    <table style="font-weight:bold;width:100%;border-collapse: collapse;" class="table table-borderless">
+                        <tr>
+                            <td>Date: <span t-esc="o.date_order.strftime('%d-%B-%Y')"/></td>
+                            <td>Terms of Payment: <span t-esc="o.payment_term_id.name"/></td>
+                        </tr>
+                        <tr>
+                            <td>Order No: <span t-esc="o.name"/></td>
+                            <td>Due Date: <span t-esc="o.validity_date.strftime('%d-%B-%Y')"/></td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <div style="font-weight:bold;">
+                        Sales Person: <span t-if="o.employee_id" t-esc="o.employee_id.name"/>
+                    </div>
+                    <br/>
+                    <div style="width:100%;font-weight:bold;">
+                        <b>Billing Details :</b>
+                        <br/>
+                        <div t-field="o.partner_id"/>
+                        <div t-field="o.partner_id.contact_address_complete"/>
+                        <div t-esc="o.partner_id.phone"/>
+                        <div t-esc="o.partner_id.email"/>
+                    </div>
+                    <br/>
+                    <div style="font-weight:bold;">
+                        Delivery Address : <span t-field="o.partner_id.ship_to"/>
+                    </div>
+                    <table style="width:100%;">
+                        <tr >
+                            <td width="50%">
+                                <!-- <strong><span>Ship To :</span></strong> -->
+                            </td>
+                            <td style="font-size:12px;text-align:center;" width="50%">
+                                <div>
+                                    <strong><span>Currency :</span></strong>
+                                    <span t-esc="o.currency_id.name"/>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <table class="table table-bordered">
+                        <thead >
+                            <tr style="font-size:14px">
+                                <th groups="bmo_mrp.see_item_code" style="border: 1px solid black;">Product Code</th>
+                                <th groups="bmo_mrp.see_product_name" style="border: 1px solid black;">Product Name</th>
+                                <th style="border: 1px solid black;">Qty</th>
+                                <th style="border: 1px solid black;">Unit Price</th>
+                                <th style="border: 1px solid black;">Disc</th>
+                                <th style="border: 1px solid black;">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody >
+                            <t t-set="undis" t-value="0"/>
+                            <t t-set="subtotal" t-value="0"/>
+                            <t t-set="t_disc" t-value="0"/>
+                            <!-- <t t-foreach="o.invoice_line_ids.filtered(lambda l: l.price_unit)" t-as="line"> -->
+                            <t t-foreach="o.order_line.filtered(lambda l: l.price_unit > 0)" t-as="line">
+                                <tr style="border: 1px solid black;height: 20px;font-size:12px">
+                                    <td groups="bmo_mrp.see_item_code" style="border: 1px solid black;text-align:left;">
+                                        <t t-if="line.product_id.default_code">
+                                            <span t-esc="line.product_id.default_code"/>
+                                        </t>
+                                        <t t-else="">
+                                            <!-- Ambil teks di dalam tanda [ ] -->
+                                            <t t-set="name_text" t-value="(line.name or '').strip()"/>
+                                            <t t-if="'[' in name_text and ']' in name_text">
+                                                <t t-set="code_part" t-value="name_text.split(']')[0].replace('[','').strip()"/>
+                                                <span t-esc="code_part"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="name_text"/>
+                                            </t>
+                                        </t>
+                                    </td>
+                                    <td groups="bmo_mrp.see_product_name" style="border: 1px solid black;text-align:left;">
+                                        <t t-if="line.product_id">
+                                            <span t-esc="line.product_id.name"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span t-esc="line.name"/>
+                                        </t>
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:center;">
+                                        <span t-esc="line.product_uom_qty"/> <span t-esc="line.product_id.uom_id.name"/>
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:right;">
+                                        <span t-esc="'{0:,.2f}'.format(int(line.price_unit))"/>
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:right;">
+                                        <t t-set="disc" t-value="0"/>
+                                        <t t-if="line.discount_type == 'percent'">
+                                            <t t-set="disc" t-value="abs(line.price_total - (line.product_uom_qty*line.price_unit))"/>
+                                            <t t-if="line.multi_discount">
+                                                <span t-esc="line.multi_discount"/>%
+                                            </t>
+                                        </t>
+                                        <t t-if="line.discount_type == 'amount'">
+                                            <t t-if="line.multi_discount">
+                                                <t t-set="disc" t-value="int(line.multi_discount)"/>
+                                                <span t-esc="'{0:,.2f}'.format(int(disc))"/>
+                                            </t>
+                                        </t>
+                                    </td>
+                                    <td style="border: 1px solid black;text-align:right;">
+                                        <span t-esc="'{0:,.2f}'.format(int(line.price_subtotal))"/>
+                                    </td>
+                                </tr>
+                                <t t-set="t_disc" t-value="t_disc + disc"/>
+                                <t t-set="subtotal" t-value="subtotal + line.price_subtotal"/>
+                            </t>
+                        </tbody>
+                    </table>
+                    <table class="table" style="width:100%;font-size:14px;">
+                        <tr>
+                            <t t-set="dpp_rumus" t-value="0.0"/>
+                            <td rowspan="8" style="border: 1px solid black;width:70%;vertical-align: top;">
+                                <div>
+                                    <strong><span>Additional Notes :</span></strong>
+                                </div>
+                                <div style="height:100px;"><span t-field="o.note"/></div>
+                            </td>
+                            <td style="width:30%;">
+                                <t t-set="dpp_rumus" t-value="0.0"/>
+                                <t t-set="dpp_rumus" t-value="((o.amount_total/1.11) * (11/12))"/>
+                                <t t-set="discount_total" t-value="sum(line.price_subtotal for line in o.order_line if line.price_subtotal &lt; 0)"/>
+                                <table style="width: 100%; border-collapse: collapse;font-size:14px">
+                                    <tr style="border: 1px solid black;">
+                                        <td style="width: 50%;"><strong><span>Sub Total</span></strong></td>
+                                        <td>:</td>
+                                        <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(subtotal))"/></td>
+                                    </tr>
+                                    <tr style="border: 1px solid black;">
+                                        <td style="width: 50%;"><strong><span>Additional Disc. :</span></strong></td>
+                                        <td>:</td>
+                                        <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(discount_total))"/></td>
+                                    </tr>
+                                    <tr style="border: 1px solid black;">
+                                        <td><strong><span>DPP </span></strong></td>
+                                        <td>:</td>
+                                        <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(dpp_rumus))"/></td>
+                                    </tr>
+                                    <tr style="border: 1px solid black;">
+                                        <td><strong><span>PPN </span></strong></td>
+                                        <td>:</td>
+                                        <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(o.amount_tax))"/></td>
+                                    </tr>
+                                    <tr style="border: 1px solid black;">
+                                        <td><strong><span>Delivery Fee</span></strong></td>
+                                        <td>:</td>
+                                        <td><!-- <span t-esc="'{0:,.2f}'.format(int(subtotal))"/> --></td>
+                                    </tr>
+                                    <tr style="border: 1px solid black;">
+                                        <td><strong><span>Down Payment</span></strong></td>
+                                        <td>:</td>
+                                        <td><!-- <span t-esc="'{0:,.2f}'.format(int(subtotal))"/> --></td>
+                                    </tr>
+                                    <tr style="border: 1px solid black;">
+                                        <td><strong><span>Amount Due </span></strong></td>
+                                        <td>:</td>
+                                        <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(o.amount_total))"/></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <div><span style="margin-right:2px;">Please sign &amp; confirm this order by email to</span> <span style="color:blue;"> so@auliacosmetic.com</span>.</div>
+                    <br/>
+                    <table class="table table-bordered" style="page-break-inside: avoid;font-size: 10px;">
+                        <tr>
+                            <td style="border: 1px solid black;text-align:center;">
+                                <strong><span>Issued by:</span></strong>
+                            </td>
+                            <td style="border: 1px solid black;text-align:center;">
+                                <strong><span>Finance Approval:</span></strong>
+                            </td>
+                            <td style="border: 1px solid black;text-align:center;">
+                                <strong><span>Sales Approval:</span></strong>
+                            </td>
+                            <td style="border: 1px solid black;text-align:center;">
+                                <strong><span>Customer Approval:</span></strong>
+                            </td>
+                        </tr>
+                        <tr style="border: 1px solid black;height:100px;font-size: 30px;color: red;">
+                            <td style="border: 1px solid black;">
+                                <center>
+                                    <t t-if="o.state!='draft'">
+                                        <!-- <b><span t-esc="o.env.user.company_id.verified_text"/></b> -->
+                                    </t>
+                                </center>
+                            </td>
+                            <td style="border: 1px solid black;font-size: 30px;">
+                                <center>
+                                    <t t-if="o.state=='purchase'">
+                                        <!-- <b><span t-esc="o.env.user.company_id.approved_text"/></b> -->
+                                    </t>
+                                </center>
+                            </td> 
+                            <td style="border: 1px solid black;">
+                                <center>
+                                    <t t-if="o.state!='draft'">
+                                        <!-- <b><span t-esc="o.env.user.company_id.verified_text"/></b> -->
+                                    </t>
+                                </center>
+                            </td>
+                            <td style="border: 1px solid black;font-size: 30px;">
+                                <center>
+                                    <t t-if="o.state=='purchase'">
+                                        <!-- <b><span t-esc="o.env.user.company_id.approved_text"/></b> -->
+                                    </t>
+                                </center>
+                            </td> 
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black;text-align:center;">
+                                <span t-esc="o.create_uid.name"/>
+                            </td>
+                            <td style="border: 1px solid black;text-align:center;">
+                                <!-- <span t-esc="o.review_apr_ids[-1].requested_by.name"/> -->
+                            </td>
+                            <td style="border: 1px solid black;text-align:center;">
+                                <!-- <span t-esc="o.review_apr_ids[0].requested_by.name"/> -->
+                            </td>
+                            <td style="border: 1px solid black;text-align:center;">
+                                <!-- <span t-esc="o.review_apr_ids[-1].requested_by.name"/> -->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black;text-align:center;vertical-align: top;">
+                                <span t-esc="(o.create_date + relativedelta(hours=7)).strftime('%d-%B-%Y')"/>
+                            </td>
+                            <td style="border: 1px solid black;text-align:center;vertical-align: top;">
+                                <!-- <span t-esc="o.review_apr_ids[-1].requested_by.function"/> -->
+                            </td>
+                            <td style="border: 1px solid black;text-align:center;vertical-align: top;">
+                                <!-- <span t-esc="o.review_apr_ids[0].requested_by.function"/> -->
+                            </td>
+                            <td style="border: 1px solid black;text-align:center;vertical-align: top;">
+                                <!-- <span t-esc="o.review_apr_ids[-1].requested_by.function"/> -->
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="footer">
+                    <img src="/bmo_report/static/img/footer.jpeg" style="width:100%; max-height:90px;"/>
+                    <div class="text-end text-muted">
+                        <div t-if="report_type == 'pdf' and display_name_in_footer" t-out="o.name">(document name)</div>
+                        <div t-if="report_type == 'pdf'">Page <span class="page"/> / <span class="topage"/></div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_sales_orders" model="ir.actions.report">
+        <field name="name">Report Sales order 2</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">bmo_report.report_sales_orders</field>
+        <field name="report_file">bmo_report.report_sales_orders</field>
+        <field name="print_report_name">'Sales Order - %s' % object.name</field>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="paperformat_id" ref="bmo_report.report_so_paperformat" />
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

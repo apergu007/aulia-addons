@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="template_report_rfq_pack_raw">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <style>
+                    table.table-bordered { 
+                        border-top: 1px solid black;
+                        border-right: 1px solid black;
+                        border-bottom: 1px solid black;
+                        border-left: 1px solid black;
+                        border-collapse: collapse;
+                        margin-top: 0px; width: 100%;
+                        table-layout: auto;
+                    }
+                </style>
+                <div class="page">
+                    <table style="border-collapse: collapse;">
+                        <tr>
+                            <td>
+                                <img t-if="o.env.user.company_id.logo"
+                                    style="max-width: 340px; max-height: 150px;"
+                                    t-att-src="image_data_uri(o.env.user.company_id.logo)"
+                                    alt="Logo"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <div style="font-weight:bold;">
+                        Request for Quotation No. <span t-esc="o.name"/>
+                    </div>
+                    <br/>
+                    <div style="font-weight:bold;">
+                        Date: <span t-if="o.date_approve" t-esc="(o.date_approve + relativedelta(hours=+7)).strftime('%d-%B-%Y')"/>
+                    </div>
+                    <div style="font-weight:bold;">
+                        Shipping Address : <span t-field="o.partner_id.ship_to"/>
+                    </div>
+                    <br/>
+                    <div style="width:100%;font-weight:bold;">
+                        <b>Vendor Details :</b>
+                        <br/>
+                        <div t-field="o.partner_id"/>
+                        <div t-field="o.partner_id.contact_address_complete"/>
+                        <div t-esc="o.partner_id.phone"/>
+                        <div t-esc="o.partner_id.email"/>
+                    </div>
+                    <br/>
+                    <div>
+                        <table class="table table-bordered">
+                            <thead >
+                                <tr style="font-size:14px">
+                                    <th style="border: 1px solid black;">Product Code</th>
+                                    <th style="border: 1px solid black;">Product Name</th>
+                                    <th style="border: 1px solid black;">Qty Required</th>
+                                    <th style="border: 1px solid black;">Expected Delivery Date</th>
+                                </tr>
+                            </thead>
+                            <tbody >
+                                <!-- <t t-foreach="o.order_line.filtered(lambda l: l.price_unit)" t-as="line"> -->
+                                <t t-foreach="o.order_line" t-as="line">
+                                    <tr style="border: 1px solid black;height: 20px;font-size:12px">
+                                        <td style="border: 1px solid black;text-align:left;">
+                                            <span t-esc="line.product_id.default_code"/>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:left;">
+                                            <t t-if="line.product_id">
+                                                <span t-esc="line.product_id.name"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="line.name"/>
+                                            </t>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="line.product_uom_qty" t-options="{'widget' : 'float', 'precision':0}"/> 
+                                            <span t-esc="line.product_id.uom_id.name"/>
+                                        </td>
+                                        <td style="border: 1px solid black;text-align:left;">
+                                            <span t-esc="line.product_id.default_code"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br/>
+                    <t t-if="raw">
+                        <div><span style="margin-right:2px;">Please send your formal quotation by email to</span> <span style="color:blue;">po.bbk@auliacosmetic.com</span> as soon as possible or within 3 days of receiving this request.</div>
+                    </t>
+                    <t t-if="pack">
+                        <div><span style="margin-right:2px;">Please send your formal quotation by email to</span> <span style="color:blue;">po@auliacosmetic.com</span> as soon as possible or within 3 days of receiving this request.</div>
+                    </t>
+                    <br/>
+                    <div>Issued by: <span t-esc="o.create_uid.name"/> - <span t-esc="(o.create_date + relativedelta(hours=7)).strftime('%d-%B-%Y')"/></div>
+                </div>
+                <div class="footer">
+                    <img src="/bmo_report/static/img/footer.jpeg" style="width:100%; max-height:90px;"/>
+                    <div class="text-end text-muted">
+                        <div t-if="report_type == 'pdf' and display_name_in_footer" t-out="o.name">(document name)</div>
+                        <div t-if="report_type == 'pdf'">Page <span class="page"/> / <span class="topage"/></div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_rfq_pack">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="pack" t-value="1"/>
+                <t t-call="bmo_report.template_report_rfq_pack_raw" />
+            </t>
+        </t>
+    </template>
+
+    <template id="report_rfq_raw">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="raw" t-value="1"/>
+                <t t-call="bmo_report.template_report_rfq_pack_raw" />
+            </t>
+        </t>
+    </template>
+    
+
+    <record id="action_report_rfq_raw" model="ir.actions.report">
+        <field name="name">Report RFQ Raw</field>
+        <field name="model">purchase.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">bmo_report.report_rfq_raw</field>
+        <field name="report_file">bmo_report.report_rfq_raw</field>
+        <field name="print_report_name">'RFQ Raw - %s' % object.name</field>
+        <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+        <field name="paperformat_id" ref="bmo_report.report_po_paperformat" />
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_rfq_pack" model="ir.actions.report">
+        <field name="name">Report RFQ Pack</field>
+        <field name="model">purchase.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">bmo_report.report_rfq_pack</field>
+        <field name="report_file">bmo_report.report_rfq_pack</field>
+        <field name="print_report_name">'RFQ Pack - %s' % object.name</field>
+        <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+        <field name="paperformat_id" ref="bmo_report.report_po_paperformat" />
+        <field name="binding_type">report</field>
+    </record>
+</odoo>
