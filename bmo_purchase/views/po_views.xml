@@ -20,6 +20,10 @@
             <xpath expr="//button[@name='button_cancel']" position="replace">
                 <button name="wizard_pop_up_cancel" invisible="state not in ('draft', 'to approve', 'sent', 'purchase')" string="Cancel" type="object" data-hotkey="x"/>
             </xpath>
+            <!-- diopen dlu buat migrasi -->
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="readonly">0</attribute>
+            </xpath>
             <xpath expr="//field[@name='currency_id']" position="after">
                 <field name="p_categ" required="1" readonly="origin != False" force_save="1"/>
                 <field name="types" required="1" readonly="(state in ['cancel', 'done', 'purchase']) or from_pr == True"/>

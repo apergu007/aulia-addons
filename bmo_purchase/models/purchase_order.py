@@ -78,19 +78,20 @@ class PurchaseOrder(models.Model):
     #         )
     #     return self.wizard_pop_up_cancel()
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        res = super(PurchaseOrder, self).create(vals_list)
-        for rec in res: 
-            if rec.p_categ == 'bahan_baku':
-                code = 'po.bahan.baku'
-            elif rec.p_categ == 'bahan_kemas':
-                code = 'po.bahan.kemas'
-            else:
-                code = 'po.lain.lain'
-            seq_src = self.env['ir.sequence'].search([('code','=',code)])
-            rec.name = seq_src.next_by_id()
-        return res
+    # dimatikan dlu buat migrasi
+    # @api.model_create_multi
+    # def create(self, vals_list):
+    #     res = super(PurchaseOrder, self).create(vals_list)
+    #     for rec in res: 
+    #         if rec.p_categ == 'bahan_baku':
+    #             code = 'po.bahan.baku'
+    #         elif rec.p_categ == 'bahan_kemas':
+    #             code = 'po.bahan.kemas'
+    #         else:
+    #             code = 'po.lain.lain'
+    #         seq_src = self.env['ir.sequence'].search([('code','=',code)])
+    #         rec.name = seq_src.next_by_id()
+    #     return res
 
 class PurchaseOrderLine(models.Model):
     _inherit = "purchase.order.line"
