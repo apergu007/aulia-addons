@@ -379,7 +379,7 @@ class QualityCheck(models.Model):
                     no_doc = f'FRM/QC/PCK/{no_doc}'
                     no_analisa = f'K{today.strftime("%y")}{today.strftime("%m")}{no_analisa}'
                 elif vals.get('type_form') == 'half':
-                    no_doc = f'FRM//QC/BLK/{no_doc}'
+                    no_doc = f'FRM/QC/BLK/{no_doc}'
                     no_analisa = f'QC/BLK/{prods.default_code}/{lots.name}/{no_analisa}'
                 elif vals.get('type_form') == 'finish':
                     no_doc = f'FRM/QC/FPD/{prods.default_code}/{no_doc}'

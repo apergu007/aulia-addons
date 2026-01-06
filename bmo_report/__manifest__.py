@@ -16,6 +16,7 @@
                         # 'security/security.xml',
                         'wizards/wiz_production_mrp.xml',
                         'reports/paperformat.xml',
+                        'reports/inherit_layout.xml',
                         'reports/report_do.xml',
                         'reports/report_delivery_note.xml',
                         'reports/report_receive.xml',

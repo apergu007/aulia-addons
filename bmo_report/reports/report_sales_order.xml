@@ -26,26 +26,26 @@
                         </tr>
                     </table>
                     <br/>
-                    <div style="font-weight:bold;">
-                        Sales Order No. <span t-esc="o.name"/>
+                    <div>
+                        <b>Sales Order No. : </b><span t-esc="o.name"/>
                     </div>
                     <br/>
-                    <table style="font-weight:bold;width:100%;border-collapse: collapse;" class="table table-borderless">
+                    <table style="width:100%;border-collapse: collapse;" class="table table-borderless">
                         <tr>
-                            <td>Date: <span t-esc="o.date_order.strftime('%d-%B-%Y')"/></td>
-                            <td>Terms of Payment: <span t-esc="o.payment_term_id.name"/></td>
+                            <td><b>Date : </b><span t-esc="o.date_order.strftime('%d-%B-%Y')"/></td>
+                            <td><b>Terms of Payment : </b><span t-esc="o.payment_term_id.name"/></td>
                         </tr>
                         <tr>
-                            <td>Order No: <span t-esc="o.name"/></td>
-                            <td>Due Date: <span t-esc="o.validity_date.strftime('%d-%B-%Y')"/></td>
+                            <td><b>Order No : </b><span t-esc="o.name"/></td>
+                            <td><b>Due Date : </b><span t-esc="o.validity_date.strftime('%d-%B-%Y')"/></td>
                         </tr>
                     </table>
                     <br/>
-                    <div style="font-weight:bold;">
-                        Sales Person: <span t-if="o.employee_id" t-esc="o.employee_id.name"/>
+                    <div>
+                        <b>Sales Person : </b><span t-if="o.employee_id" t-esc="o.employee_id.name"/>
                     </div>
                     <br/>
-                    <div style="width:100%;font-weight:bold;">
+                    <div style="width:100%;">
                         <b>Billing Details :</b>
                         <br/>
                         <div t-field="o.partner_id"/>
@@ -54,8 +54,8 @@
                         <div t-esc="o.partner_id.email"/>
                     </div>
                     <br/>
-                    <div style="font-weight:bold;">
-                        Delivery Address : <span t-field="o.partner_id.ship_to"/>
+                    <div>
+                        <b>Delivery Address : </b><span t-field="o.partner_id.ship_to"/>
                     </div>
                     <table style="width:100%;">
                         <tr >
@@ -199,76 +199,46 @@
                     <br/>
                     <div><span style="margin-right:2px;">Please sign &amp; confirm this order by email to</span> <span style="color:blue;"> so@auliacosmetic.com</span>.</div>
                     <br/>
-                    <table class="table table-bordered" style="page-break-inside: avoid;font-size: 10px;">
+                    <table class="table" style="width:100%;page-break-inside: avoid;font-size: 14px;">
                         <tr>
-                            <td style="border: 1px solid black;text-align:center;">
+                            <td style="text-align:center;">
                                 <strong><span>Issued by:</span></strong>
                             </td>
-                            <td style="border: 1px solid black;text-align:center;">
+                            <td style="text-align:center;">
                                 <strong><span>Finance Approval:</span></strong>
                             </td>
-                            <td style="border: 1px solid black;text-align:center;">
+                            <td style="text-align:center;">
                                 <strong><span>Sales Approval:</span></strong>
                             </td>
-                            <td style="border: 1px solid black;text-align:center;">
+                            <td style="text-align:center;">
                                 <strong><span>Customer Approval:</span></strong>
                             </td>
                         </tr>
-                        <tr style="border: 1px solid black;height:100px;font-size: 30px;color: red;">
-                            <td style="border: 1px solid black;">
-                                <center>
-                                    <t t-if="o.state!='draft'">
-                                        <!-- <b><span t-esc="o.env.user.company_id.verified_text"/></b> -->
-                                    </t>
-                                </center>
-                            </td>
-                            <td style="border: 1px solid black;font-size: 30px;">
-                                <center>
-                                    <t t-if="o.state=='purchase'">
-                                        <!-- <b><span t-esc="o.env.user.company_id.approved_text"/></b> -->
-                                    </t>
-                                </center>
-                            </td> 
-                            <td style="border: 1px solid black;">
-                                <center>
-                                    <t t-if="o.state!='draft'">
-                                        <!-- <b><span t-esc="o.env.user.company_id.verified_text"/></b> -->
-                                    </t>
-                                </center>
-                            </td>
-                            <td style="border: 1px solid black;font-size: 30px;">
-                                <center>
-                                    <t t-if="o.state=='purchase'">
-                                        <!-- <b><span t-esc="o.env.user.company_id.approved_text"/></b> -->
-                                    </t>
-                                </center>
-                            </td> 
-                        </tr>
                         <tr>
-                            <td style="border: 1px solid black;text-align:center;">
+                            <td style="text-align:center;">
                                 <span t-esc="o.create_uid.name"/>
                             </td>
-                            <td style="border: 1px solid black;text-align:center;">
+                            <td style="text-align:center;">
                                 <!-- <span t-esc="o.review_apr_ids[-1].requested_by.name"/> -->
                             </td>
-                            <td style="border: 1px solid black;text-align:center;">
+                            <td style="text-align:center;">
                                 <!-- <span t-esc="o.review_apr_ids[0].requested_by.name"/> -->
                             </td>
-                            <td style="border: 1px solid black;text-align:center;">
+                            <td style="text-align:center;">
                                 <!-- <span t-esc="o.review_apr_ids[-1].requested_by.name"/> -->
                             </td>
                         </tr>
                         <tr>
-                            <td style="border: 1px solid black;text-align:center;vertical-align: top;">
+                            <td style="text-align:center;vertical-align: top;">
                                 <span t-esc="(o.create_date + relativedelta(hours=7)).strftime('%d-%B-%Y')"/>
                             </td>
-                            <td style="border: 1px solid black;text-align:center;vertical-align: top;">
+                            <td style="text-align:center;vertical-align: top;">
                                 <!-- <span t-esc="o.review_apr_ids[-1].requested_by.function"/> -->
                             </td>
-                            <td style="border: 1px solid black;text-align:center;vertical-align: top;">
+                            <td style="text-align:center;vertical-align: top;">
                                 <!-- <span t-esc="o.review_apr_ids[0].requested_by.function"/> -->
                             </td>
-                            <td style="border: 1px solid black;text-align:center;vertical-align: top;">
+                            <td style="text-align:center;vertical-align: top;">
                                 <!-- <span t-esc="o.review_apr_ids[-1].requested_by.function"/> -->
                             </td>
                         </tr>

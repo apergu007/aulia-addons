@@ -2,80 +2,65 @@
 <odoo>
     <template id="template_report_po_pack_raw">
         <t t-call="web.html_container">
-            <t t-foreach="docs" t-as="o">
-                <style>
-                    table.table-bordered { 
-                        border-top: 1px solid black;
-                        border-right: 1px solid black;
-                        border-bottom: 1px solid black;
-                        border-left: 1px solid black;
-                        border-collapse: collapse;
-                        margin-top: 0px; width: 100%;
-                        table-layout: auto;
-                    }
-                </style>
-                <div class="page">
-                    <table style="border-collapse: collapse;">
-                        <tr>
-                            <td>
-                                <img t-if="o.env.user.company_id.logo"
-                                    style="max-width: 340px; max-height: 150px;"
-                                    t-att-src="image_data_uri(o.env.user.company_id.logo)"
-                                    alt="Logo"/>
-                            </td>
-                        </tr>
-                    </table>
-                    <br/>
-                    <div style="font-weight:bold;">
-                        Purchase Order No. : <span t-esc="o.name"/>
-                    </div>
-                    <br/>
-                    <div style="font-weight:bold;">
-                        Date: <span t-if="o.date_approve" t-esc="(o.date_approve + relativedelta(hours=+7)).strftime('%d-%B-%Y')"/>
-                    </div>
-                    <br/>
-                    <div style="width:100%;font-weight:bold;">
-                        <b>Vendor Details :</b>
+            <t t-call="bmo_report.external_layout_custom">
+                <t t-foreach="docs" t-as="o">
+                    <style>
+                        table.table-sm { 
+                            border-top: 1px solid black;
+                            border-right: 1px solid black;
+                            border-bottom: 1px solid black;
+                            border-left: 1px solid black;
+                            border-collapse: collapse;
+                            margin-top: 0px; width: 100%;
+                            table-layout: auto;
+                        }
+                    </style>
+                    <div class="page" style="font-size:14px;">
+                        <div style="font-size:20px;">
+                            <span style="margin-right:2px;font-weight:bold;">Purchase Order No. : </span><span t-esc="o.name"/>
+                        </div>
                         <br/>
-                        <div t-field="o.partner_id"/>
-                        <div t-field="o.partner_id.contact_address_complete"/>
-                        <div t-esc="o.partner_id.phone"/>
-                        <div t-esc="o.partner_id.email"/>
-                    </div>
-                    <br/>
-                    <div style="font-weight:bold;">
-                        Terms of Payment : <span t-esc="o.payment_term_id.name"/>
-                    </div>
-                    <div style="font-weight:bold;">
-                        Shipping Address : <span t-field="o.partner_id.ship_to"/>
-                    </div>
-                    <div style="font-weight:bold;">
-                        Expected Arrival : <span t-esc="o.date_planned.strftime('%d-%B-%Y')"/>
-                    </div>
-                    <table style="width:100%;">
-                        <tr >
-                            <td width="50%">
-                                <!-- <strong><span>Ship To :</span></strong> -->
-                            </td>
-                            <td style="font-size:12px;text-align:center;" width="50%">
-                                <div>
-                                    <strong><span>Currency :</span></strong>
-                                    <span t-esc="o.currency_id.name"/>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                    <br/>
-                    <div>
-                        <table class="table table-bordered">
+                        <div class="row">
+                            <div class="col-6">
+                                <b>Order Date : </b><span t-if="o.date_approve" t-esc="(o.date_approve + relativedelta(hours=+7)).strftime('%d-%B-%Y')"/>
+                            </div>
+                            <div class="col-6">
+                                <b>Expected Arrival : </b><span t-esc="o.date_planned.strftime('%d-%B-%Y')"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-6">
+                                <b>Vendor Details :</b>
+                                <br/>
+                                <div t-field="o.partner_id"/>
+                                <div t-field="o.partner_id.contact_address_complete"/>
+                                <div t-esc="o.partner_id.mobile"/>
+                                <div t-esc="o.partner_id.email"/>
+                            </div>
+                            <div class="col-6">
+                                <b>Shipping Address : </b>
+                                <br/>
+                                <div t-field="o.partner_id.ship_to"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-8"></div>
+                            <div class="col-4">
+                                <strong><span>Currency :</span></strong>
+                                <span t-esc="o.currency_id.name"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <table class="table table-sm">
                             <thead >
-                                <tr style="font-size:14px">
-                                    <th style="border: 1px solid black;">Product Code</th>
-                                    <th style="border: 1px solid black;">Product Name</th>
-                                    <th style="border: 1px solid black;">Qty</th>
-                                    <th style="border: 1px solid black;">Unit Price</th>
-                                    <th style="border: 1px solid black;">Disc</th>
-                                    <th style="border: 1px solid black;">Amount</th>
+                                <tr>
+                                    <th style="text-align:center;border: 1px solid black;">Product Code</th>
+                                    <th style="text-align:center;border: 1px solid black;">Product Name</th>
+                                    <th style="text-align:center;border: 1px solid black;">Qty</th>
+                                    <th style="text-align:center;border: 1px solid black;">Unit Price</th>
+                                    <th style="text-align:center;border: 1px solid black;">Disc</th>
+                                    <th style="text-align:center;border: 1px solid black;">Amount</th>
                                 </tr>
                             </thead>
                             <tbody >
@@ -83,7 +68,7 @@
                                 <t t-set="t_disc" t-value="0"/>
                                 <!-- <t t-foreach="o.order_line.filtered(lambda l: l.price_unit)" t-as="line"> -->
                                 <t t-foreach="o.order_line" t-as="line">
-                                    <tr style="border: 1px solid black;height: 20px;font-size:12px">
+                                    <tr style="border: 1px solid black;height: 20px;">
                                         <td style="border: 1px solid black;text-align:left;">
                                             <span t-esc="line.product_id.default_code"/>
                                         </td>
@@ -119,133 +104,90 @@
                                 </t>
                             </tbody>
                         </table>
-                    </div>
-                    <br/>
-                    <table class="table" style="width:100%;font-size:14px;border-collapse: collapse;">
-                        <tr>
-                            <td rowspan="4" style="border: 1px solid black;width:70%;vertical-align: top;">
+                        <div class="row">
+                            <div class="col-8">
                                 <div>
                                     <strong><span>Additional Notes :</span></strong>
                                 </div>
-                                <div style="height:100px;"><span t-field="o.notes"/></div>
-                            </td>
-                            <td style="width:30%;">
+                                <div style="height:50px;"><span t-field="o.notes"/></div>
+                            </div>
+                            <div class="col-4">
                                 <t t-set="subtotal" t-value="sum(line.price_subtotal for line in o.order_line if line.price_subtotal &gt; 0)"/>
                                 <t t-set="dpp_rumus" t-value="0.0"/>
                                 <t t-set="dpp_rumus" t-value="((o.amount_total/1.11) * (11/12))"/>
-                                <table style="width: 100%; border-collapse: collapse;font-size:14px">
-                                    <tr style="border: 1px solid black;">
+                                <table class="table table-borderless" style="width:100%;border-collapse: collapse;">
+                                    <tr>
                                         <td style="width: 50%;"><strong><span>Sub Total </span></strong></td>
                                         <td>:</td>
                                         <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(subtotal))"/></td>
                                     </tr>
-                                    <tr style="border: 1px solid black;">
+                                    <tr>
                                         <td><strong><span>Taxes </span></strong></td>
                                         <td>:</td>
                                         <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(o.amount_tax))"/></td>
                                     </tr>
-                                    <tr style="border: 1px solid black;">
+                                    <tr>
                                         <td><strong><span>Grand Total </span></strong></td>
                                         <td>:</td>
                                         <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(o.amount_total))"/></td>
-                                    </tr>
+                                    </tr>         
                                 </table>
-                            </td>
-                        </tr>
-                    </table>
-                    <t t-if="raw">
-                        <div>Purchase Terms:
-                            <ul>
-                                <li>Payment Terms: <span t-field="o.partner_id.property_supplier_payment_term_id"/></li>
-                                <li><span style="margin-right:2px;">Please sign &amp; confirm this order by email to</span> <span style="color:blue"> po.bbk@auliacosmetic.com.</span></li>
-                                <li>Please attach Certificate of Analysis (COA) with delivery note.</li>
-                                <li>Please attach a copy of signed PO with the bill/invoice. </li>
-                                <li>Without prior confirmation, early delivery/extra delivery quantity may be returned.</li>
-                            </ul>
+                            </div>
                         </div>
-                    </t>
-                    <t t-if="pack">
-                        <div>Purchase Terms:
-                            <ul>
-                                <li>Payment Terms: <span t-field="o.partner_id.property_supplier_payment_term_id"/></li>
-                                <li><span style="margin-right:2px;">Please sign &amp; confirm this order by email to</span> <span style="color:blue"> po@auliacosmetic.com.</span></li>
-                                <li>Please attach Certificate of Analysis (COA) with delivery note.</li>
-                                <li>Please attach a copy of signed PO with the bill/invoice. </li>
-                                <li>Without prior confirmation, early delivery/extra delivery quantity may be returned.</li>
-                            </ul>
-                        </div>
-                    </t>
-                    <br/>
-                    <div>
-                        <div>
-                            <table class="table table-bordered" style="page-break-inside: avoid;font-size: 10px;">
-                                <tr>
-                                    <td style="border: 1px solid black;text-align:center;width:33%;">
-                                        <strong><span>Issued by: </span></strong>
-                                    </td>
-                                    <td style="border: 1px solid black;text-align:center;width:33%;">
-                                        <strong><span>Approval by: </span></strong>
-                                    </td>
-                                    <td style="border: 1px solid black;text-align:center;width:33%;">
-                                        <strong><span>Vendor Confirmation: </span></strong>
-                                    </td>
-                                </tr>
-                                <tr style="border: 1px solid black;height:100px;font-size: 30px;color: red;">
-                                    <td style="border: 1px solid black;">
-                                        <center>
-                                            <t t-if="o.state!='draft'">
-                                                <!-- <b><span t-esc="o.env.user.company_id.verified_text"/></b> -->
-                                            </t>
-                                        </center>
-                                    </td>
-                                    <td style="border: 1px solid black;font-size: 30px;">
-                                        <center>
-                                            <t t-if="o.state=='purchase'">
-                                                <!-- <b><span t-esc="o.env.user.company_id.approved_text"/></b> -->
-                                            </t>
-                                        </center>
-                                    </td>
-                                    <td style="border: 1px solid black;font-size: 30px;">
-                                        <center>
-                                            <t t-if="o.state=='purchase'">
-                                                <!-- <b><span t-esc="o.env.user.company_id.approved_text"/></b> -->
-                                            </t>
-                                        </center>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="border: 1px solid black;text-align:center;">
-                                        <span t-esc="o.create_uid.name"/>
-                                    </td>
-                                    <td style="border: 1px solid black;text-align:center;">
-                                        <span t-if="o.approver_ids" t-esc="o.approver_ids[-1].user_id.name"/>
-                                    </td>
-                                    <td style="border: 1px solid black;text-align:center;">
-                                        <!-- <span t-esc="o.review_apr_ids[-1].requested_by.name"/> -->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="border: 1px solid black;text-align:center;vertical-align: top;">
-                                        <span t-esc="(o.create_date + relativedelta(hours=7)).strftime('%d-%B-%Y')"/>
-                                    </td>
-                                    <td style="border: 1px solid black;text-align:center;vertical-align: top;">
-                                        <span t-if="o.approver_ids" t-esc="(o.approver_ids[-1].write_date + relativedelta(hours=7)).strftime('%d-%B-%Y')"/>
-                                    </td>
-                                    <td style="border: 1px solid black;text-align:center;vertical-align: top;">
-                                        <!-- <span t-esc="o.review_apr_ids[-1].requested_by.function"/> -->
-                                    </td>
-                                </tr>
-                            </table>
+                        <br/>
+                        <t t-if="raw">
+                            <div>Purchase Terms:
+                                <ul>
+                                    <li>Payment Terms: <span t-field="o.partner_id.property_supplier_payment_term_id"/></li>
+                                    <li><span style="margin-right:2px;">Please sign &amp; confirm this order by email to</span> <span style="color:blue"> po.bbk@auliacosmetic.com.</span></li>
+                                    <li>Please attach Certificate of Analysis (COA) with delivery note.</li>
+                                    <li>Please attach a copy of signed PO with the bill/invoice. </li>
+                                    <li>Without prior confirmation, early delivery/extra delivery quantity may be returned.</li>
+                                </ul>
+                            </div>
+                        </t>
+                        <t t-if="pack">
+                            <div>Purchase Terms:
+                                <ul>
+                                    <li>Payment Terms: <span t-field="o.partner_id.property_supplier_payment_term_id"/></li>
+                                    <li><span style="margin-right:2px;">Please sign &amp; confirm this order by email to</span> <span style="color:blue"> po@auliacosmetic.com.</span></li>
+                                    <li>Please attach Certificate of Analysis (COA) with delivery note.</li>
+                                    <li>Please attach a copy of signed PO with the bill/invoice. </li>
+                                    <li>Without prior confirmation, early delivery/extra delivery quantity may be returned.</li>
+                                </ul>
+                            </div>
+                        </t>
+                        <br/>
+                        <div class="row" style="width:100%; page-break-inside: avoid;">
+                            <!-- First column -->
+                            <div class="col" style="text-align:center; width:33%; border:0px;">
+                                <strong><span>Issued by: </span></strong>
+                                <div><span t-esc="o.create_uid.name"/></div>
+                                <div style="text-align:center; vertical-align: top;">
+                                    <span t-esc="(o.create_date + relativedelta(hours=7)).strftime('%d-%B-%Y %H:%M')"/>
+                                </div>
+                            </div>
+
+                            <!-- Second column -->
+                            <div class="col" style="text-align:center; width:33%; border:0px;">
+                                <strong><span>Approval by: </span></strong>
+                                <div><span t-if="o.approver_ids" t-esc="o.approver_ids[-1].user_id.name"/></div>
+                                <div style="text-align:center; vertical-align: top;">
+                                    <span t-if="o.approver_ids" t-esc="(o.approver_ids[-1].write_date + relativedelta(hours=7)).strftime('%d-%B-%Y %H:%M')"/>
+                                </div>
+                            </div>
+
+                            <!-- Third column -->
+                            <div class="col" style="text-align:center; width:33%; border:0px;">
+                                <strong><span>Vendor Confirmation: </span></strong>
+                                <div style="height:60px;"><!-- <span t-esc="o.review_apr_ids[-1].requested_by.name"/> --></div>
+                                <div style="text-align:center; vertical-align: top;">
+                                    <div>(_____________________________)</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="footer">
-                    <img src="/bmo_report/static/img/footer.jpeg" style="width:100%; max-height:90px;"/>
-                    <div class="text-end text-muted">
-                        <div t-if="report_type == 'pdf' and display_name_in_footer" t-out="o.name">(document name)</div>
-                        <div t-if="report_type == 'pdf'">Page <span class="page"/> / <span class="topage"/></div>
-                    </div>
-                </div>
+                </t>
             </t>
         </t>
     </template>
@@ -270,26 +212,26 @@
     
 
     <record id="action_report_po_raw" model="ir.actions.report">
-        <field name="name">Report Purchase Raw</field>
+        <field name="name">PO Bahan Baku</field>
         <field name="model">purchase.order</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">bmo_report.report_po_raw</field>
         <field name="report_file">bmo_report.report_po_raw</field>
         <field name="print_report_name">'Purchase Order Raw - %s' % object.name</field>
         <field name="binding_model_id" ref="purchase.model_purchase_order"/>
-        <field name="paperformat_id" ref="bmo_report.report_po_paperformat" />
+        <field name="paperformat_id" ref="bmo_report.report_po_paperformat_header" />
         <field name="binding_type">report</field>
     </record>
 
     <record id="action_report_po_pack" model="ir.actions.report">
-        <field name="name">Report Purchase Pack</field>
+        <field name="name">PO Bahan Kemas</field>
         <field name="model">purchase.order</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">bmo_report.report_po_pack</field>
         <field name="report_file">bmo_report.report_po_pack</field>
         <field name="print_report_name">'Purchase Order Pack - %s' % object.name</field>
         <field name="binding_model_id" ref="purchase.model_purchase_order"/>
-        <field name="paperformat_id" ref="bmo_report.report_po_paperformat" />
+        <field name="paperformat_id" ref="bmo_report.report_po_paperformat_header" />
         <field name="binding_type">report</field>
     </record>
 </odoo>

@@ -90,19 +90,20 @@
                             <t t-foreach="o.invoice_line_ids" t-as="line">
                                 <tr style="border: 1px solid black;height: 20px;font-size:12px">
                                     <td groups="bmo_mrp.see_item_code" style="border: 1px solid black;text-align:left;">
-                                        <t t-if="line.product_id.default_code">
+                                        <t t-if="line.product_id">
                                             <span t-esc="line.product_id.default_code"/>
                                         </t>
                                         <t t-else="">
+                                            <span t-esc="line.account_id.code"/>
                                             <!-- Ambil teks di dalam tanda [ ] -->
-                                            <t t-set="name_text" t-value="(line.name or '').strip()"/>
+                                            <!-- <t t-set="name_text" t-value="(line.name or '').strip()"/>
                                             <t t-if="'[' in name_text and ']' in name_text">
                                                 <t t-set="code_part" t-value="name_text.split(']')[0].replace('[','').strip()"/>
                                                 <span t-esc="code_part"/>
                                             </t>
                                             <t t-else="">
                                                 <span t-esc="name_text"/>
-                                            </t>
+                                            </t> -->
                                         </t>
                                     </td>
                                     <td groups="bmo_mrp.see_product_name" style="border: 1px solid black;text-align:left;">
@@ -199,78 +200,48 @@
                     <br/>
                     <div><span style="margin-right:2px;">Please sign &amp; confirm this order by email to</span>  <span style="color:blue;"> so@auliacosmetic.com</span>.</div>
                     <br/>
-                    <table class="table table-bordered" style="page-break-inside: avoid;font-size: 10px;">
+                    <table class="table" style="width:100%;page-break-inside: avoid;font-size: 14px;">
                         <tr>
-                            <td style="border: 1px solid black;text-align:center;">
+                            <td style="text-align:center;">
                                 <strong><span>Issued by:</span></strong>
                             </td>
-                            <td style="border: 1px solid black;text-align:center;">
+                            <td style="text-align:center;">
                                 <strong><span>Finance Approval:</span></strong>
                             </td>
-                            <td style="border: 1px solid black;text-align:center;">
+                            <td style="text-align:center;">
                                 <strong><span>Sales Approval:</span></strong>
                             </td>
-                            <td style="border: 1px solid black;text-align:center;">
+                            <td style="text-align:center;">
                                 <strong><span>Customer Approval:</span></strong>
                             </td>
                         </tr>
-                        <tr style="border: 1px solid black;height:100px;font-size: 30px;color: red;">
-                            <td style="border: 1px solid black;">
-                                <center>
-                                    <t t-if="o.state!='draft'">
-                                        <!-- <b><span t-esc="o.env.user.company_id.verified_text"/></b> -->
-                                    </t>
-                                </center>
-                            </td>
-                            <td style="border: 1px solid black;font-size: 30px;">
-                                <center>
-                                    <t t-if="o.state=='purchase'">
-                                        <!-- <b><span t-esc="o.env.user.company_id.approved_text"/></b> -->
-                                    </t>
-                                </center>
-                            </td> 
-                            <td style="border: 1px solid black;">
-                                <center>
-                                    <t t-if="o.state!='draft'">
-                                        <!-- <b><span t-esc="o.env.user.company_id.verified_text"/></b> -->
-                                    </t>
-                                </center>
-                            </td>
-                            <td style="border: 1px solid black;font-size: 30px;">
-                                <center>
-                                    <t t-if="o.state=='purchase'">
-                                        <!-- <b><span t-esc="o.env.user.company_id.approved_text"/></b> -->
-                                    </t>
-                                </center>
-                            </td> 
-                        </tr>
                         <tr>
-                            <td style="border: 1px solid black;text-align:center;">
+                            <td style="text-align:center;">
                                 <span t-esc="o.create_uid.name"/>
                                 <!-- <span t-esc="o.review_apr_ids[0].requested_by.name"/> -->
                             </td>
-                            <td style="border: 1px solid black;text-align:center;">
+                            <td style="text-align:center;">
                                 <!-- <span t-esc="o.review_apr_ids[-1].requested_by.name"/> -->
                             </td>
-                            <td style="border: 1px solid black;text-align:center;">
+                            <td style="text-align:center;">
                                 <!-- <span t-esc="o.review_apr_ids[0].requested_by.name"/> -->
                             </td>
-                            <td style="border: 1px solid black;text-align:center;">
+                            <td style="text-align:center;">
                                 <!-- <span t-esc="o.review_apr_ids[-1].requested_by.name"/> -->
                             </td>
                         </tr>
                         <tr>
-                            <td style="border: 1px solid black;text-align:center;vertical-align: top;">
+                            <td style="text-align:center;vertical-align: top;">
                                 <span t-esc="(o.create_date + relativedelta(hours=7)).strftime('%d-%B-%Y')"/>
                                 <!-- <span t-if="o.approver_ids" t-esc="o.approver_ids[0].requested_by.function"/> -->
                             </td>
-                            <td style="border: 1px solid black;text-align:center;vertical-align: top;">
+                            <td style="text-align:center;vertical-align: top;">
                                 <!-- <span t-esc="o.review_apr_ids[-1].requested_by.function"/> -->
                             </td>
-                            <td style="border: 1px solid black;text-align:center;vertical-align: top;">
+                            <td style="text-align:center;vertical-align: top;">
                                 <!-- <span t-esc="o.review_apr_ids[0].requested_by.function"/> -->
                             </td>
-                            <td style="border: 1px solid black;text-align:center;vertical-align: top;">
+                            <td style="text-align:center;vertical-align: top;">
                                 <!-- <span t-esc="o.review_apr_ids[-1].requested_by.function"/> -->
                             </td>
                         </tr>

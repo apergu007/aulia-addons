@@ -33,6 +33,22 @@
             <field name="dpi">90</field>
         </record>
 
+        <record id="report_so_2_paperformat" model="report.paperformat"> 
+            <field name="name">Sales Order 2</field>
+            <field name="default" eval="True" />
+            <field name="format">custom</field>
+            <field name="page_height">279</field>
+            <field name="page_width">241</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">20</field>
+            <field name="margin_bottom">25</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">15</field>
+            <field name="dpi">90</field>
+        </record>
+
         <record id="report_sales_invoice_paperformat" model="report.paperformat"> 
             <field name="name">Sales Invoice</field>
             <field name="default" eval="True" />
@@ -62,6 +78,22 @@
             <field name="margin_right">5</field>
             <field name="header_line" eval="False" />
             <field name="header_spacing">0</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <record id="report_po_paperformat_header" model="report.paperformat"> 
+            <field name="name">Purchase Order With Header</field>
+            <field name="default" eval="True" />
+            <field name="format">custom</field>
+            <field name="page_height">279</field>
+            <field name="page_width">241</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">30</field>
+            <field name="margin_bottom">25</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">25</field>
             <field name="dpi">90</field>
         </record>
 

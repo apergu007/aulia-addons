@@ -26,15 +26,15 @@
                         </tr>
                     </table>
                     <br/>
-                    <div style="font-weight:bold;">
-                        Request for Quotation No. <span t-esc="o.name"/>
+                    <div>
+                        <b>Request for Quotation No. : </b> <span t-esc="o.name"/>
                     </div>
                     <br/>
-                    <div style="font-weight:bold;">
-                        Date: <span t-if="o.date_approve" t-esc="(o.date_approve + relativedelta(hours=+7)).strftime('%d-%B-%Y')"/>
+                    <div>
+                        <b>Date : </b><span t-if="o.date_approve" t-esc="(o.date_approve + relativedelta(hours=+7)).strftime('%d-%B-%Y')"/>
                     </div>
-                    <div style="font-weight:bold;">
-                        Shipping Address : <span t-field="o.partner_id.ship_to"/>
+                    <div>
+                        <b>Shipping Address : </b><span t-field="o.partner_id.ship_to"/>
                     </div>
                     <br/>
                     <div style="width:100%;font-weight:bold;">
