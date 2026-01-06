@@ -311,7 +311,7 @@ class StockInventory(models.Model):
         return True
 
     def action_done(self):
-        if self.type_adjustments in ('normal', 'qty_only') and not self.line_ids:
+        if self.type_adjustments in ('normal', 'qty_only') and self.line_ids:
             for line in self.line_ids:
                 domain = [
                     ('company_id', '=', line.stock_inventory_id.company_id.id),
