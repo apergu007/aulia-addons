@@ -2,7 +2,7 @@
 <odoo>
     <template id="template_report_po_pack_raw">
         <t t-call="web.html_container">
-            <t t-call="bmo_report.external_layout_custom">
+            <t t-call="bmo_report.external_layout_custom_noheader">
                 <t t-foreach="docs" t-as="o">
                     <style>
                         table.table-sm { 
@@ -15,6 +15,26 @@
                             table-layout: auto;
                         }
                     </style>
+                    <div t-attf-class="header">
+                        <t t-set="company" t-value="o.company_id.sudo()"/>
+                        <div class="row">
+                            <div class="col-6">
+                                <img t-if="company.logo" class="o_company_logo_big" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
+                                <div t-if="company.report_header" t-field="company.report_header" class="o_company_tagline fw-bold mt-2">Company tagline</div>
+                            </div>
+                            <div class="col-5">
+                                <div class="text-right">
+                                    <span style="margin-right:2px;font-weight:bold;">Purchase Order No. : </span><span t-esc="o.name"/>
+                                </div>
+                            </div>
+                            <div class="col-1">
+                                <div class="text-right">
+                                    <div t-if="report_type == 'pdf'">Page <span class="page"/> / <span class="topage"/></div>
+                                    <!-- <div t-if="report_type == 'pdf' and display_name_in_footer" t-out="o.name">(document name)</div> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="page" style="font-size:14px;">
                         <div style="font-size:20px;">
                             <span style="margin-right:2px;font-weight:bold;">Purchase Order No. : </span><span t-esc="o.name"/>
@@ -79,11 +99,17 @@
                                             <span t-esc="line.product_id.default_code"/>
                                         </td>
                                         <td style="border: 1px solid black;text-align:left;">
-                                            <t t-if="line.product_id">
-                                                <span t-esc="line.product_id.name"/>
+                                            <t t-if="line.description">
+                                                <span t-esc="line.description"/>
                                             </t>
                                             <t t-else="">
-                                                <span t-esc="line.name"/>
+                                                <t t-if="line.product_id">
+                                                    <span t-esc="line.product_id.name"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-esc="line.name"/>
+                                                </t>
+                                                
                                             </t>
                                         </td>
                                         <td style="border: 1px solid black;text-align:center;">
@@ -191,9 +217,11 @@
                             <!-- Second column -->
                             <div class="col" style="text-align:center; width:33%; border:0px;">
                                 <strong><span>Approval by: </span></strong>
-                                <div><span t-if="o.approver_ids" t-esc="o.approver_ids[-1].user_id.name"/></div>
+                                <div>
+                                    <span t-if="o.approver_ids and o.approver_ids[-1].state == 'approved'" t-esc="o.approver_ids[-1].user_id.name"/>
+                                </div>
                                 <div style="text-align:center; vertical-align: top;">
-                                    <span t-if="o.approver_ids" t-esc="(o.approver_ids[-1].write_date + relativedelta(hours=7)).strftime('%d-%B-%Y %H:%M')"/>
+                                    <span t-if="o.approver_ids and o.approver_ids[-1].state == 'approved'" t-esc="(o.approver_ids[-1].write_date + relativedelta(hours=7)).strftime('%d-%B-%Y %H:%M')"/>
                                 </div>
                             </div>
 
@@ -237,7 +265,7 @@
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">bmo_report.report_po_raw</field>
         <field name="report_file">bmo_report.report_po_raw</field>
-        <field name="print_report_name">'Purchase Order Raw - %s' % object.name</field>
+        <field name="print_report_name">'PO Bahan Baku - %s' % object.name</field>
         <field name="binding_model_id" ref="purchase.model_purchase_order"/>
         <field name="paperformat_id" ref="bmo_report.report_po_paperformat_header" />
         <field name="binding_type">report</field>
@@ -249,7 +277,7 @@
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">bmo_report.report_po_pack</field>
         <field name="report_file">bmo_report.report_po_pack</field>
-        <field name="print_report_name">'Purchase Order Pack - %s' % object.name</field>
+        <field name="print_report_name">'PO Bahan Kemas - %s' % object.name</field>
         <field name="binding_model_id" ref="purchase.model_purchase_order"/>
         <field name="paperformat_id" ref="bmo_report.report_po_paperformat_header" />
         <field name="binding_type">report</field>

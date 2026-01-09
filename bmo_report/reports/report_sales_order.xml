@@ -18,9 +18,19 @@
                     <div t-attf-class="header">
                         <t t-set="company" t-value="o.company_id.sudo()"/>
                         <div class="row">
-                            <div class="col-11">
+                            <div class="col-6">
                                 <img t-if="company.logo" class="o_company_logo_big" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
                                 <div t-if="company.report_header" t-field="company.report_header" class="o_company_tagline fw-bold mt-2">Company tagline</div>
+                            </div>
+                            <div class="col-5">
+                                <div class="text-right">
+                                    <t t-if="so == 1">
+                                        <span style="margin-right:2px;font-weight:bold;">Sales Order No. : </span><span t-esc="o.name"/>
+                                    </t>
+                                    <t t-if="proforma == 1">
+                                        <span style="margin-right:2px;font-weight:bold;">Proforma Invoice No. : </span><span t-esc="o.name"/>
+                                    </t>
+                                </div>
                             </div>
                             <div class="col-1">
                                 <div class="text-right">
@@ -30,7 +40,12 @@
                             </div>
                         </div>
                         <div style="font-size:20px;">
-                            <span style="margin-right:2px;font-weight:bold;">Sales Order No. : </span><span t-esc="o.name"/>
+                            <t t-if="so == 1">
+                                <span style="margin-right:2px;font-weight:bold;">Sales Order No. : </span><span t-esc="o.name"/>
+                            </t>
+                            <t t-if="proforma == 1">
+                                <span style="margin-right:2px;font-weight:bold;">Proforma Invoice No. : </span><span t-esc="o.name"/>
+                            </t>
                         </div>
                         <br/>
                         <div class="row">
@@ -96,7 +111,7 @@
                                         <t t-set="dp_fee" t-value="dp_fee + line.price_unit"/>
                                     </t>
                                     <tr style="border: 1px solid black;height: 20px;">
-                                        <td style="border: 1px solid black;text-align:left;">
+                                        <td style="border: 1px solid black;text-align:center;">
                                             <span t-esc="col"/>
                                         </td>
                                         <td style="border: 1px solid black;text-align:left;">
@@ -262,13 +277,43 @@
         </t>
     </template>
 
+    <template id="report_so_so">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="so" t-value="1"/>
+                <t t-call="bmo_report.report_sales_orders" />
+            </t>
+        </t>
+    </template>
+
+    <template id="report_so_proforma">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="proforma" t-value="1"/>
+                <t t-call="bmo_report.report_sales_orders" />
+            </t>
+        </t>
+    </template>
+
     <record id="action_report_sales_orders" model="ir.actions.report">
         <field name="name">Report Sales order</field>
         <field name="model">sale.order</field>
         <field name="report_type">qweb-pdf</field>
-        <field name="report_name">bmo_report.report_sales_orders</field>
-        <field name="report_file">bmo_report.report_sales_orders</field>
+        <field name="report_name">bmo_report.report_so_so</field>
+        <field name="report_file">bmo_report.report_so_so</field>
         <field name="print_report_name">'Sales Order - %s' % object.name</field>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="paperformat_id" ref="bmo_report.report_a4_paperformat_header" />
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_proforma_invoice" model="ir.actions.report">
+        <field name="name">Report Proforma Invoice</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">bmo_report.report_so_proforma</field>
+        <field name="report_file">bmo_report.report_so_proforma</field>
+        <field name="print_report_name">'Proforma Invoice - %s' % object.name</field>
         <field name="binding_model_id" ref="sale.model_sale_order"/>
         <field name="paperformat_id" ref="bmo_report.report_a4_paperformat_header" />
         <field name="binding_type">report</field>
