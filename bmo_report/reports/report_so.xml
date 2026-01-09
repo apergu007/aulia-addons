@@ -346,7 +346,7 @@
         <t t-call="bmo_report.report_report_so"/>
     </template>
 
-    <record id="action_report_so" model="ir.actions.report">
+    <!-- <record id="action_report_so" model="ir.actions.report">
         <field name="name">Report Sales Order</field>
         <field name="model">sale.order</field>
         <field name="report_type">qweb-pdf</field>
@@ -356,9 +356,9 @@
         <field name="binding_model_id" ref="sale.model_sale_order"/>
         <field name="paperformat_id" ref="bmo_report.report_so_paperformat" />
         <field name="binding_type">report</field>
-    </record>
+    </record> -->
 
-    <record id="action_report_so_name_po" model="ir.actions.report">
+    <!-- <record id="action_report_so_name_po" model="ir.actions.report">
         <field name="name">Report Sales Order (po)</field>
         <field name="model">sale.order</field>
         <field name="report_type">qweb-pdf</field>
@@ -368,5 +368,5 @@
         <field name="binding_model_id" ref="sale.model_sale_order"/>
         <field name="paperformat_id" ref="bmo_report.report_so_paperformat" />
         <field name="binding_type">report</field>
-    </record>
+    </record> -->
 </odoo>

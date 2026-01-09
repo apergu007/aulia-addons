@@ -1,5 +1,37 @@
 <odoo>
     <data>
+        <template id="external_layout_custom_noheader">
+            <t t-if="not o" t-set="o" t-value="doc"/>
+
+            <t t-if="not company">
+                <!-- Multicompany -->
+                <t t-if="company_id">
+                    <t t-set="company" t-value="company_id"/>
+                </t>
+                <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
+                    <t t-set="company" t-value="o.company_id.sudo()"/>
+                </t>
+                <t t-else="else">
+                    <t t-set="company" t-value="res_company"/>
+                </t>
+            </t>
+            <div t-attf-class="o_company_#{company.id}_layout article o_report_layout_striped o_table_striped o_snail_mail {{'o_report_layout_background' if company.layout_background != 'Blank' else ''}}"
+                t-att-data-oe-model="o and o._name"
+                t-att-data-oe-id="o and o.id"
+                t-att-data-oe-lang="o and o.env.context.get('lang')">
+                <t t-call="web.address_layout"/>
+                <h2 t-out="layout_document_title"/>
+                <t t-out="0"/>
+            </div>
+            <div t-attf-class="footer">
+                <img src="/bmo_report/static/img/footer.jpeg" style="left:-10mm; width:calc(100% + 100mm); max-height:90px;"/>
+                <!-- <div class="text-end text-muted">
+                    <div t-if="report_type == 'pdf' and display_name_in_footer" t-out="o.name">(document name)</div>
+                    <div t-if="report_type == 'pdf'">Page <span class="page"/> / <span class="topage"/></div>
+                </div> -->
+            </div>
+        </template>
+
         <template id="external_layout_custom">
             <t t-if="not o" t-set="o" t-value="doc"/>
 
@@ -24,7 +56,6 @@
                     <div class="col-1">
                         <div class="text-right">
                             <div t-if="report_type == 'pdf'">Page <span class="page"/> / <span class="topage"/></div>
-                            <!-- <div t-if="report_type == 'pdf' and display_name_in_footer" t-out="o.name">(document name)</div> -->
                         </div>
                     </div>
                 </div>

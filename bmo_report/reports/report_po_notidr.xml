@@ -242,7 +242,7 @@
         </t>
     </template>
 
-    <record id="action_report_po_notidr" model="ir.actions.report">
+    <!-- <record id="action_report_po_notidr" model="ir.actions.report">
         <field name="name">Report Purchase Order Not IDR</field>
         <field name="model">purchase.order</field>
         <field name="report_type">qweb-pdf</field>
@@ -252,5 +252,5 @@
         <field name="binding_model_id" ref="purchase.model_purchase_order"/>
         <field name="paperformat_id" ref="bmo_report.report_po_paperformat" />
         <field name="binding_type">report</field>
-    </record>
+    </record> -->
 </odoo>

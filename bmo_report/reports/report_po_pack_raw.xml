@@ -55,6 +55,7 @@
                         <table class="table table-sm">
                             <thead >
                                 <tr>
+                                    <th style="text-align:center;border: 1px solid black;">No</th>
                                     <th style="text-align:center;border: 1px solid black;">Product Code</th>
                                     <th style="text-align:center;border: 1px solid black;">Product Name</th>
                                     <th style="text-align:center;border: 1px solid black;">Qty</th>
@@ -66,9 +67,14 @@
                             <tbody >
                                 <t t-set="undis" t-value="0"/>
                                 <t t-set="t_disc" t-value="0"/>
+                                <t t-set="col" t-value="0"/>
                                 <!-- <t t-foreach="o.order_line.filtered(lambda l: l.price_unit)" t-as="line"> -->
                                 <t t-foreach="o.order_line" t-as="line">
+                                    <t t-set="col" t-value="col+1"/>
                                     <tr style="border: 1px solid black;height: 20px;">
+                                        <td style="border: 1px solid black;text-align:center;">
+                                            <span t-esc="col"/>
+                                        </td>
                                         <td style="border: 1px solid black;text-align:left;">
                                             <span t-esc="line.product_id.default_code"/>
                                         </td>
@@ -85,18 +91,24 @@
                                             <span t-esc="line.product_id.uom_id.name"/>
                                         </td>
                                         <td style="border: 1px solid black;text-align:right;">
-                                            <span t-esc="'{0:,.2f}'.format(int(line.price_unit))"/>
+                                            <t t-if="o.currency_id.name == 'IDR'">
+                                                <span t-esc="line.price_unit" t-options='{"widget": "float", "precision": 2}'/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="line.price_unit" t-options='{"widget": "float", "precision": 3}'/>
+                                            </t>
                                         </td>
                                         <td style="border: 1px solid black;text-align:right;">
                                             <t t-set="disc" t-value="abs(line.price_subtotal - (line.product_qty*line.price_unit))"/>
-                                            <span t-esc="'{0:,.2f}'.format(int(disc))"/>
+                                            <!-- <span t-esc="'{0:,.2f}'.format(int(disc))"/> -->
+                                            <span t-esc="disc" t-options='{"widget": "float", "precision": 2}'/>
                                         </td>
                                         <td style="border: 1px solid black;text-align:right;">
                                             <t t-if="o.currency_id.name == 'IDR'">
-                                                <span t-esc="'{0:,.2f}'.format(int(line.price_subtotal))"/>
+                                                <span t-esc="line.price_subtotal" t-options='{"widget": "float", "precision": 2}'/>
                                             </t>
                                             <t t-else="">
-                                                <span t-esc="'{0:,.3f}'.format(int(line.price_subtotal))"/>
+                                                <span t-esc="line.price_subtotal" t-options='{"widget": "float", "precision": 3}'/>
                                             </t>
                                         </td>
                                     </tr>
@@ -109,27 +121,35 @@
                                 <div>
                                     <strong><span>Additional Notes :</span></strong>
                                 </div>
-                                <div style="height:50px;"><span t-field="o.notes"/></div>
+                                <div style="height:200px;"><span t-field="o.notes"/></div>
                             </div>
                             <div class="col-4">
                                 <t t-set="subtotal" t-value="sum(line.price_subtotal for line in o.order_line if line.price_subtotal &gt; 0)"/>
                                 <t t-set="dpp_rumus" t-value="0.0"/>
                                 <t t-set="dpp_rumus" t-value="((o.amount_total/1.11) * (11/12))"/>
-                                <table class="table table-borderless" style="width:100%;border-collapse: collapse;">
+                                <table class="table table-borderless" style="width:100%;border-collapse: collapse;text-align:right;">
                                     <tr>
                                         <td style="width: 50%;"><strong><span>Sub Total </span></strong></td>
                                         <td>:</td>
-                                        <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(subtotal))"/></td>
+                                        <td style="text-align:right;">
+                                            <!-- <span t-esc="'{0:,.2f}'.format(int(subtotal))"/> -->
+                                            <span t-esc="subtotal" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td><strong><span>Taxes </span></strong></td>
                                         <td>:</td>
-                                        <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(o.amount_tax))"/></td>
+                                        <td style="text-align:right;">
+                                            <span t-esc="o.amount_tax" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td><strong><span>Grand Total </span></strong></td>
                                         <td>:</td>
-                                        <td style="text-align:right;"><span t-esc="'{0:,.2f}'.format(int(o.amount_total))"/></td>
+                                        <td style="text-align:right;">
+                                            <!-- <span t-esc="'{0:,.2f}'.format(int(o.amount_total))"/> -->
+                                            <span t-esc="o.amount_total" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
                                     </tr>         
                                 </table>
                             </div>
